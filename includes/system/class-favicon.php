@@ -9,9 +9,9 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
-use WPPluginBoilerplate\System\Logger;
+use OPcacheManager\System\Logger;
 
 /**
  * Define the favicons functionality.

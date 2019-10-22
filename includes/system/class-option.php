@@ -9,7 +9,7 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
 /**
  * Define the options functionality.
@@ -60,7 +60,7 @@ class Option {
 		if ( array_key_exists( $option, self::$defaults ) ) {
 			$default = self::$defaults[ $option ];
 		}
-		return get_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, $default );
+		return get_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, $default );
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Option {
 		if ( array_key_exists( $option, self::$defaults ) ) {
 			$default = self::$defaults[ $option ];
 		}
-		return get_site_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, $default );
+		return get_site_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, $default );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class Option {
 	 * @since 1.0.0
 	 */
 	public static function site_exists( $option ) {
-		return 'non_existent_option' !== get_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, 'non_existent_option' );
+		return 'non_existent_option' !== get_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, 'non_existent_option' );
 	}
 
 	/**
@@ -99,7 +99,7 @@ class Option {
 	 * @since 1.0.0
 	 */
 	public static function network_exists( $option ) {
-		return 'non_existent_option' !== get_site_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, 'non_existent_option' );
+		return 'non_existent_option' !== get_site_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, 'non_existent_option' );
 	}
 
 	/**
@@ -115,7 +115,7 @@ class Option {
 	 * @since 1.0.0
 	 */
 	public static function site_set( $option, $value, $autoload = null ) {
-		return update_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, $value, $autoload );
+		return update_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, $value, $autoload );
 	}
 
 	/**
@@ -127,7 +127,7 @@ class Option {
 	 * @since 1.0.0
 	 */
 	public static function network_set( $option, $value ) {
-		return update_site_option( WPPB_PRODUCT_ABBREVIATION . '_' . $option, $value );
+		return update_site_option( OPCM_PRODUCT_ABBREVIATION . '_' . $option, $value );
 	}
 
 	/**
@@ -140,7 +140,7 @@ class Option {
 		global $wpdb;
 		$result = 0;
 		// phpcs:ignore
-		$delete = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '" . WPPB_PRODUCT_ABBREVIATION . '_%' . "';" );
+		$delete = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '" . OPCM_PRODUCT_ABBREVIATION . '_%' . "';" );
 		foreach ( $delete as $option ) {
 			if ( delete_option( $option ) ) {
 				++$result;

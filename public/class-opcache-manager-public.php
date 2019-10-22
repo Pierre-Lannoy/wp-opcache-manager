@@ -7,9 +7,9 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\Plugin;
+namespace OPcacheManager\Plugin;
 
-use WPPluginBoilerplate\System\Assets;
+use OPcacheManager\System\Assets;
 
 /**
  * The class responsible for the public-facing functionality of the plugin.
@@ -18,7 +18,7 @@ use WPPluginBoilerplate\System\Assets;
  * @author  Pierre Lannoy <https://pierre.lannoy.fr/>.
  * @since   1.0.0
  */
-class Wp_Plugin_Boilerplate_Public {
+class Opcache_Manager_Public {
 
 
 	/**
@@ -45,7 +45,7 @@ class Wp_Plugin_Boilerplate_Public {
 	 * @since 1.0.0
 	 */
 	public function enqueue_styles() {
-		$this->assets->register_style( WPPB_ASSETS_ID, WPPB_PUBLIC_URL, 'css/wp-plugin-boilerplate.min.css' );
+		$this->assets->register_style( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'css/opcache-manager.min.css' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Wp_Plugin_Boilerplate_Public {
 	 * @since 1.0.0
 	 */
 	public function enqueue_scripts() {
-		$this->assets->register_script( WPPB_ASSETS_ID, WPPB_PUBLIC_URL, 'js/wp-plugin-boilerplate.min.js', [ 'jquery' ] );
+		$this->assets->register_script( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
 	}
 
 }

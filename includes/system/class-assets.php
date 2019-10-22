@@ -7,10 +7,10 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
-use WPPluginBoilerplate\System\Environment;
-use WPPluginBoilerplate\System\UUID;
+use OPcacheManager\System\Environment;
+use OPcacheManager\System\UUID;
 
 /**
  * The class responsible to handle assets management.
@@ -36,7 +36,7 @@ class Assets {
 	 * @since 1.0.0
 	 */
 	public function prefetch() {
-		if ( Option::site_get( 'use_cdn' ) && WPPB_CDN_AVAILABLE ) {
+		if ( Option::site_get( 'use_cdn' ) && OPCM_CDN_AVAILABLE ) {
 			echo '<meta http-equiv="x-dns-prefetch-control" content="on">';
 			echo '<link rel="dns-prefetch" href="//cdn.jsdelivr.net" />';
 		}
@@ -59,17 +59,17 @@ class Assets {
 	 * @since  1.0.0
 	 */
 	public function register_style( $handle, $src, $file, $deps = [], $media = 'all' ) {
-		if ( Option::site_get( 'use_cdn' ) && WPPB_CDN_AVAILABLE ) {
-			if ( WPPB_ADMIN_URL === $src ) {
-				$file = 'https://cdn.jsdelivr.net/wp/' . WPPB_SLUG . '/tags/' . WPPB_VERSION . '/admin/' . $file;
+		if ( Option::site_get( 'use_cdn' ) && OPCM_CDN_AVAILABLE ) {
+			if ( OPCM_ADMIN_URL === $src ) {
+				$file = 'https://cdn.jsdelivr.net/wp/' . OPCM_SLUG . '/tags/' . OPCM_VERSION . '/admin/' . $file;
 			} else {
-				$file = 'https://cdn.jsdelivr.net/wp/' . WPPB_SLUG . '/tags/' . WPPB_VERSION . '/public/' . $file;
+				$file = 'https://cdn.jsdelivr.net/wp/' . OPCM_SLUG . '/tags/' . OPCM_VERSION . '/public/' . $file;
 			}
 			// phpcs:ignore
 			return wp_register_style( $handle, $file, $deps, null, $media );
 		} else {
 			if ( Environment::is_plugin_in_production_mode() ) {
-				$version = WPPB_VERSION;
+				$version = OPCM_VERSION;
 			} else {
 				$version = UUID::generate_unique_id( 20 );
 			}
@@ -94,17 +94,17 @@ class Assets {
 	 * @since  1.0.0
 	 */
 	public function register_script( $handle, $src, $file, $deps = [] ) {
-		if ( Option::site_get( 'use_cdn' ) && WPPB_CDN_AVAILABLE ) {
-			if ( WPPB_ADMIN_URL === $src ) {
-				$file = 'https://cdn.jsdelivr.net/wp/' . WPPB_SLUG . '/tags/' . WPPB_VERSION . '/admin/' . $file;
+		if ( Option::site_get( 'use_cdn' ) && OPCM_CDN_AVAILABLE ) {
+			if ( OPCM_ADMIN_URL === $src ) {
+				$file = 'https://cdn.jsdelivr.net/wp/' . OPCM_SLUG . '/tags/' . OPCM_VERSION . '/admin/' . $file;
 			} else {
-				$file = 'https://cdn.jsdelivr.net/wp/' . WPPB_SLUG . '/tags/' . WPPB_VERSION . '/public/' . $file;
+				$file = 'https://cdn.jsdelivr.net/wp/' . OPCM_SLUG . '/tags/' . OPCM_VERSION . '/public/' . $file;
 			}
 			// phpcs:ignore
 			return wp_register_script( $handle, $file, $deps, null, Option::site_get( 'script_in_footer' ) );
 		} else {
 			if ( Environment::is_plugin_in_production_mode() ) {
-				$version = WPPB_VERSION;
+				$version = OPCM_VERSION;
 			} else {
 				$version = UUID::generate_unique_id( 20 );
 			}

@@ -9,10 +9,10 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
 use WP_User;
-use WPPluginBoilerplate\System\I18n;
+use OPcacheManager\System\I18n;
 
 /**
  * Define the localization functionality.

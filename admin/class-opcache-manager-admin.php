@@ -7,9 +7,9 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\Plugin;
+namespace OPcacheManager\Plugin;
 
-use WPPluginBoilerplate\System\Assets;
+use OPcacheManager\System\Assets;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -18,7 +18,7 @@ use WPPluginBoilerplate\System\Assets;
  * @author  Pierre Lannoy <https://pierre.lannoy.fr/>.
  * @since   1.0.0
  */
-class Wp_Plugin_Boilerplate_Admin {
+class Opcache_Manager_Admin {
 
 	/**
 	 * The assets manager that's responsible for handling all assets of the plugin.
@@ -44,7 +44,7 @@ class Wp_Plugin_Boilerplate_Admin {
 	 * @since 1.0.0
 	 */
 	public function enqueue_styles() {
-		$this->assets->register_style( WPPB_ASSETS_ID, WPPB_ADMIN_URL, 'css/wp-plugin-boilerplate.min.css' );
+		$this->assets->register_style( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'css/opcache-manager.min.css' );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Wp_Plugin_Boilerplate_Admin {
 	 * @since 1.0.0
 	 */
 	public function enqueue_scripts() {
-		$this->assets->register_script( WPPB_ASSETS_ID, WPPB_ADMIN_URL, 'js/wp-plugin-boilerplate.min.js', [ 'jquery' ] );
+		$this->assets->register_script( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
 	}
 
 	/**
@@ -97,8 +97,8 @@ class Wp_Plugin_Boilerplate_Admin {
 	 * @since 1.0.0
 	 */
 	public function add_row_meta( $links, $file ) {
-		if ( 0 === strpos( $file, WPPB_SLUG . '/' ) ) {
-			$links[] = '<a href="https://wordpress.org/support/plugin/' . WPPB_SLUG . '/">' . __( 'Support', 'wp-plugin-boilerplate' ) . '</a>';
+		if ( 0 === strpos( $file, OPCM_SLUG . '/' ) ) {
+			$links[] = '<a href="https://wordpress.org/support/plugin/' . OPCM_SLUG . '/">' . __( 'Support', 'opcache-manager' ) . '</a>';
 		}
 		return $links;
 	}

@@ -9,7 +9,7 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
 /**
  * Define the logging functionality.
@@ -45,7 +45,7 @@ class Logger {
 	 */
 	public static function init() {
 		if ( defined( 'DECALOG_VERSION' ) && class_exists( '\Decalog\Logger' ) ) {
-			self::$logger = new \Decalog\Logger( 'plugin', WPPB_PRODUCT_NAME, WPPB_VERSION );
+			self::$logger = new \Decalog\Logger( 'plugin', OPCM_PRODUCT_NAME, OPCM_VERSION );
 		}
 	}
 

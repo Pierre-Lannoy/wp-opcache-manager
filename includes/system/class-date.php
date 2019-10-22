@@ -9,7 +9,7 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\System;
+namespace OPcacheManager\System;
 
 /**
  * Define the date functionality.
@@ -54,10 +54,10 @@ class Date {
 	 */
 	public static function get_positive_time_diff_from_mysql_utc($from) {
 		if (strtotime($from) < time()) {
-			return sprintf( esc_html__('%s ago', 'wp-plugin-boilerplate'), human_time_diff(strtotime($from)));
+			return sprintf( esc_html__('%s ago', 'opcache-manager'), human_time_diff(strtotime($from)));
 		}
 		else {
-			return esc_html__('currently', 'wp-plugin-boilerplate');
+			return esc_html__('currently', 'opcache-manager');
 		}
 	}
 
@@ -70,10 +70,10 @@ class Date {
 	 */
 	public static function get_time_diff_from_mysql_utc($from) {
 		if (strtotime($from) < time()) {
-			return sprintf( esc_html__('%s ago', 'wp-plugin-boilerplate'), human_time_diff(strtotime($from)));
+			return sprintf( esc_html__('%s ago', 'opcache-manager'), human_time_diff(strtotime($from)));
 		}
 		else {
-			return sprintf( esc_html__('in %s', 'wp-plugin-boilerplate'), human_time_diff(strtotime($from)));
+			return sprintf( esc_html__('in %s', 'opcache-manager'), human_time_diff(strtotime($from)));
 		}
 	}
 
@@ -89,15 +89,15 @@ class Date {
 	public static function get_age_array_from_seconds( $age, $legend = false, $abbrev = false ) {
 		if ( $abbrev ) {
 			$intervals = [
-				[ 60, _x( 'sec.', 'Abbreviation - Stands for "second".', 'wp-plugin-boilerplate' ), _x( 'sec.', 'Abbreviation - Stands for "second".', 'wp-plugin-boilerplate' ) ],
-				[ 60, _x( 'min.', 'Abbreviation - Stands for "minute".', 'wp-plugin-boilerplate' ), _x( 'min.', 'Abbreviation - Stands for "minute".', 'wp-plugin-boilerplate' ) ],
-				[ 100000, _x( 'hr.', 'Abbreviation - Stands for "hour".', 'wp-plugin-boilerplate' ), _x( 'hr.', 'Abbreviation - Stands for "hour".', 'wp-plugin-boilerplate' ) ],
+				[ 60, _x( 'sec.', 'Abbreviation - Stands for "second".', 'opcache-manager' ), _x( 'sec.', 'Abbreviation - Stands for "second".', 'opcache-manager' ) ],
+				[ 60, _x( 'min.', 'Abbreviation - Stands for "minute".', 'opcache-manager' ), _x( 'min.', 'Abbreviation - Stands for "minute".', 'opcache-manager' ) ],
+				[ 100000, _x( 'hr.', 'Abbreviation - Stands for "hour".', 'opcache-manager' ), _x( 'hr.', 'Abbreviation - Stands for "hour".', 'opcache-manager' ) ],
 			];
 		} else {
 			$intervals = [
-				[ 60, _n( 'second', 'seconds', 1, 'wp-plugin-boilerplate' ), _n( 'second', 'seconds', 2, 'wp-plugin-boilerplate' ) ],
-				[ 60, _n( 'minute', 'minutes', 1, 'wp-plugin-boilerplate' ), _n( 'minute', 'minutes', 2, 'wp-plugin-boilerplate' ) ],
-				[ 100000, _n( 'hour', 'hours', 1, 'wp-plugin-boilerplate' ), _n( 'hour', 'hours', 2, 'wp-plugin-boilerplate' ) ],
+				[ 60, _n( 'second', 'seconds', 1, 'opcache-manager' ), _n( 'second', 'seconds', 2, 'opcache-manager' ) ],
+				[ 60, _n( 'minute', 'minutes', 1, 'opcache-manager' ), _n( 'minute', 'minutes', 2, 'opcache-manager' ) ],
+				[ 100000, _n( 'hour', 'hours', 1, 'opcache-manager' ), _n( 'hour', 'hours', 2, 'opcache-manager' ) ],
 			];
 		}
 		$value = [];

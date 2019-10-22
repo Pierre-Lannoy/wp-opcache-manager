@@ -7,7 +7,7 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\Plugin;
+namespace OPcacheManager\Plugin;
 
 /**
  * Fired during plugin deactivation.

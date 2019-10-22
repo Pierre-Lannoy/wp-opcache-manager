@@ -7,12 +7,15 @@
  * @since   1.0.0
  */
 
-namespace WPPluginBoilerplate\Plugin;
+namespace OPcacheManager\Plugin;
 
 use Parsedown;
-use WPPluginBoilerplate\System\Nag;
-use WPPluginBoilerplate\System\Option;
+use OPcacheManager\System\Nag;
+use OPcacheManager\System\Option;
 use Exception;
+use OPcacheManager\System\Environment;
+use OPcacheManager\System\Role;
+use OPcacheManager\System\Logger;
 
 /**
  * Plugin updates handling.
@@ -32,19 +35,27 @@ class Updater {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-		$old = Option::site_get( 'version' );
-		if ( WPPB_VERSION !== $old ) {
+		$old = Option::network_get( 'version' );
+		if ( OPCM_VERSION !== $old ) {
 			if ( '0.0.0' === $old ) {
 				$this->install();
 				// phpcs:ignore
-				$message = sprintf( esc_html__( '%1$s has been correctly installed.', 'wp-plugin-boilerplate' ), WPPB_PRODUCT_NAME );
+				$message = sprintf( esc_html__( '%1$s has been correctly installed.', 'opcache-manager' ), OPCM_PRODUCT_NAME );
 			} else {
 				$this->update( $old );
 				// phpcs:ignore
-				$message = sprintf( esc_html__( '%1$s has been correctly updated from version %2$s to version %3$s.', 'wp-plugin-boilerplate' ), WPPB_PRODUCT_NAME, $old, WPPB_VERSION );
+				$message  = sprintf( esc_html__( '%1$s has been correctly updated from version %2$s to version %3$s.', 'opcache-manager' ), OPCM_PRODUCT_NAME, $old, OPCM_VERSION );
+				Logger::notice( $message );
+				if ( ( Environment::is_wordpress_multisite() && Role::SUPER_ADMIN === Role::admin_type() ) || Role::SINGLE_ADMIN === Role::admin_type() ) {
+					// phpcs:ignore
+					$message .= ' ' . sprintf( __( 'See <a href="%s">what\'s new</a>.', 'opcache-manager' ), admin_url( 'options-general.php?page=opcache-manager-settings&tab=about' ) );
+				} else {
+					// phpcs:ignore
+					$message .= ' ' . sprintf( __( 'See <a href="%s">what\'s new</a>.', 'opcache-manager' ), OPCM_PRODUCT_URL . '/blob/master/CHANGELOG.md' );
+				}
 			}
 			Nag::add( 'update', 'info', $message );
-			Option::site_set( 'version', WPPB_VERSION );
+			Option::network_set( 'version', OPCM_VERSION );
 		}
 	}
 
@@ -103,7 +114,7 @@ class Updater {
 	 * @since 1.0.0
 	 */
 	public function auto_update_plugin( $update, $item ) {
-		if ( ( WPPB_SLUG === $item->slug ) && $this->is_autoupdatable() ) {
+		if ( ( OPCM_SLUG === $item->slug ) && $this->is_autoupdatable() ) {
 			return true;
 		} else {
 			return $update;
@@ -128,9 +139,9 @@ class Updater {
 		);
 		$style       = $_attributes['style'];
 		$mode        = $_attributes['mode'];
-		$error       = esc_html__( 'Sorry, unable to find or read changelog file.', 'wp-plugin-boilerplate' );
+		$error       = esc_html__( 'Sorry, unable to find or read changelog file.', 'opcache-manager' );
 		$result      = esc_html( $error );
-		$changelog   = WPPB_PLUGIN_DIR . 'CHANGELOG.md';
+		$changelog   = OPCM_PLUGIN_DIR . 'CHANGELOG.md';
 		if ( file_exists( $changelog ) ) {
 			try {
 				// phpcs:ignore
@@ -146,6 +157,7 @@ class Updater {
 				}
 			} catch ( Exception $e ) {
 				$result = esc_html( $error );
+				Logger::warning( $result );
 			}
 		}
 		return $result;
