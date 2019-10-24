@@ -17,6 +17,7 @@ use OPcacheManager\System\I18n;
 use OPcacheManager\System\Assets;
 use OPcacheManager\Library\Libraries;
 use OPcacheManager\System\Nag;
+use OPcacheManager\System\Option;
 
 /**
  * The core plugin class.
@@ -87,6 +88,14 @@ class Core {
 		add_shortcode( 'opcm-changelog', [ $updater, 'sc_get_changelog' ] );
 		add_shortcode( 'opcm-libraries', [ $libraries, 'sc_get_list' ] );
 		add_shortcode( 'opcm-statistics', [ 'OPcacheManager\System\Statistics', 'sc_get_raw' ] );
+		if ( 'never' !== Option::network_get( 'reset_frequency' ) ) {
+			$this->loader->add_action( OPCM_CRON_NAME, 'OPcacheManager\System\OPcache', 'reset' );
+		}
+		if ( ! wp_next_scheduled( OPCM_CRON_NAME ) ) {
+			if ( 'never' !== Option::network_get( 'reset_frequency' ) ) {
+				wp_schedule_event( time(), Option::network_get( 'reset_frequency' ), OPCM_CRON_NAME );
+			}
+		}
 	}
 
 	/**
@@ -107,6 +116,7 @@ class Core {
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'add_row_meta', 10, 2 );
 		$this->loader->add_action( 'admin_notices', $nag, 'display' );
 		$this->loader->add_action( 'wp_ajax_hide_opcm_nag', $nag, 'hide_callback' );
+		$this->loader->add_action( 'wp_ajax_opcm_get_stats', 'OPcacheManager\Plugin\Feature\AnalyticsFactory', 'get_stats_callback' );
 	}
 
 	/**

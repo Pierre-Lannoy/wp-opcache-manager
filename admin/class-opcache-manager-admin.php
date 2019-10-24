@@ -9,7 +9,16 @@
 
 namespace OPcacheManager\Plugin;
 
+//use OPcacheManager\Plugin\Feature\Analytics;
+//use OPcacheManager\Plugin\Feature\AnalyticsFactory;
 use OPcacheManager\System\Assets;
+use OPcacheManager\System\Logger;
+use OPcacheManager\System\Role;
+use OPcacheManager\System\Option;
+use OPcacheManager\System\Form;
+use OPcacheManager\System\Blog;
+use OPcacheManager\System\Date;
+use OPcacheManager\System\Timezone;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -62,6 +71,28 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function init_admin_menus() {
+		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
+			/* translators: as in the sentence "OPcache Manager Settings" or "WordPress Settings" */
+			$settings = add_submenu_page( 'options-general.php', sprintf( esc_html__( '%s Settings', 'opcache-manager' ), OPCM_PRODUCT_NAME ), OPCM_PRODUCT_NAME, 'manage_options', 'opcm-settings', [ $this, 'get_settings_page' ] );
+			$name     = add_submenu_page(
+				'tools.php',
+				esc_html__( 'OPcache Tools', 'opcache-manager' ),
+				esc_html__( 'OPcache Tools', 'opcache-manager' ),
+				'manage_options',
+				'opcm-tools',
+				[ $this, 'get_tools_page' ]
+			);
+		}
+		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() || Role::LOCAL_ADMIN === Role::admin_type() ) {
+			$name = add_submenu_page(
+				'tools.php',
+				esc_html__( 'OPcache Analytics', 'opcache-manager' ),
+				esc_html__( 'OPcache Analytics', 'opcache-manager' ),
+				'manage_options',
+				'opcm-viewer',
+				[ $this, 'get_viewer_page' ]
+			);
+		}
 	}
 
 	/**
@@ -70,6 +101,8 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function init_settings_sections() {
+		add_settings_section( 'opcm_plugin_features_section', esc_html__( 'Plugin Features', 'opcache-manager' ), [ $this, 'plugin_features_section_callback' ], 'opcm_plugin_features_section' );
+		add_settings_section( 'opcm_plugin_options_section', esc_html__( 'Plugin options', 'opcache-manager' ), [ $this, 'plugin_options_section_callback' ], 'opcm_plugin_options_section' );
 	}
 
 	/**
@@ -85,6 +118,9 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function add_actions_links( $actions, $plugin_file, $plugin_data, $context ) {
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=opcm-settings' ) ), esc_html__( 'Settings', 'opcache-manager' ) );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'tools.php?page=opcm-tools' ) ), esc_html__( 'Tools', 'opcache-manager' ) );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'tools.php?page=opcm-viewer' ) ), esc_html__( 'Statistics', 'opcache-manager' ) );
 		return $actions;
 	}
 
@@ -99,8 +135,223 @@ class Opcache_Manager_Admin {
 	public function add_row_meta( $links, $file ) {
 		if ( 0 === strpos( $file, OPCM_SLUG . '/' ) ) {
 			$links[] = '<a href="https://wordpress.org/support/plugin/' . OPCM_SLUG . '/">' . __( 'Support', 'opcache-manager' ) . '</a>';
+			$links[] = '<a href="https://github.com/Pierre-Lannoy/wp-opcache-manager">' . __( 'GitHub repository', 'opcache-manager' ) . '</a>';
 		}
 		return $links;
+	}
+
+	/**
+	 * Get the content of the tools page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_tools_page() {
+		//$analytics = AnalyticsFactory::get_analytics();
+		//include OPCM_ADMIN_DIR . 'partials/traffic-admin-view-analytics.php';
+	}
+
+	/**
+	 * Get the content of the viewer page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_viewer_page() {
+		//$analytics = AnalyticsFactory::get_analytics();
+		//include OPCM_ADMIN_DIR . 'partials/traffic-admin-view-analytics.php';
+	}
+
+	/**
+	 * Get the content of the settings page.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_settings_page() {
+		if ( ! ( $tab = filter_input( INPUT_GET, 'tab' ) ) ) {
+			$tab = filter_input( INPUT_POST, 'tab' );
+		}
+		if ( ! ( $action = filter_input( INPUT_GET, 'action' ) ) ) {
+			$action = filter_input( INPUT_POST, 'action' );
+		}
+		if ( $action && $tab ) {
+			switch ( $tab ) {
+				case 'misc':
+					switch ( $action ) {
+						case 'do-save':
+							if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
+								if ( ! empty( $_POST ) && array_key_exists( 'submit', $_POST ) ) {
+									$this->save_options();
+								} elseif ( ! empty( $_POST ) && array_key_exists( 'reset-to-defaults', $_POST ) ) {
+									$this->reset_options();
+								}
+							}
+							break;
+					}
+					break;
+			}
+		}
+		include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-settings-main.php';
+	}
+
+	/**
+	 * Save the plugin options.
+	 *
+	 * @since 1.0.0
+	 */
+	private function save_options() {
+		if ( ! empty( $_POST ) ) {
+			if ( array_key_exists( '_wpnonce', $_POST ) && wp_verify_nonce( $_POST['_wpnonce'], 'opcm-plugin-options' ) ) {
+				Option::network_set( 'use_cdn', array_key_exists( 'opcm_plugin_options_usecdn', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_usecdn' ) : false );
+				Option::network_set( 'auto_update', array_key_exists( 'opcm_plugin_options_autoupdate', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_autoupdate' ) : false );
+				Option::network_set( 'display_nag', array_key_exists( 'opcm_plugin_options_nag', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_nag' ) : false );
+				Option::network_set( 'reset_frequency', array_key_exists( 'opcm_plugin_features_reset_frequency', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_reset_frequency', FILTER_SANITIZE_STRING ) : Option::network_get( 'reset_frequency' ) );
+				$message = esc_html__( 'Plugin settings have been saved.', 'opcache-manager' );
+				$code    = 0;
+				add_settings_error( 'opcm_no_error', $code, $message, 'updated' );
+				Logger::info( 'Plugin settings updated.', $code );
+			} else {
+				$message = esc_html__( 'Plugin settings have not been saved. Please try again.', 'opcache-manager' );
+				$code    = 2;
+				add_settings_error( 'opcm_nonce_error', $code, $message, 'error' );
+				Logger::warning( 'Plugin settings not updated.', $code );
+			}
+		}
+	}
+
+	/**
+	 * Reset the plugin options.
+	 *
+	 * @since 1.0.0
+	 */
+	private function reset_options() {
+		if ( ! empty( $_POST ) ) {
+			if ( array_key_exists( '_wpnonce', $_POST ) && wp_verify_nonce( $_POST['_wpnonce'], 'opcm-plugin-options' ) ) {
+				Option::reset_to_defaults();
+				$message = esc_html__( 'Plugin settings have been reset to defaults.', 'opcache-manager' );
+				$code    = 0;
+				add_settings_error( 'opcm_no_error', $code, $message, 'updated' );
+				Logger::info( 'Plugin settings reset to defaults.', $code );
+			} else {
+				$message = esc_html__( 'Plugin settings have not been reset to defaults. Please try again.', 'opcache-manager' );
+				$code    = 2;
+				add_settings_error( 'opcm_nonce_error', $code, $message, 'error' );
+				Logger::warning( 'Plugin settings not reset to defaults.', $code );
+			}
+		}
+	}
+
+	/**
+	 * Callback for plugin options section.
+	 *
+	 * @since 1.0.0
+	 */
+	public function plugin_options_section_callback() {
+		$form = new Form();
+		if ( defined( 'DECALOG_VERSION' ) ) {
+			$help  = '<img style="width:16px;vertical-align:text-bottom;" src="' . \Feather\Icons::get_base64( 'thumbs-up', 'none', '#00C800' ) . '" />&nbsp;';
+			$help .= sprintf( esc_html__('Your site is currently using %s.', 'opcache-manager' ), '<em>DecaLog v' . DECALOG_VERSION .'</em>' );
+		} else {
+			$help  = '<img style="width:16px;vertical-align:text-bottom;" src="' . \Feather\Icons::get_base64( 'alert-triangle', 'none', '#FF8C00' ) . '" />&nbsp;';
+			$help .= sprintf( esc_html__('Your site does not use any logging plugin. To log all events triggered in OPcache Manager, I recommend you to install the excellent (and free) %s. But it is not mandatory.', 'opcache-manager' ), '<a href="https://wordpress.org/plugins/decalog/">DecaLog</a>' );
+		}
+		add_settings_field(
+			'opcm_plugin_options_logger',
+			__( 'Logging', 'opcache-manager' ),
+			[ $form, 'echo_field_simple_text' ],
+			'opcm_plugin_options_section',
+			'opcm_plugin_options_section',
+			[
+				'text' => $help
+			]
+		);
+		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_logger' );
+		add_settings_field(
+			'opcm_plugin_options_usecdn',
+			__( 'Resources', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_options_section',
+			'opcm_plugin_options_section',
+			[
+				'text'        => esc_html__( 'Use public CDN', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_options_usecdn',
+				'checked'     => Option::network_get( 'use_cdn' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will use a public CDN (jsDelivr) to serve scripts and stylesheets.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_usecdn' );
+		add_settings_field(
+			'opcm_plugin_options_autoupdate',
+			__( 'Plugin updates', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_options_section',
+			'opcm_plugin_options_section',
+			[
+				'text'        => esc_html__( 'Automatic (recommended)', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_options_autoupdate',
+				'checked'     => Option::network_get( 'auto_update' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will update itself as soon as a new version is available.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_autoupdate' );
+		add_settings_field(
+			'opcm_plugin_options_nag',
+			__( 'Admin notices', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_options_section',
+			'opcm_plugin_options_section',
+			[
+				'text'        => esc_html__( 'Display', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_options_nag',
+				'checked'     => Option::network_get( 'display_nag' ),
+				'description' => esc_html__( 'Allows OPcache Manager to display admin notices throughout the admin dashboard.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: OPcache Manager respects DISABLE_NAG_NOTICES flag.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_nag' );
+	}
+
+	/**
+	 * Get the available frequencies.
+	 *
+	 * @return array An array containing the history modes.
+	 * @since  3.2.0
+	 */
+	protected function get_frequencies_array() {
+		$result   = [];
+		$result[] = [ 'never', __( 'Never', 'opcache-manager' ) ];
+		$result[] = [ 'hourly', __( 'Once Hourly', 'opcache-manager' ) ];
+		$result[] = [ 'twicedaily', __( 'Twice Daily', 'opcache-manager' ) ];
+		$result[] = [ 'daily', __( 'Once Daily', 'opcache-manager' ) ];
+		return $result;
+	}
+
+	/**
+	 * Callback for plugin features section.
+	 *
+	 * @since 1.0.0
+	 */
+	public function plugin_features_section_callback() {
+		$form = new Form();
+		add_settings_field(
+			'opcm_plugin_features_reset_frequency',
+			__( 'Reset OPcache', 'opcache-manager' ),
+			[ $form, 'echo_field_select' ],
+			'opcm_plugin_features_section',
+			'opcm_plugin_features_section',
+			[
+				'list'        => $this->get_frequencies_array(),
+				'id'          => 'opcm_plugin_features_reset_frequency',
+				'value'       => Option::network_get( 'reset_frequency' ),
+				'description' => esc_html__( 'Frequency at which OPcache must be automatically reset.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_reset_frequency' );
 	}
 
 }

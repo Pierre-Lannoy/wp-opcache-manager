@@ -96,7 +96,7 @@ class Updater {
 	 * @since 1.0.0
 	 */
 	public function is_autoupdatable() {
-		return ( $this->is_updatable() && Option::site_get( 'auto_update' ) );
+		return ( $this->is_updatable() && Option::network_get( 'auto_update' ) );
 	}
 
 	/**

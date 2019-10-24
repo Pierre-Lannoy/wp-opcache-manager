@@ -19,3 +19,5 @@ define( 'OPCM_MINIMUM_WP_VERSION', '4.9' );
 define( 'OPCM_MINIMUM_PHP_VERSION', '7.2' );
 
 define( 'OPCM_CDN_AVAILABLE', true );
+
+define( 'OPCM_CRON_NAME', 'opcm_opcache_reset' );

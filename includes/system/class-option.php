@@ -37,13 +37,13 @@ class Option {
 	 * @since 1.0.0
 	 */
 	public static function init() {
-		self::$defaults['use_cdn']           = false;
-		self::$defaults['download_favicons'] = false;
-		self::$defaults['script_in_footer']  = false;
-		self::$defaults['auto_update']       = true;
-		self::$defaults['display_nag']       = true;
-		self::$defaults['nags']              = [];
-		self::$defaults['version']           = '0.0.0';
+		self::$defaults['use_cdn']          = false;
+		self::$defaults['script_in_footer'] = false;
+		self::$defaults['auto_update']      = true;
+		self::$defaults['display_nag']      = true;
+		self::$defaults['nags']             = [];
+		self::$defaults['version']          = '0.0.0';
+		self::$defaults['reset_frequency']  = 'never';
 	}
 
 	/**
@@ -147,6 +147,19 @@ class Option {
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Reset some options to their defaults.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function reset_to_defaults() {
+		self::network_set( 'use_cdn', self::$defaults['use_cdn'] );
+		self::network_set( 'script_in_footer', self::$defaults['script_in_footer'] );
+		self::network_set( 'auto_update', self::$defaults['auto_update'] );
+		self::network_set( 'display_nag', self::$defaults['display_nag'] );
+		self::network_set( 'reset_frequency', self::$defaults['reset_frequency'] );
 	}
 
 	/**

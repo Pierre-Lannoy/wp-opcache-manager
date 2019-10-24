@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Short sentence to describe the plugin.
+OPcache statistics and management right in the WordPress admin dashboard.
 
 == Description ==
 X
