@@ -89,11 +89,20 @@ class Core {
 		add_shortcode( 'opcm-libraries', [ $libraries, 'sc_get_list' ] );
 		add_shortcode( 'opcm-statistics', [ 'OPcacheManager\System\Statistics', 'sc_get_raw' ] );
 		if ( 'never' !== Option::network_get( 'reset_frequency' ) ) {
-			$this->loader->add_action( OPCM_CRON_NAME, 'OPcacheManager\System\OPcache', 'reset' );
+			$this->loader->add_action( OPCM_CRON_RESET_NAME, 'OPcacheManager\System\OPcache', 'reset' );
 		}
-		if ( ! wp_next_scheduled( OPCM_CRON_NAME ) ) {
+		if ( ! wp_next_scheduled( OPCM_CRON_RESET_NAME ) ) {
 			if ( 'never' !== Option::network_get( 'reset_frequency' ) ) {
-				wp_schedule_event( time(), Option::network_get( 'reset_frequency' ), OPCM_CRON_NAME );
+				wp_schedule_event( time(), Option::network_get( 'reset_frequency' ), OPCM_CRON_RESET_NAME );
+			}
+		}
+		$this->loader->add_filter( 'cron_schedules', 'OPcacheManager\Plugin\Feature\Capture', 'add_cron_05_minutes_interval' );
+		if ( Option::network_get( 'analytics' ) ) {
+			$this->loader->add_action( OPCM_CRON_STATS_NAME, 'OPcacheManager\Plugin\Feature\Capture', 'check' );
+		}
+		if ( ! wp_next_scheduled( OPCM_CRON_STATS_NAME ) ) {
+			if ( Option::network_get( 'analytics' ) ) {
+				wp_schedule_event( time(), 'five_minutes', OPCM_CRON_STATS_NAME );
 			}
 		}
 	}

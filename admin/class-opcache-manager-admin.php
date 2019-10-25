@@ -200,10 +200,19 @@ class Opcache_Manager_Admin {
 	private function save_options() {
 		if ( ! empty( $_POST ) ) {
 			if ( array_key_exists( '_wpnonce', $_POST ) && wp_verify_nonce( $_POST['_wpnonce'], 'opcm-plugin-options' ) ) {
+				$old_frequency = Option::network_get( 'reset_frequency' );
 				Option::network_set( 'use_cdn', array_key_exists( 'opcm_plugin_options_usecdn', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_usecdn' ) : false );
 				Option::network_set( 'auto_update', array_key_exists( 'opcm_plugin_options_autoupdate', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_autoupdate' ) : false );
 				Option::network_set( 'display_nag', array_key_exists( 'opcm_plugin_options_nag', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_nag' ) : false );
-				Option::network_set( 'reset_frequency', array_key_exists( 'opcm_plugin_features_reset_frequency', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_reset_frequency', FILTER_SANITIZE_STRING ) : Option::network_get( 'reset_frequency' ) );
+				Option::network_set( 'analytics', array_key_exists( 'opcm_plugin_features_analytics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_analytics' ) : false );
+				Option::network_set( 'history', array_key_exists( 'opcm_plugin_features_history', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_history', FILTER_SANITIZE_NUMBER_INT ) : Option::network_get( 'history' ) );
+				Option::network_set( 'reset_frequency', array_key_exists( 'opcm_plugin_features_reset_frequency', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_reset_frequency', FILTER_SANITIZE_STRING ) : $old_frequency );
+				if ( Option::network_get( 'reset_frequency' ) !== $old_frequency ) {
+					wp_clear_scheduled_hook( OPCM_CRON_RESET_NAME );
+				}
+				if ( ! Option::network_get( 'analytics' ) ) {
+					wp_clear_scheduled_hook( OPCM_CRON_STATS_NAME );
+				}
 				$message = esc_html__( 'Plugin settings have been saved.', 'opcache-manager' );
 				$code    = 0;
 				add_settings_error( 'opcm_no_error', $code, $message, 'updated' );
@@ -322,10 +331,29 @@ class Opcache_Manager_Admin {
 	 */
 	protected function get_frequencies_array() {
 		$result   = [];
-		$result[] = [ 'never', __( 'Never', 'opcache-manager' ) ];
-		$result[] = [ 'hourly', __( 'Once Hourly', 'opcache-manager' ) ];
-		$result[] = [ 'twicedaily', __( 'Twice Daily', 'opcache-manager' ) ];
-		$result[] = [ 'daily', __( 'Once Daily', 'opcache-manager' ) ];
+		$result[] = [ 'never', esc_html__( 'Never', 'opcache-manager' ) ];
+		$result[] = [ 'hourly', esc_html__( 'Once Hourly', 'opcache-manager' ) ];
+		$result[] = [ 'twicedaily', esc_html__( 'Twice Daily', 'opcache-manager' ) ];
+		$result[] = [ 'daily', esc_html__( 'Once Daily', 'opcache-manager' ) ];
+		return $result;
+	}
+
+	/**
+	 * Get the available history retentions.
+	 *
+	 * @return array An array containing the history modes.
+	 * @since  3.2.0
+	 */
+	protected function get_retentions_array() {
+		$result = [];
+		for ( $i = 1; $i < 4; $i++ ) {
+			// phpcs:ignore
+			$result[] = [ (int) ( 7 * $i ), esc_html( sprintf( _n( '%d week', '%d weeks', $i, 'opcache-manager' ), $i ) ) ];
+		}
+		for ( $i = 1; $i < 4; $i++ ) {
+			// phpcs:ignore
+			$result[] = [ (int) ( 30 * $i ), esc_html( sprintf( _n( '%d month', '%d months', $i, 'opcache-manager' ), $i ) ) ];
+		}
 		return $result;
 	}
 
@@ -336,6 +364,38 @@ class Opcache_Manager_Admin {
 	 */
 	public function plugin_features_section_callback() {
 		$form = new Form();
+		add_settings_field(
+			'opcm_plugin_features_analytics',
+			__( 'Analytics', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_features_section',
+			'opcm_plugin_features_section',
+			[
+				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_features_analytics',
+				'checked'     => Option::network_get( 'analytics' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes.', 'opcache-manager') . '<br/>' . esc_html__( 'Note: for this to work, your WordPress site must have an operational CRON.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_analytics' );
+		add_settings_field(
+			'opcm_plugin_features_history',
+			__( 'Historical data', 'opcache-manager' ),
+			[ $form, 'echo_field_select' ],
+			'opcm_plugin_features_section',
+			'opcm_plugin_features_section',
+			[
+				'list'        => $this->get_retentions_array(),
+				'id'          => 'opcm_plugin_features_history',
+				'value'       => Option::network_get( 'history' ),
+				'description' => esc_html__( 'Maximum age of data to keep for statistics.', 'opcache-manager' ),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_history' );
 		add_settings_field(
 			'opcm_plugin_features_reset_frequency',
 			__( 'Reset OPcache', 'opcache-manager' ),

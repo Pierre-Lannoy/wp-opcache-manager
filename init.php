@@ -20,4 +20,5 @@ define( 'OPCM_MINIMUM_PHP_VERSION', '7.2' );
 
 define( 'OPCM_CDN_AVAILABLE', true );
 
-define( 'OPCM_CRON_NAME', 'opcm_opcache_reset' );
+define( 'OPCM_CRON_RESET_NAME', 'opcm_opcache_reset' );
+define( 'OPCM_CRON_STATS_NAME', 'opcm_opcache_stats' );

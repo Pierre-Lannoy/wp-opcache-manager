@@ -11,6 +11,7 @@ namespace OPcacheManager\Plugin;
 
 use OPcacheManager\System\Option;
 use OPcacheManager\System\User;
+use OPcacheManager\Plugin\Feature\Schema;
 
 /**
  * Fired during plugin deletion.
@@ -31,7 +32,8 @@ class Uninstaller {
 	public static function uninstall() {
 		Option::site_delete_all();
 		User::delete_all_meta();
-		// Delete cache?
+		$schema = new Schema();
+		$schema->finalize();
 	}
 
 }

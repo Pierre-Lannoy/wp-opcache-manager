@@ -44,6 +44,9 @@ class Option {
 		self::$defaults['nags']             = [];
 		self::$defaults['version']          = '0.0.0';
 		self::$defaults['reset_frequency']  = 'never';
+		self::$defaults['last_check']       = [];
+		self::$defaults['history']          = 21;
+		self::$defaults['analytics']        = true;
 	}
 
 	/**
@@ -160,6 +163,8 @@ class Option {
 		self::network_set( 'auto_update', self::$defaults['auto_update'] );
 		self::network_set( 'display_nag', self::$defaults['display_nag'] );
 		self::network_set( 'reset_frequency', self::$defaults['reset_frequency'] );
+		self::network_set( 'analytics', self::$defaults['analytics'] );
+		self::network_set( 'history', self::$defaults['history'] );
 	}
 
 	/**

@@ -9,6 +9,8 @@
 
 namespace OPcacheManager\Plugin;
 
+use OPcacheManager\Plugin\Feature\Schema;
+
 /**
  * Fired during plugin activation.
  *
@@ -20,13 +22,14 @@ namespace OPcacheManager\Plugin;
  */
 class Activator {
 
-
 	/**
 	 * Activate the plugin.
 	 *
 	 * @since 1.0.0
 	 */
 	public static function activate() {
+		$schema = new Schema();
+		$schema->initialize();
 	}
 
 }

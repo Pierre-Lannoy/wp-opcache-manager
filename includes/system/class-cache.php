@@ -87,6 +87,7 @@ class Cache {
 			'infinite'          => 10 * YEAR_IN_SECONDS,
 			'diagnosis'         => HOUR_IN_SECONDS,
 			'plugin-statistics' => DAY_IN_SECONDS,
+			'check'             => DAY_IN_SECONDS,
 		];
 	}
 

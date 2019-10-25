@@ -25,6 +25,22 @@ use OPcacheManager\System\Logger;
 class OPcache {
 
 	/**
+	 * The list of status.
+	 *
+	 * @since  1.0.0
+	 * @var    array    $status    Maintains the status list.
+	 */
+	public static $status = [ 'disabled', 'enabled', 'cache_full', 'restart_pending', 'restart_in_progress', 'recycle_in_progress' ];
+
+	/**
+	 * The list of reset trypes.
+	 *
+	 * @since  1.0.0
+	 * @var    array    $status    Maintains the status list.
+	 */
+	public static $resets = [ 'none', 'oom', 'hash', 'manual' ];
+
+	/**
 	 * Initializes the class and set its properties.
 	 *
 	 * @since 1.0.0
@@ -41,7 +57,7 @@ class OPcache {
 	public static function reset( $automatic = true ) {
 		if ( function_exists( 'opcache_reset' ) ) {
 			opcache_reset();
-			Logger::info( $automatic ? 'OPcache reset.' : 'OPcache manually reset.' );
+			Logger::info( $automatic ? 'OPcache reset via cron.' : 'OPcache reset via manual action.' );
 		}
 	}
 

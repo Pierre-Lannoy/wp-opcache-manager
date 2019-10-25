@@ -13,8 +13,7 @@ use Parsedown;
 use OPcacheManager\System\Nag;
 use OPcacheManager\System\Option;
 use Exception;
-use OPcacheManager\System\Environment;
-use OPcacheManager\System\Role;
+use OPcacheManager\Plugin\Feature\Schema;
 use OPcacheManager\System\Logger;
 
 /**
@@ -70,7 +69,8 @@ class Updater {
 	 * @since 1.0.0
 	 */
 	private function update( $from ) {
-
+		$schema = new Schema();
+		$schema->update();
 	}
 
 	/**
