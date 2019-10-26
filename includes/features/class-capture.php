@@ -14,8 +14,6 @@ namespace OPcacheManager\Plugin\Feature;
 use OPcacheManager\System\Cache;
 use OPcacheManager\System\Logger;
 use OPcacheManager\Plugin\Feature\Schema;
-use OPcacheManager\System\Option;
-use OPcacheManager\System\Timezone;
 
 /**
  * Define the captures functionality.
@@ -165,8 +163,6 @@ class Capture {
 			$schema->write_statistics_record_to_database( $record );
 			Logger::debug( 'OPcache is disabled. No statistics to record.' );
 		}
-
-
 	}
 
 }

@@ -147,7 +147,7 @@ class Opcache_Manager_Admin {
 	 */
 	public function get_tools_page() {
 		//$analytics = AnalyticsFactory::get_analytics();
-		//include OPCM_ADMIN_DIR . 'partials/traffic-admin-view-analytics.php';
+		include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-tools.php';
 	}
 
 	/**
