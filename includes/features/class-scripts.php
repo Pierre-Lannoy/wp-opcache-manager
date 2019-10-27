@@ -13,6 +13,8 @@ namespace OPcacheManager\Plugin\Feature;
 
 use OPcacheManager\System\Conversion;
 use OPcacheManager\System\Logger;
+use OPcacheManager\System\Date;
+use OPcacheManager\System\Timezone;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -46,6 +48,22 @@ class Scripts extends \WP_List_Table {
 	private $limit = 50;
 
 	/**
+	 * The order by of the list.
+	 *
+	 * @since    1.0.0
+	 * @var      string    $orderby    The order by of the list.
+	 */
+	private $orderby = 'script';
+
+	/**
+	 * The order of the list.
+	 *
+	 * @since    1.0.0
+	 * @var      string    $order    The order of the list.
+	 */
+	private $order = 'desc';
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -68,19 +86,32 @@ class Scripts extends \WP_List_Table {
 				$raw = opcache_get_status( true );
 				if ( array_key_exists( 'scripts', $raw ) ) {
 					foreach ( $raw['scripts'] as $script ) {
-						$item             = [];
-						$item['script']   = str_replace( ABSPATH, './', $script['full_path'] );
-						$item['hit']      = $script['hits'];
-						$item['memory']   = $script['memory_consumption'];
-						$item['compiled'] = $script['timestamp'];
-						$item['used']     = $script['last_used_timestamp'];
-						$this->scripts[]  = $item;
+						$item              = [];
+						$item['script']    = str_replace( ABSPATH, './', $script['full_path'] );
+						$item['hit']       = $script['hits'];
+						$item['memory']    = $script['memory_consumption'];
+						$item['timestamp'] = $script['timestamp'];
+						$item['used']      = $script['last_used_timestamp'];
+						$this->scripts[]   = $item;
 					}
 				}
 			} catch ( \Throwable $e ) {
 				Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
 			}
 		}
+		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
+		if ( ! $this->limit ) {
+			$this->limit = 50;
+		}
+		$this->order = filter_input( INPUT_GET, 'order', FILTER_SANITIZE_STRING );
+		if ( ! $this->order ) {
+			$this->order = 'desc';
+		}
+		$this->orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_STRING );
+		if ( ! $this->orderby ) {
+			$this->orderby = 'script';
+		}
+		$this->process_action();
 	}
 
 	/**
@@ -132,136 +163,30 @@ class Scripts extends \WP_List_Table {
 	}
 
 	/**
-	 * "name" column formatter.
+	 * "used" column formatter.
 	 *
 	 * @param   array $item   The current item.
 	 * @return  string  The cell formatted, ready to print.
 	 * @since    1.0.0
-	 *
-	protected function column_name( $item ) {
-		$edit              = esc_url(
-			add_query_arg(
-				[
-					'page'   => 'decalog-settings',
-					'action' => 'form-edit',
-					'tab'    => 'scripts',
-					'uuid'   => $item['uuid'],
-				],
-				admin_url( 'options-general.php' )
-			)
-		);
-		$delete            = esc_url(
-			add_query_arg(
-				[
-					'page'   => 'decalog-settings',
-					'action' => 'form-delete',
-					'tab'    => 'scripts',
-					'uuid'   => $item['uuid'],
-				],
-				admin_url( 'options-general.php' )
-			)
-		);
-		$pause             = esc_url(
-			add_query_arg(
-				[
-					'page'   => 'decalog-settings',
-					'action' => 'pause',
-					'tab'    => 'scripts',
-					'uuid'   => $item['uuid'],
-					'nonce'  => wp_create_nonce( 'decalog-logger-pause-' . $item['uuid'] ),
-				],
-				admin_url( 'options-general.php' )
-			)
-		);
-		$test              = esc_url(
-			add_query_arg(
-				[
-					'page'   => 'decalog-settings',
-					'action' => 'test',
-					'tab'    => 'scripts',
-					'uuid'   => $item['uuid'],
-					'nonce'  => wp_create_nonce( 'decalog-logger-test-' . $item['uuid'] ),
-				],
-				admin_url( 'options-general.php' )
-			)
-		);
-		$start             = esc_url(
-			add_query_arg(
-				[
-					'page'   => 'decalog-settings',
-					'action' => 'start',
-					'tab'    => 'scripts',
-					'uuid'   => $item['uuid'],
-					'nonce'  => wp_create_nonce( 'decalog-logger-start-' . $item['uuid'] ),
-				],
-				admin_url( 'options-general.php' )
-			)
-		);
-		$view              = esc_url(
-			add_query_arg(
-				[
-					'page'      => 'decalog-viewer',
-					'logger_id' => $item['uuid'],
-				],
-				admin_url( 'tools.php' )
-			)
-		);
-		$handler           = $this->handler_types->get( $item['handler'] );
-		$icon              = '<img style="width:34px;float:left;padding-right:6px;" src="' . $handler['icon'] . '" />';
-		$actions['edit']   = sprintf( '<a href="%s">' . esc_html__( 'Edit', 'decalog' ) . '</a>', $edit );
-		$actions['delete'] = sprintf( '<a href="%s">' . esc_html__( 'Remove', 'decalog' ) . '</a>', $delete );
-		if ( $item['running'] ) {
-			$actions['pause'] = sprintf( '<a href="%s">' . esc_html__( 'Pause', 'decalog' ) . '</a>', $pause );
-		} else {
-			$actions['start'] = sprintf( '<a href="%s">' . esc_html__( 'Start', 'decalog' ) . '</a>', $start );
-		}
-		if ( 'WordpressHandler' === $handler['id'] ) {
-			$actions['view'] = sprintf( '<a href="%s">' . esc_html__( 'View', 'decalog' ) . '</a>', $view );
-		}
-		if ( $item['running'] ) {
-			$actions['test'] = sprintf( '<a href="%s">' . esc_html__( 'Send Test', 'decalog' ) . '</a>', $test );
-		}
-		return $icon . '&nbsp;' . sprintf( '<a href="%1$s">%2$s</a><br /><span style="color:silver">&nbsp;%3$s</span>%4$s', $edit, $item['name'], $handler['name'], $this->row_actions( $actions ) );
+	 */
+	protected function column_used( $item ) {
+		$time = new \DateTime();
+		$time->setTimestamp( $item['used'] );
+		return ucfirst( Date::get_positive_time_diff_from_mysql_utc( $time->format( 'Y-m-d H:i:s' ) ) );
 	}
 
 	/**
-	 * "status" column formatter.
+	 * "timestamp" column formatter.
 	 *
 	 * @param   array $item   The current item.
 	 * @return  string  The cell formatted, ready to print.
 	 * @since    1.0.0
-	 *
-	protected function column_status( $item ) {
-		$status = ( $item['running'] ? '▶&nbsp;' . esc_html__( 'Running', 'decalog' ) : '❙❙&nbsp;' . esc_html__( 'Paused', 'decalog' ) );
-		return $status;
+	 */
+	protected function column_timestamp( $item ) {
+	    $time = new \DateTime();
+	    $time->setTimestamp( $item['timestamp'] );
+		return Date::get_date_from_mysql_utc( $time->format( 'Y-m-d H:i:s' ), Timezone::network_get()->getName(), 'Y-m-d H:i:s' );
 	}
-
-	/**
-	 * "details" column formatter.
-	 *
-	 * @param   array $item   The current item.
-	 * @return  string  The cell formatted, ready to print.
-	 * @since    1.0.0
-	 *
-	protected function column_details( $item ) {
-		$list = [ esc_html__( 'Standard', 'decalog' ) ];
-		foreach ( $item['processors'] as $processor ) {
-			$list[] = $this->processor_types->get( $processor )['name'];
-		}
-		return implode( ', ', $list );
-	}
-
-	/**
-	 * "minimal level" column formatter.
-	 *
-	 * @param   array $item   The current item.
-	 * @return  string  The cell formatted, ready to print.
-	 * @since    1.0.0
-	 *
-	protected function column_level( $item ) {
-		$name = ucfirst( strtolower( Log::level_name( $item['level'] ) ) );
-		return $name;
-	}*/
 
 	/**
 	 * Enumerates columns.
@@ -271,12 +196,12 @@ class Scripts extends \WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = [
-			'cb'       => '<input type="checkbox" />',
-			'script'   => esc_html__( 'File', 'opcache-manager' ),
-			'hit'      => esc_html__( 'Hits', 'opcache-manager' ),
-			'memory'   => esc_html__( 'Memory size', 'opcache-manager' ),
-			'compiled' => esc_html__( 'Compiled at', 'opcache-manager' ),
-			'used'     => esc_html__( 'Last used', 'opcache-manager' ),
+			'cb'        => '<input type="checkbox" />',
+			'script'    => esc_html__( 'File', 'opcache-manager' ),
+			'timestamp' => esc_html__( 'Timestamp', 'opcache-manager' ),
+			'hit'       => esc_html__( 'Hits', 'opcache-manager' ),
+			'memory'    => esc_html__( 'Memory size', 'opcache-manager' ),
+			'used'      => esc_html__( 'Used', 'opcache-manager' ),
 		];
 		return $columns;
 	}
@@ -299,11 +224,11 @@ class Scripts extends \WP_List_Table {
 	 */
 	protected function get_sortable_columns() {
 		$sortable_columns = [
-			'script'   => [ 'script', true ],
-			'hit'      => [ 'hit', false ],
-			'memory'   => [ 'memory', false ],
-			'compiled' => [ 'compiled', false ],
-			'used'     => [ 'used', false ],
+			'script'    => [ 'script', true ],
+			'hit'       => [ 'hit', false ],
+			'memory'    => [ 'memory', false ],
+			'timestamp' => [ 'timestamp', false ],
+			'used'      => [ 'used', false ],
 		];
 		return $sortable_columns;
 	}
@@ -329,7 +254,7 @@ class Scripts extends \WP_List_Table {
 	 * @since 1.0.0
 	 */
 	protected function display_tablenav( $which ) {
-		if ( 'top' === $which ) {
+	    if ( 'top' === $which ) {
 			wp_nonce_field( 'bulk-scripts' );
 		}
 		echo '<div class="tablenav ' . esc_attr( $which ) . '">';
@@ -356,10 +281,7 @@ class Scripts extends \WP_List_Table {
 		foreach ( $args as $key => $val ) {
 			$$key = $val;
 		}
-		if ( 'top' === $which ) {
-			include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-tools-lines.php';
-		}
-		if ( 'bottom' === $which ) {
+		if ( 'top' === $which || 'bottom' === $which ) {
 			include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-tools-lines.php';
 		}
 	}
@@ -370,11 +292,6 @@ class Scripts extends \WP_List_Table {
 	 * @since    1.0.0
 	 */
 	public function prepare_items() {
-		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
-		if ( ! $this->limit ) {
-			$this->limit = 50;
-		}
-		$per_page     = $this->limit;
 		$current_page = $this->get_pagenum();
 		$total_items  = count( $this->scripts );
 		$this->set_pagination_args(
@@ -384,7 +301,6 @@ class Scripts extends \WP_List_Table {
 				'total_pages' => ceil( $total_items / $this->limit ),
 			]
 		);
-		$this->process_bulk_action();
 		$columns               = $this->get_columns();
 		$hidden                = $this->get_hidden_columns();
 		$sortable              = $this->get_sortable_columns();
@@ -393,19 +309,15 @@ class Scripts extends \WP_List_Table {
 		usort(
 			$data,
 			function ( $a, $b ) {
-				//phpcs:ignore
-				$orderby = ( ! empty( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : 'script';
-				//phpcs:ignore
-				$order  = ( ! empty( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : 'desc';
-				if ( 'script' === $orderby ) {
-					$result = strcmp( strtolower( $a[ $orderby ] ), strtolower( $b[ $orderby ] ) );
+				if ( 'script' === $this->orderby ) {
+					$result = strcmp( strtolower( $a[ $this->orderby ] ), strtolower( $b[ $this->orderby ] ) );
 				} else {
-					$result = intval( $a[ $orderby ] ) < intval( $b[ $orderby ] ) ? 1 : -1;
+					$result = intval( $a[ $this->orderby ] ) < intval( $b[ $this->orderby ] ) ? 1 : -1;
 				}
-				return ( 'asc' === $order ) ? -$result : $result;
+				return ( 'asc' === $this->order ) ? -$result : $result;
 			}
 		);
-		$this->items = array_slice( $data, ( ( $current_page - 1 ) * $per_page ), $per_page );
+		$this->items = array_slice( $data, ( ( $current_page - 1 ) * $this->limit ), $this->limit );
 	}
 
 	/**
@@ -421,13 +333,13 @@ class Scripts extends \WP_List_Table {
 			$l['value'] = $d;
 			// phpcs:ignore
 			$l['text']     = sprintf( esc_html__( 'Display %d files per page', 'opcache-manager' ), $d );
-			$l['selected'] = ( $d === $this->limit ? 'selected="selected" ' : '' );
+			$l['selected'] = ( intval( $d ) === intval( $this->limit ) ? 'selected="selected" ' : '' );
 			$result[]      = $l;
 		}
 		return $result;
 	}
 
-	public function process_bulk_action() {
+	public function process_action() {
 		if ( ! isset( $_POST['bulk'] ) || empty( $_POST['bulk'] ) ) {
 			return; // Thou shall not pass! There is nothing to do
 		}

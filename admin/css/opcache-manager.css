@@ -21,12 +21,12 @@
         width: 15%;
     }
 
-    .widefat.fixed.scripts .column-compiled,
+    .widefat.fixed.scripts .column-timestamp,
     .widefat.fixed.scripts .column-used{
         width: 20%;
     }
 
-    .widefat.fixed.scripts .acolumn-script{
+    .widefat.fixed.scripts .column-script{
         width: 50%;
     }
 }

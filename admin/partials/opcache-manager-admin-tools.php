@@ -20,7 +20,11 @@ wp_enqueue_style( OPCM_ASSETS_ID );
 ?>
 
 <div class="wrap">
-	<h2><?php echo esc_html( sprintf( esc_html__( '%s Tools', 'opcache-manager' ), OPCM_PRODUCT_NAME ) ); ?></h2>
+	<h2><?php echo OPCM_PRODUCT_NAME; ?></h2>
 	<?php settings_errors(); ?>
-	<?php $scripts->display(); ?>
+	<?php $scripts->views(); ?>
+    <form id="opcm-tools" method="get" action="<?php echo admin_url('tools.php'); ?>">
+        <input type="hidden" name="page" value="opcm-tools" />
+	    <?php $scripts->display(); ?>
+    </form>
 </div>
