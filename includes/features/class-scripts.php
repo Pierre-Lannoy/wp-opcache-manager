@@ -72,6 +72,22 @@ class Scripts extends \WP_List_Table {
 	private $order = 'desc';
 
 	/**
+	 * The current url.
+	 *
+	 * @since    1.0.0
+	 * @var      string    $url    The current url.
+	 */
+	private $url = '';
+
+	/**
+	 * The form nonce.
+	 *
+	 * @since    1.0.0
+	 * @var      string    $nonce    The form nonce.
+	 */
+	private $nonce = '';
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -358,9 +374,9 @@ class Scripts extends \WP_List_Table {
 		$output               = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
 		$current              = $this->get_pagenum();
 		$removable_query_args = wp_removable_query_args();
-		$current_url          = set_url_scheme( 'http://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
+		$current_url          = $this->url;
 		$current_url          = remove_query_arg( $removable_query_args, $current_url );
-		$page_links           = array();
+		$page_links           = [];
 		$total_pages_before   = '<span class="paging-input">';
 		$total_pages_after    = '</span></span>';
 		$disable_first        = false;
@@ -386,7 +402,7 @@ class Scripts extends \WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				$this->get_url( remove_query_arg( 'paged', $current_url ) ),
+				$this->get_url( remove_query_arg( 'paged', $current_url ), true ),
 				__( 'First page' ),
 				'&laquo;'
 			);
@@ -396,7 +412,7 @@ class Scripts extends \WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				$this->get_url( add_query_arg( 'paged', max( 1, $current - 1 ), $current_url ) ),
+				$this->get_url( add_query_arg( 'paged', max( 1, $current - 1 ), $current_url ), true ),
 				__( 'Previous page' ),
 				'&lsaquo;'
 			);
@@ -420,7 +436,7 @@ class Scripts extends \WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				$this->get_url( add_query_arg( 'paged', min( $total_pages, $current + 1 ), $current_url ) ),
+				$this->get_url( add_query_arg( 'paged', min( $total_pages, $current + 1 ), $current_url ), true ),
 				__( 'Next page' ),
 				'&rsaquo;'
 			);
@@ -430,7 +446,7 @@ class Scripts extends \WP_List_Table {
 		} else {
 			$page_links[] = sprintf(
 				"<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
-				$this->get_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
+				$this->get_url( add_query_arg( 'paged', $total_pages, $current_url ), true ),
 				__( 'Last page' ),
 				'&raquo;'
 			);
@@ -446,31 +462,98 @@ class Scripts extends \WP_List_Table {
 			$page_class = ' no-pages';
 		}
 		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+		// phpcs:ignore
 		echo $this->_pagination;
 	}
 
-	public function get_url( $url = false ) {
-		global $wp;
-		$url = remove_query_arg( 'limit', $url );
-		return esc_url( $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . 'limit=' . $this->limit );
+	/**
+	 * Print column headers, accounting for hidden and sortable columns.
+	 *
+	 * @staticvar int $cb_counter.
+	 * @param bool $with_id Whether to set the id attribute or not.
+	 * @since 1.0.0
+	 */
+	public function print_column_headers( $with_id = true ) {
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+		if ( ! empty( $columns['cb'] ) ) {
+			static $cb_counter = 1;
+			$columns['cb']     = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __( 'Select All' ) . '</label><input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
+			$cb_counter++;
+		}
+		foreach ( $columns as $column_key => $column_display_name ) {
+			$class = [ 'manage-column', "column-$column_key" ];
+			if ( in_array( $column_key, $hidden, true ) ) {
+				$class[] = 'hidden';
+			}
+			if ( 'cb' === $column_key ) {
+				$class[] = 'check-column';
+			} elseif ( in_array( $column_key, [ 'posts', 'comments', 'links' ], true ) ) {
+				$class[] = 'num';
+			}
+			if ( $column_key === $primary ) {
+				$class[] = 'column-primary';
+			}
+			if ( isset( $sortable[ $column_key ] ) ) {
+				list( $orderby, $desc_first ) = $sortable[ $column_key ];
+				if ( $this->orderby === $orderby ) {
+					$order   = 'asc' === $this->order ? 'desc' : 'asc';
+					$class[] = 'sorted';
+					$class[] = $this->order;
+				} else {
+					$order   = $desc_first ? 'desc' : 'asc';
+					$class[] = 'sortable';
+					$class[] = $desc_first ? 'asc' : 'desc';
+				}
+				$column_display_name = '<a href="' . $this->get_url( add_query_arg( compact( 'orderby', 'order' ), $this->url ), true ) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator"></span></a>';
+			}
+			$tag   = ( 'cb' === $column_key ) ? 'td' : 'th';
+			$scope = ( 'th' === $tag ) ? 'scope="col"' : '';
+			$id    = $with_id ? "id='$column_key'" : '';
+			if ( ! empty( $class ) ) {
+				$class = "class='" . join( ' ', $class ) . "'";
+			}
+			// phpcs:ignore
+			echo "<$tag $scope $id $class>$column_display_name</$tag>";
+		}
 	}
 
+	/**
+	 * Get the cleaned url.
+	 *
+	 * @param boolean $url Optional. The url, false for current url.
+	 * @param boolean $limit Optional. Has the limit to be in the url.
+	 * @return string The url cleaned, ready to use.
+	 * @since 1.0.0
+	 */
+	public function get_url( $url = false, $limit = false ) {
+		global $wp;
+		$url = remove_query_arg( 'limit', $url );
+		if ( $limit ) {
+			$url .= ( false === strpos( $url, '?' ) ? '?' : '&' ) . 'limit=' . $this->limit;
+		}
+		return esc_url( $url );
+	}
+
+	/**
+	 * Initializes all the list properties.
+     *
+	 * @since 1.0.0
+	 */
 	public function process_args() {
+		$this->nonce = filter_input( INPUT_POST, '_wpnonce' );
+		$this->url   = set_url_scheme( 'http://' . filter_input( INPUT_SERVER, 'HTTP_HOST' ) . filter_input( INPUT_SERVER, 'REQUEST_URI' ) );
 		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
 		foreach ( [ 'top', 'bottom' ] as $which ) {
-			if ( array_key_exists( 'dolimit-' . $which, $_POST ) ) {
+			if ( wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'dolimit-' . $which, $_POST ) ) {
 				$this->limit = filter_input( INPUT_POST, 'limit-' . $which, FILTER_SANITIZE_NUMBER_INT );
 			}
 		}
-		echo '<h1>' . intval( $this->limit ) . '</h1>';
 		if ( 0 === intval( $this->limit ) ) {
 			$this->limit = filter_input( INPUT_POST, 'limit-top', FILTER_SANITIZE_NUMBER_INT );
 		}
-		echo '<h1>' . intval( $this->limit ) . '</h1>';
 		if ( 0 === intval( $this->limit ) ) {
 			$this->limit = 50;
 		}
-		echo '<h1>' . intval( $this->limit ) . '</h1>';
 		$this->paged = filter_input( INPUT_GET, 'paged', FILTER_SANITIZE_NUMBER_INT );
 		if ( ! $this->paged ) {
 			$this->paged = filter_input( INPUT_POST, 'paged', FILTER_SANITIZE_NUMBER_INT );
