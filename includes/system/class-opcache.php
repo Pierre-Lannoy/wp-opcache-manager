@@ -33,7 +33,7 @@ class OPcache {
 	public static $status = [ 'disabled', 'enabled', 'cache_full', 'restart_pending', 'restart_in_progress', 'recycle_in_progress', 'warmup' ];
 
 	/**
-	 * The list of reset trypes.
+	 * The list of reset types.
 	 *
 	 * @since  1.0.0
 	 * @var    array    $status    Maintains the status list.
