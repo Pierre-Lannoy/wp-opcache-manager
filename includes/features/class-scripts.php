@@ -45,7 +45,15 @@ class Scripts extends \WP_List_Table {
 	 * @since    1.0.0
 	 * @var      integer    $limit    The number of lines to display.
 	 */
-	private $limit = 50;
+	private $limit = 0;
+
+	/**
+	 * The page to display.
+	 *
+	 * @since    1.0.0
+	 * @var      integer    $limit    The page to display.
+	 */
+	private $paged = 1;
 
 	/**
 	 * The order by of the list.
@@ -99,18 +107,7 @@ class Scripts extends \WP_List_Table {
 				Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
 			}
 		}
-		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
-		if ( ! $this->limit ) {
-			$this->limit = 50;
-		}
-		$this->order = filter_input( INPUT_GET, 'order', FILTER_SANITIZE_STRING );
-		if ( ! $this->order ) {
-			$this->order = 'desc';
-		}
-		$this->orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_STRING );
-		if ( ! $this->orderby ) {
-			$this->orderby = 'script';
-		}
+		$this->process_args();
 		$this->process_action();
 	}
 
@@ -183,8 +180,8 @@ class Scripts extends \WP_List_Table {
 	 * @since    1.0.0
 	 */
 	protected function column_timestamp( $item ) {
-	    $time = new \DateTime();
-	    $time->setTimestamp( $item['timestamp'] );
+		$time = new \DateTime();
+		$time->setTimestamp( $item['timestamp'] );
 		return Date::get_date_from_mysql_utc( $time->format( 'Y-m-d H:i:s' ), Timezone::network_get()->getName(), 'Y-m-d H:i:s' );
 	}
 
@@ -254,15 +251,15 @@ class Scripts extends \WP_List_Table {
 	 * @since 1.0.0
 	 */
 	protected function display_tablenav( $which ) {
-	    if ( 'top' === $which ) {
-			wp_nonce_field( 'bulk-scripts' );
+		if ( 'top' === $which ) {
+			wp_nonce_field( 'bulk-opcm-tools', '_wpnonce', false );
 		}
 		echo '<div class="tablenav ' . esc_attr( $which ) . '">';
 		if ( $this->has_items() ) {
 			echo '<div class="alignleft actions bulkactions">';
 			$this->bulk_actions( $which );
 			echo '</div>';
-        }
+		}
 		$this->extra_tablenav( $which );
 		$this->pagination( $which );
 		echo '<br class="clear" />';
@@ -277,7 +274,7 @@ class Scripts extends \WP_List_Table {
 	 */
 	public function extra_tablenav( $which ) {
 		$list = $this;
-		$args = compact( 'list' );
+		$args = compact( 'list', 'which' );
 		foreach ( $args as $key => $val ) {
 			$$key = $val;
 		}
@@ -292,15 +289,14 @@ class Scripts extends \WP_List_Table {
 	 * @since    1.0.0
 	 */
 	public function prepare_items() {
-		$current_page = $this->get_pagenum();
-		$total_items  = count( $this->scripts );
 		$this->set_pagination_args(
 			[
-				'total_items' => $total_items,
+				'total_items' => count( $this->scripts ),
 				'per_page'    => $this->limit,
-				'total_pages' => ceil( $total_items / $this->limit ),
+				'total_pages' => ceil( count( $this->scripts ) / $this->limit ),
 			]
 		);
+		$current_page          = $this->get_pagenum();
 		$columns               = $this->get_columns();
 		$hidden                = $this->get_hidden_columns();
 		$sortable              = $this->get_sortable_columns();
@@ -339,7 +335,164 @@ class Scripts extends \WP_List_Table {
 		return $result;
 	}
 
+	/**
+	 * Pagination links.
+	 *
+	 * @param string $which Position of extra control.
+	 * @since 1.0.0
+	 */
+	protected function pagination( $which ) {
+		if ( empty( $this->_pagination_args ) ) {
+			return;
+		}
+		$total_items     = $this->_pagination_args['total_items'];
+		$total_pages     = $this->_pagination_args['total_pages'];
+		$infinite_scroll = false;
+		if ( isset( $this->_pagination_args['infinite_scroll'] ) ) {
+			$infinite_scroll = $this->_pagination_args['infinite_scroll'];
+		}
+		if ( 'top' === $which && $total_pages > 1 ) {
+			$this->screen->render_screen_reader_content( 'heading_pagination' );
+		}
+		// phpcs:ignore
+		$output               = '<span class="displaying-num">' . sprintf( _n( '%s item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+		$current              = $this->get_pagenum();
+		$removable_query_args = wp_removable_query_args();
+		$current_url          = set_url_scheme( 'http://' . wp_unslash( $_SERVER['HTTP_HOST'] ) . wp_unslash( $_SERVER['REQUEST_URI'] ) );
+		$current_url          = remove_query_arg( $removable_query_args, $current_url );
+		$page_links           = array();
+		$total_pages_before   = '<span class="paging-input">';
+		$total_pages_after    = '</span></span>';
+		$disable_first        = false;
+		$disable_last         = false;
+		$disable_prev         = false;
+		$disable_next         = false;
+		if ( 1 === $current ) {
+			$disable_first = true;
+			$disable_prev  = true;
+		}
+		if ( 2 === $current ) {
+			$disable_first = true;
+		}
+		if ( $current === $total_pages ) {
+			$disable_last = true;
+			$disable_next = true;
+		}
+		if ( $current === $total_pages - 1 ) {
+			$disable_last = true;
+		}
+		if ( $disable_first ) {
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
+		} else {
+			$page_links[] = sprintf(
+				"<a class='first-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+				$this->get_url( remove_query_arg( 'paged', $current_url ) ),
+				__( 'First page' ),
+				'&laquo;'
+			);
+		}
+		if ( $disable_prev ) {
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
+		} else {
+			$page_links[] = sprintf(
+				"<a class='prev-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+				$this->get_url( add_query_arg( 'paged', max( 1, $current - 1 ), $current_url ) ),
+				__( 'Previous page' ),
+				'&lsaquo;'
+			);
+		}
+		if ( 'bottom' === $which ) {
+			$html_current_page  = $current;
+			$total_pages_before = '<span class="screen-reader-text">' . __( 'Current Page' ) . '</span><span id="table-paging" class="paging-input"><span class="tablenav-paging-text">';
+		} else {
+			$html_current_page = sprintf(
+				"%s<input class='current-page' id='current-page-selector' type='text' name='paged' value='%s' size='%d' aria-describedby='table-paging' /><span class='tablenav-paging-text'>",
+				'<label for="current-page-selector" class="screen-reader-text">' . __( 'Current Page' ) . '</label>',
+				$current,
+				strlen( $total_pages )
+			);
+		}
+		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+		// phpcs:ignore
+		$page_links[]     = $total_pages_before . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . $total_pages_after;
+		if ( $disable_next ) {
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
+		} else {
+			$page_links[] = sprintf(
+				"<a class='next-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+				$this->get_url( add_query_arg( 'paged', min( $total_pages, $current + 1 ), $current_url ) ),
+				__( 'Next page' ),
+				'&rsaquo;'
+			);
+		}
+		if ( $disable_last ) {
+			$page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
+		} else {
+			$page_links[] = sprintf(
+				"<a class='last-page button' href='%s'><span class='screen-reader-text'>%s</span><span aria-hidden='true'>%s</span></a>",
+				$this->get_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
+				__( 'Last page' ),
+				'&raquo;'
+			);
+		}
+		$pagination_links_class = 'pagination-links';
+		if ( ! empty( $infinite_scroll ) ) {
+			$pagination_links_class .= ' hide-if-js';
+		}
+		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
+		if ( $total_pages ) {
+			$page_class = $total_pages < 2 ? ' one-page' : '';
+		} else {
+			$page_class = ' no-pages';
+		}
+		$this->_pagination = "<div class='tablenav-pages{$page_class}'>$output</div>";
+		echo $this->_pagination;
+	}
+
+	public function get_url( $url = false ) {
+		global $wp;
+		$url = remove_query_arg( 'limit', $url );
+		return esc_url( $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . 'limit=' . $this->limit );
+	}
+
+	public function process_args() {
+		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
+		foreach ( [ 'top', 'bottom' ] as $which ) {
+			if ( array_key_exists( 'dolimit-' . $which, $_POST ) ) {
+				$this->limit = filter_input( INPUT_POST, 'limit-' . $which, FILTER_SANITIZE_NUMBER_INT );
+			}
+		}
+		echo '<h1>' . intval( $this->limit ) . '</h1>';
+		if ( 0 === intval( $this->limit ) ) {
+			$this->limit = filter_input( INPUT_POST, 'limit-top', FILTER_SANITIZE_NUMBER_INT );
+		}
+		echo '<h1>' . intval( $this->limit ) . '</h1>';
+		if ( 0 === intval( $this->limit ) ) {
+			$this->limit = 50;
+		}
+		echo '<h1>' . intval( $this->limit ) . '</h1>';
+		$this->paged = filter_input( INPUT_GET, 'paged', FILTER_SANITIZE_NUMBER_INT );
+		if ( ! $this->paged ) {
+			$this->paged = filter_input( INPUT_POST, 'paged', FILTER_SANITIZE_NUMBER_INT );
+			if ( ! $this->paged ) {
+				$this->paged = 1;
+			}
+		}
+		$_REQUEST['paged'] = $this->paged;
+		$this->order       = filter_input( INPUT_GET, 'order', FILTER_SANITIZE_STRING );
+		if ( ! $this->order ) {
+			$this->order = 'desc';
+		}
+		$this->orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_STRING );
+		if ( ! $this->orderby ) {
+			$this->orderby = 'script';
+		}
+	}
+
+
 	public function process_action() {
+		echo print_r( $_POST, true );
+
 		if ( ! isset( $_POST['bulk'] ) || empty( $_POST['bulk'] ) ) {
 			return; // Thou shall not pass! There is nothing to do
 		}
