@@ -207,6 +207,7 @@ class Opcache_Manager_Admin {
 				Option::network_set( 'analytics', array_key_exists( 'opcm_plugin_features_analytics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_analytics' ) : false );
 				Option::network_set( 'history', array_key_exists( 'opcm_plugin_features_history', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_history', FILTER_SANITIZE_NUMBER_INT ) : Option::network_get( 'history' ) );
 				Option::network_set( 'reset_frequency', array_key_exists( 'opcm_plugin_features_reset_frequency', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_reset_frequency', FILTER_SANITIZE_STRING ) : $old_frequency );
+				Option::network_set( 'warmup', array_key_exists( 'opcm_plugin_features_warmup', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_warmup' ) : false );
 				if ( Option::network_get( 'reset_frequency' ) !== $old_frequency ) {
 					wp_clear_scheduled_hook( OPCM_CRON_RESET_NAME );
 				}
@@ -412,6 +413,23 @@ class Opcache_Manager_Admin {
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_reset_frequency' );
+
+		add_settings_field(
+			'opcm_plugin_features_warmup',
+			__( 'Site warm-up', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_features_section',
+			'opcm_plugin_features_section',
+			[
+				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_features_warmup',
+				'checked'     => Option::network_get( 'warmup' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager'),
+				'full_width'  => true,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_warmup' );
 	}
 
 }

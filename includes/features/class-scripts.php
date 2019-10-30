@@ -15,6 +15,7 @@ use OPcacheManager\System\Conversion;
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
+use OPcacheManager\System\OPcache;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -86,6 +87,22 @@ class Scripts extends \WP_List_Table {
 	 * @var      string    $nonce    The form nonce.
 	 */
 	private $nonce = '';
+
+	/**
+	 * The action to perform.
+	 *
+	 * @since    1.0.0
+	 * @var      string    $action    The action to perform.
+	 */
+	private $action = '';
+
+	/**
+	 * The bulk args.
+	 *
+	 * @since    1.0.0
+	 * @var      array    $bulk    The bulk args.
+	 */
+	private $bulk = [];
 
 	/**
 	 * Initialize the class and set its properties.
@@ -536,7 +553,7 @@ class Scripts extends \WP_List_Table {
 
 	/**
 	 * Initializes all the list properties.
-     *
+	 *
 	 * @since 1.0.0
 	 */
 	public function process_args() {
@@ -570,32 +587,61 @@ class Scripts extends \WP_List_Table {
 		if ( ! $this->orderby ) {
 			$this->orderby = 'script';
 		}
-	}
-
-
-	public function process_action() {
-		echo print_r( $_POST, true );
-
-		if ( ! isset( $_POST['bulk'] ) || empty( $_POST['bulk'] ) ) {
-			return; // Thou shall not pass! There is nothing to do
+		foreach ( [ 'top', 'bottom' ] as $which ) {
+			if ( wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'dowarmup-' . $which, $_POST ) ) {
+				$this->action = 'warmup';
+			}
+			if ( wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'doinvalidate-' . $which, $_POST ) ) {
+				$this->action = 'reset';
+			}
 		}
-
-		/*
-		$jpms = Jetpack_Network::init();
-
-		$action = $this->current_action();
-		switch ( $action ) {
-			case 'connect':
-				foreach( $_POST['bulk'] as $k => $site ) {
-					$jpms->do_subsiteregister( $site );
+		if ( '' === $this->action ) {
+			$action = '-1';
+			if ( '-1' === $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'action', $_POST ) ) {
+				$action = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_STRING );
+			}
+			if ( '-1' === $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'action2', $_POST ) ) {
+				$action = filter_input( INPUT_POST, 'action2', FILTER_SANITIZE_STRING );
+			}
+			if ( '-1' !== $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'bulk', $_POST ) ) {
+				$this->bulk = filter_input( INPUT_POST, 'bulk', FILTER_SANITIZE_STRING, FILTER_FORCE_ARRAY );
+				if ( 0 < count( $this->bulk ) ) {
+					$this->action = $action;
 				}
-				break;
-			case 'disconnect':
-				foreach( $_POST['bulk'] as $k => $site ) {
-					$jpms->do_subsitedisconnect( $site );
-				}
-				break;
-		}*/
+			}
+		}
 	}
 
+	/**
+	 * Processes the selected action.
+	 *
+	 * @since 1.0.0
+	 */
+	public function process_action() {
+		switch ( $this->action ) {
+			case 'warmup':
+				OPcache::warmup( false );
+				$message = esc_html__( 'Site has been warmed-up.', 'opcache-manager' );
+				$code    = 0;
+				break;
+			case 'reset':
+				OPcache::reset( false );
+				$message = esc_html__( 'OPcache has been force invalidated.', 'opcache-manager' );
+				$code    = 0;
+				break;
+			case 'invalidate':
+				break;
+			case 'force':
+				break;
+			case 'recompile':
+				break;
+			default:
+				return;
+		}
+		if ( 0 === $code ) {
+			add_settings_error( 'opcache_manager_no_error', $code, $message, 'updated' );
+		} else {
+			add_settings_error( 'opcache_manager_error', $code, $message, 'error' );
+		}
+	}
 }

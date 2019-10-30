@@ -47,6 +47,7 @@ class Option {
 		self::$defaults['last_check']       = [];
 		self::$defaults['history']          = 21;
 		self::$defaults['analytics']        = true;
+		self::$defaults['warmup']           = false;
 	}
 
 	/**

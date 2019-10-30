@@ -12,6 +12,7 @@
 namespace OPcacheManager\System;
 
 use OPcacheManager\System\Logger;
+use OPcacheManager\System\Option;
 
 /**
  * Define the OPcache functionality.
@@ -49,7 +50,7 @@ class OPcache {
 	}
 
 	/**
-	 * Get a blog name.
+	 * Reset the cache (force invalidate all).
 	 *
 	 * @param   boolean $automatic Optional. Is the reset automatically done (via cron, for example).
 	 * @since   1.0.0
@@ -58,6 +59,22 @@ class OPcache {
 		if ( function_exists( 'opcache_reset' ) ) {
 			opcache_reset();
 			Logger::info( $automatic ? 'OPcache reset via cron.' : 'OPcache reset via manual action.' );
+			if ( $automatic && Option::network_get( 'warmup' ) ) {
+				self::warmup();
+			}
+		}
+	}
+
+	/**
+	 * Reset the cache (force invalidate all).
+	 *
+	 * @param   boolean $automatic Optional. Is the reset automatically done (via cron, for example).
+	 * @since   1.0.0
+	 */
+	public static function warmup( $automatic = true ) {
+		if ( function_exists( 'opcache_compile_file' ) ) {
+
+			Logger::info( $automatic ? 'Site warmed-up via cron.' : 'Site warmed-up via manual action.' );
 		}
 	}
 
