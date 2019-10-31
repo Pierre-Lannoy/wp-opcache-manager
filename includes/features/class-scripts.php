@@ -121,6 +121,8 @@ class Scripts extends \WP_List_Table {
 		if ( version_compare( $wp_version, '4.2-z', '>=' ) && $this->compat_fields && is_array( $this->compat_fields ) ) {
 			array_push( $this->compat_fields, 'all_items' );
 		}
+		$this->process_args();
+		$this->process_action();
 		$this->scripts = [];
 		if ( function_exists( 'opcache_get_status' ) ) {
 			try {
@@ -140,8 +142,6 @@ class Scripts extends \WP_List_Table {
 				Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
 			}
 		}
-		$this->process_args();
-		$this->process_action();
 	}
 
 	/**
@@ -535,6 +535,32 @@ class Scripts extends \WP_List_Table {
 	}
 
 	/**
+	 * Display a warning if needed.
+	 *
+	 * @since    1.0.0
+	 */
+	public function warning() {
+		$message = '';
+		if ( function_exists( 'opcache_get_status' ) ) {
+			$raw = opcache_get_status( false );
+			if ( ! (bool) $raw['opcache_enabled'] ) {
+				$message = esc_html__( 'OPcache is not enabled on this site. There\'s nothing to see here.', 'opcache-manager' );
+			}
+			if ( (bool) $raw['restart_pending'] ) {
+				$message = esc_html__( 'A full reset is currently pending. Displayed values may be inaccurate.', 'opcache-manager' );
+            }
+			if ( (bool) $raw['restart_in_progress'] ) {
+				$message = esc_html__( 'A full reset is currently in progress. Displayed values may be inaccurate.', 'opcache-manager' );
+			}
+		} else {
+		    $message = esc_html__( 'OPcache is not enabled on this site. There\'s nothing to see here.', 'opcache-manager' );
+        }
+		if ( '' !== $message ) {
+			echo '<div id="opcm-warning" class="notice notice-warning"><p><strong>' . $message . '</strong></p></div>';
+        }
+	}
+
+	/**
 	 * Get the cleaned url.
 	 *
 	 * @param boolean $url Optional. The url, false for current url.
@@ -626,14 +652,20 @@ class Scripts extends \WP_List_Table {
 				break;
 			case 'reset':
 				OPcache::reset( false );
-				$message = esc_html__( 'OPcache has been force invalidated.', 'opcache-manager' );
+				$message = esc_html__( 'OPcache forced invalidation has been initiated. It may take a few minutes to complete.', 'opcache-manager' );
 				$code    = 0;
 				break;
 			case 'invalidate':
+			    $message = esc_html( sprintf( __( 'Invalidation done: %d file(s).', 'opcache-manager' ), OPcache::invalidate( $this->bulk, false ) ) );
+				$code    = 0;
 				break;
 			case 'force':
+				$message = esc_html( sprintf( __( 'Forced invalidation done: %d file(s).', 'opcache-manager' ), OPcache::invalidate( $this->bulk, true ) ) );
+				$code    = 0;
 				break;
 			case 'recompile':
+				$message = esc_html( sprintf( __( 'Recompilation done: %d file(s).', 'opcache-manager' ), OPcache::recompile( $this->bulk, true ) ) );
+				$code    = 0;
 				break;
 			default:
 				return;
