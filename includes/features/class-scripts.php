@@ -129,6 +129,9 @@ class Scripts extends \WP_List_Table {
 				$raw = opcache_get_status( true );
 				if ( array_key_exists( 'scripts', $raw ) ) {
 					foreach ( $raw['scripts'] as $script ) {
+						if ( false === strpos( $script['full_path'], ABSPATH ) ) {
+							continue;
+						}
 						$item              = [];
 						$item['script']    = str_replace( ABSPATH, './', $script['full_path'] );
 						$item['hit']       = $script['hits'];
