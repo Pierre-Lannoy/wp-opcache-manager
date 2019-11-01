@@ -646,8 +646,8 @@ class Scripts extends \WP_List_Table {
 	public function process_action() {
 		switch ( $this->action ) {
 			case 'warmup':
-				OPcache::warmup( false );
-				$message = esc_html__( 'Site has been warmed-up.', 'opcache-manager' );
+				;
+				$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
 				$code    = 0;
 				break;
 			case 'reset':

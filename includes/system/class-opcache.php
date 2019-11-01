@@ -13,7 +13,7 @@ namespace OPcacheManager\System;
 
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Option;
-use function Clue\StreamFilter\fun;
+use OPcacheManager\System\File;
 
 /**
  * Define the OPcache functionality.
@@ -118,10 +118,10 @@ class OPcache {
 							if ( @opcache_compile_file( $file ) ) {
 								$cpt++;
 							} else {
-								Logger::error( sprintf( 'Unable to recompile file "%s".', $file ) );
+								Logger::error( sprintf( 'Unable to compile file "%s".', $file ) );
 							}
 						} catch ( \Throwable $e ) {
-							Logger::warning( sprintf( 'Unable to recompile file "%s": %s.', $file, $e->getMessage() ), $e->getCode() );
+							Logger::warning( sprintf( 'Unable to compile file "%s": %s.', $file, $e->getMessage() ), $e->getCode() );
 						}
 					} else {
 						Logger::error( sprintf( 'File "%s" already cached.', $file ) );
@@ -150,16 +150,20 @@ class OPcache {
 	}
 
 	/**
-	 * Reset the cache (force invalidate all).
+	 * Warm-up the site.
 	 *
-	 * @param   boolean $automatic Optional. Is the reset automatically done (via cron, for example).
+	 * @param   boolean $automatic Optional. Is the warmup done (via cron, for example).
+	 * @return integer The number of recompiled files.
 	 * @since   1.0.0
 	 */
 	public static function warmup( $automatic = true ) {
-		if ( function_exists( 'opcache_compile_file' ) ) {
-
-			Logger::info( $automatic ? 'Site warmed-up via cron.' : 'Site warmed-up via manual action.' );
+		$files = [];
+		foreach ( File::list_files( ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
+			$files[] = str_replace( ABSPATH, './', $file );
 		}
+		$result = self::recompile( $files );
+		Logger::info( $automatic ? 'Site warm-up initiated via cron.' : 'Site warmed-up initiated via manual action.' );
+		return $result;
 	}
 
 }
