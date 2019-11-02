@@ -25,7 +25,7 @@ class Cache {
 	 * @since  1.0.0
 	 * @var    string    $pool_name    The pool's name.
 	 */
-	private static $pool_name = DECALOG_SLUG;
+	private static $pool_name = OPCM_PRODUCT_ABBREVIATION;
 
 	/**
 	 * Differentiates cache items by blogs.

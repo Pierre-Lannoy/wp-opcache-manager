@@ -9,7 +9,7 @@
 
 define( 'OPCM_PRODUCT_NAME', 'OPcache Manager' );
 define( 'OPCM_PRODUCT_URL', 'https://github.com/Pierre-Lannoy/wp-opcache-manager' );
-define( 'OPCM_PRODUCT_SHORTNAME', 'PluginBoilerplate' );
+define( 'OPCM_PRODUCT_SHORTNAME', 'OPcache' );
 define( 'OPCM_PRODUCT_ABBREVIATION', 'opcm' );
 define( 'OPCM_SLUG', 'opcache-manager' );
 define( 'OPCM_VERSION', '1.0.0-dev0' );

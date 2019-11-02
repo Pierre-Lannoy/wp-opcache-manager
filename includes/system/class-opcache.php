@@ -32,7 +32,7 @@ class OPcache {
 	 * @since  1.0.0
 	 * @var    array    $status    Maintains the status list.
 	 */
-	public static $status = [ 'disabled', 'enabled', 'cache_full', 'restart_pending', 'restart_in_progress', 'recycle_in_progress', 'warmup' ];
+	public static $status = [ 'disabled', 'enabled', 'cache_full', 'restart_pending', 'restart_in_progress', 'recycle_in_progress', 'warmup', 'reset_warmup' ];
 
 	/**
 	 * The list of reset types.
@@ -118,13 +118,13 @@ class OPcache {
 							if ( @opcache_compile_file( $file ) ) {
 								$cpt++;
 							} else {
-								Logger::error( sprintf( 'Unable to compile file "%s".', $file ) );
+								Logger::debug( sprintf( 'Unable to compile file "%s".', $file ) );
 							}
 						} catch ( \Throwable $e ) {
-							Logger::warning( sprintf( 'Unable to compile file "%s": %s.', $file, $e->getMessage() ), $e->getCode() );
+							Logger::debug( sprintf( 'Unable to compile file "%s": %s.', $file, $e->getMessage() ), $e->getCode() );
 						}
 					} else {
-						Logger::error( sprintf( 'File "%s" already cached.', $file ) );
+						Logger::debug( sprintf( 'File "%s" already cached.', $file ) );
 					}
 				}
 			}
@@ -161,8 +161,14 @@ class OPcache {
 		foreach ( File::list_files( ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
 			$files[] = str_replace( ABSPATH, './', $file );
 		}
-		$result = self::recompile( $files );
 		Logger::info( $automatic ? 'Site warm-up initiated via cron.' : 'Site warmed-up initiated via manual action.' );
+		$result = self::recompile( $files );
+		if ( $automatic ) {
+			Cache::set_global( '/Data/ResetWarmupTimestamp', time(), 'check' );
+		} else {
+			Cache::set_global( '/Data/WarmupTimestamp', time(), 'check' );
+		}
+		Logger::info( sprintf( 'Site warm-up terminated. %d files were recompiled', $result ) );
 		return $result;
 	}
 

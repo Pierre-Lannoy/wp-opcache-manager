@@ -17,6 +17,7 @@ use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\OPcache;
 use OPcacheManager\Plugin\Feature\Capture;
+use OPcacheManager\System\Cache;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -653,7 +654,6 @@ class Scripts extends \WP_List_Table {
 				;
 				$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
 				$code    = 0;
-				Capture::check( 'warmup' );
 				break;
 			case 'reset':
 				OPcache::reset( false );

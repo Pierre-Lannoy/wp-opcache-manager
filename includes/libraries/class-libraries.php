@@ -64,7 +64,7 @@ class Libraries {
 			'base'    => OPCM_VENDOR_DIR . 'feather/',
 			'version' => '4.22.1',
 			// phpcs:ignore
-			'author'  => sprintf( esc_html__( '%s & contributors', 'decalog' ), 'Cole Bemis' ),
+			'author'  => sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Cole Bemis' ),
 			'url'     => 'https://feathericons.com',
 			'license' => 'mit',
 			'langs'   => 'en',

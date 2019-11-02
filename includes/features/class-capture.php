@@ -50,17 +50,16 @@ class Capture {
 	/**
 	 * Check status and record it if needed.
 	 *
-	 * @param string $forced_status Optional. Forces the status string - mainly for site warm-up.
 	 * @since    1.0.0
 	 */
-	public static function check( $forced_status = '' ) {
+	public static function check() {
 		$schema = new Schema();
 		$record = $schema->init_record();
 		$time   = time();
 		if ( function_exists( 'opcache_get_status' ) ) {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
-			if ( '' !== $forced_status || ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 270 < $time - $old['timestamp'] ) && ( 330 > $time - $old['timestamp'] ) ) ) {
+			if ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 270 < $time - $old['timestamp'] ) && ( 330 > $time - $old['timestamp'] ) ) {
 				try {
 					$restart            = false;
 					$value              = [];
@@ -68,20 +67,27 @@ class Capture {
 					$value['timestamp'] = $time;
 					$record['status']   = 'enabled';
 					// Trying to figure out the status.
-					if ( '' === $forced_status ) {
-						if ( array_key_exists( 'cache_full', $value['raw'] ) && (bool) $value['raw']['cache_full'] ) {
-							$record['status'] = 'cache_full';
-						}
-						if ( array_key_exists( 'restart_pending', $value['raw'] ) && (bool) $value['raw']['restart_pending'] ) {
-							$record['status'] = 'restart_pending';
-						}
-						if ( array_key_exists( 'restart_in_progress', $value['raw'] ) && (bool) $value['raw']['restart_in_progress'] ) {
-							$record['status'] = 'restart_in_progress';
-						}
-					} else {
-						$record['status'] = $forced_status;
+					if ( array_key_exists( 'cache_full', $value['raw'] ) && (bool) $value['raw']['cache_full'] ) {
+						$record['status'] = 'cache_full';
 					}
-
+					if ( array_key_exists( 'restart_pending', $value['raw'] ) && (bool) $value['raw']['restart_pending'] ) {
+						$record['status'] = 'restart_pending';
+					}
+					if ( array_key_exists( 'restart_in_progress', $value['raw'] ) && (bool) $value['raw']['restart_in_progress'] ) {
+						$record['status'] = 'restart_in_progress';
+					}
+					$warmup_timestamp = Cache::get_global( '/Data/WarmupTimestamp' );
+					if ( false !== $warmup_timestamp ) {
+						if ( 300 > $time - $warmup_timestamp ) {
+							$record['status'] = 'warmup';
+						}
+					}
+					$reset_warmup_timestamp = Cache::get_global( '/Data/ResetWarmupTimestamp' );
+					if ( false !== $reset_warmup_timestamp ) {
+						if ( 300 > $time - $reset_warmup_timestamp ) {
+							$record['status'] = 'reset_warmup';
+						}
+					}
 					// Trying to figure out the restart type.
 					if ( array_key_exists( 'opcache_statistics', $old['raw'] ) && array_key_exists( 'opcache_statistics', $value['raw'] ) && array_key_exists( 'oom_restarts', $old['raw']['opcache_statistics'] ) && array_key_exists( 'oom_restarts', $value['raw']['opcache_statistics'] ) ) {
 						if ( (int) $old['raw']['opcache_statistics']['oom_restarts'] !== (int) $value['raw']['opcache_statistics']['oom_restarts'] ) {

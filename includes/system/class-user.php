@@ -104,7 +104,7 @@ class User {
 	public static function delete_all_meta() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'usermeta';
-		$sql        = 'DELETE FROM ' . $table_name . ' WHERE meta_key LIKE "%\_decalog-%";';
+		$sql        = 'DELETE FROM ' . $table_name . ' WHERE meta_key LIKE "%\_opcm-%";';
 		// phpcs:ignore
 		return $wpdb->query( $sql );
 	}

@@ -115,7 +115,7 @@ class Environment {
 	 */
 	public static function is_wordpress_version_ok() {
 		global $wp_version;
-		return ( ! version_compare( $wp_version, DECALOG_MINIMUM_WP_VERSION, '<' ) );
+		return ( ! version_compare( $wp_version, OPCM_MINIMUM_WP_VERSION, '<' ) );
 	}
 
 	/**

@@ -166,6 +166,7 @@ class Option {
 		self::network_set( 'reset_frequency', self::$defaults['reset_frequency'] );
 		self::network_set( 'analytics', self::$defaults['analytics'] );
 		self::network_set( 'history', self::$defaults['history'] );
+		self::network_set( 'warmup', self::$defaults['warmup'] );
 	}
 
 	/**
