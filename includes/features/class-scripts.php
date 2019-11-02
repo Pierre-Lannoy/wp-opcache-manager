@@ -16,8 +16,6 @@ use OPcacheManager\System\Logger;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\OPcache;
-use OPcacheManager\Plugin\Feature\Capture;
-use OPcacheManager\System\Cache;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -553,16 +551,17 @@ class Scripts extends \WP_List_Table {
 			}
 			if ( (bool) $raw['restart_pending'] ) {
 				$message = esc_html__( 'A full reset is currently pending. Displayed values may be inaccurate.', 'opcache-manager' );
-            }
+			}
 			if ( (bool) $raw['restart_in_progress'] ) {
 				$message = esc_html__( 'A full reset is currently in progress. Displayed values may be inaccurate.', 'opcache-manager' );
 			}
 		} else {
-		    $message = esc_html__( 'OPcache is not enabled on this site. There\'s nothing to see here.', 'opcache-manager' );
-        }
+			$message = esc_html__( 'OPcache is not enabled on this site. There\'s nothing to see here.', 'opcache-manager' );
+		}
 		if ( '' !== $message ) {
+			// phpcs:ignore
 			echo '<div id="opcm-warning" class="notice notice-warning"><p><strong>' . $message . '</strong></p></div>';
-        }
+		}
 	}
 
 	/**
@@ -651,7 +650,7 @@ class Scripts extends \WP_List_Table {
 	public function process_action() {
 		switch ( $this->action ) {
 			case 'warmup':
-				;
+				// phpcs:ignore
 				$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
 				$code    = 0;
 				break;
@@ -661,14 +660,17 @@ class Scripts extends \WP_List_Table {
 				$code    = 0;
 				break;
 			case 'invalidate':
-			    $message = esc_html( sprintf( __( 'Invalidation done: %d file(s).', 'opcache-manager' ), OPcache::invalidate( $this->bulk, false ) ) );
+				// phpcs:ignore
+				$message = esc_html( sprintf( __( 'Invalidation done: %d file(s).', 'opcache-manager' ), OPcache::invalidate( $this->bulk, false ) ) );
 				$code    = 0;
 				break;
 			case 'force':
+				// phpcs:ignore
 				$message = esc_html( sprintf( __( 'Forced invalidation done: %d file(s).', 'opcache-manager' ), OPcache::invalidate( $this->bulk, true ) ) );
 				$code    = 0;
 				break;
 			case 'recompile':
+				// phpcs:ignore
 				$message = esc_html( sprintf( __( 'Recompilation done: %d file(s).', 'opcache-manager' ), OPcache::recompile( $this->bulk, true ) ) );
 				$code    = 0;
 				break;
