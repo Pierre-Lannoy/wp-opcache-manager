@@ -9,8 +9,8 @@
 
 namespace OPcacheManager\Plugin;
 
-//use OPcacheManager\Plugin\Feature\Analytics;
-//use OPcacheManager\Plugin\Feature\AnalyticsFactory;
+use OPcacheManager\Plugin\Feature\Analytics;
+use OPcacheManager\Plugin\Feature\AnalyticsFactory;
 use OPcacheManager\System\Assets;
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Role;
@@ -54,6 +54,7 @@ class Opcache_Manager_Admin {
 	 */
 	public function enqueue_styles() {
 		$this->assets->register_style( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'css/opcache-manager.min.css' );
+		$this->assets->register_style( 'opcm-daterangepicker', TRAFFIC_ADMIN_URL, 'css/daterangepicker.min.css' );
 	}
 
 	/**
@@ -63,6 +64,8 @@ class Opcache_Manager_Admin {
 	 */
 	public function enqueue_scripts() {
 		$this->assets->register_script( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-moment-with-locale', TRAFFIC_ADMIN_URL, 'js/moment-with-locales.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-daterangepicker', TRAFFIC_ADMIN_URL, 'js/daterangepicker.min.js', [ 'jquery' ] );
 	}
 
 	/**
@@ -146,7 +149,6 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function get_tools_page() {
-		//$analytics = AnalyticsFactory::get_analytics();
 		include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-tools.php';
 	}
 
@@ -156,8 +158,8 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function get_viewer_page() {
-		//$analytics = AnalyticsFactory::get_analytics();
-		//include OPCM_ADMIN_DIR . 'partials/traffic-admin-view-analytics.php';
+		$analytics = AnalyticsFactory::get_analytics();
+		include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-view-analytics.php';
 	}
 
 	/**
@@ -375,7 +377,7 @@ class Opcache_Manager_Admin {
 				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
 				'id'          => 'opcm_plugin_features_analytics',
 				'checked'     => Option::network_get( 'analytics' ),
-				'description' => esc_html__( 'If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes.', 'opcache-manager') . '<br/>' . esc_html__( 'Note: for this to work, your WordPress site must have an operational CRON.', 'opcache-manager' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: for this to work, your WordPress site must have an operational CRON.', 'opcache-manager' ),
 				'full_width'  => true,
 				'enabled'     => true,
 			]
@@ -424,7 +426,7 @@ class Opcache_Manager_Admin {
 				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
 				'id'          => 'opcm_plugin_features_warmup',
 				'checked'     => Option::network_get( 'warmup' ),
-				'description' => esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager'),
+				'description' => esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager' ),
 				'full_width'  => true,
 				'enabled'     => true,
 			]

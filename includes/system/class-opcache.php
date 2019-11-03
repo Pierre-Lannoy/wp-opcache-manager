@@ -59,6 +59,28 @@ class OPcache {
 	}
 
 	/**
+	 * Get name and version.
+	 *
+	 * @return string The name and version of the product.
+	 * @since   1.0.0
+	 */
+	public static function name() {
+		$result = '';
+		if ( function_exists( 'opcache_get_configuration' ) ) {
+			$raw = opcache_get_configuration();
+			if ( array_key_exists( 'version', $raw ) ) {
+				if ( array_key_exists( 'opcache_product_name', $raw['version'] ) ) {
+					$result = $raw['version']['opcache_product_name'];
+				}
+				if ( array_key_exists( 'version', $raw['version'] ) ) {
+					$result .= ' ' . $raw['version']['version'];
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
 	 * Invalidate files.
 	 *
 	 * @param   array $files List of files to invalidate.
