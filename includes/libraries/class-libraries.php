@@ -62,7 +62,7 @@ class Libraries {
 			'name'    => 'Feather',
 			'prefix'  => 'Feather',
 			'base'    => OPCM_VENDOR_DIR . 'feather/',
-			'version' => '4.22.1',
+			'version' => '4.24.1',
 			// phpcs:ignore
 			'author'  => sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Cole Bemis' ),
 			'url'     => 'https://feathericons.com',
@@ -160,10 +160,40 @@ class Libraries {
 		}
 		$item            = [];
 		$item['name']    = 'Plugin Boilerplate';
-		$item['version'] = '';
+		$item['version'] = '1.0.0';
 		$item['author']  = 'Pierre Lannoy';
 		$item['url']     = 'https://github.com/Pierre-Lannoy/wp-' . 'plugin-' . 'boilerplate';
 		$item['license'] = $this->license_name( 'gpl3' );
+		$item['langs']   = L10n::get_language_markup( [ 'en' ] );
+		$list[]          = $item;
+		$item            = [];
+		$item['name']    = 'Date Range Picker';
+		$item['version'] = '3.0.5';
+		$item['author']  = sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Dan Grossman' );
+		$item['url']     = 'https://github.com/dangrossman/daterangepicker';
+		$item['license'] = $this->license_name( 'mit' );
+		$item['langs']   = L10n::get_language_markup( [ 'en' ] );
+		$list[]          = $item;
+		$item            = [];
+		$item['name']    = 'Moment';
+		$item['version'] = '2.24.0';
+		$item['author']  = sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Tim Wood' );
+		$item['url']     = 'https://github.com/moment/moment';
+		$item['license'] = $this->license_name( 'mit' );
+		$item['langs']   = L10n::get_language_markup( [ 'en' ] );
+		$list[]          = $item;
+		$item['name']    = 'SVG-Loaders';
+		$item['version'] = '1.0.2';
+		$item['author']  = sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Sam Herbert' );
+		$item['url']     = 'https://github.com/SamHerbert/SVG-Loaders';
+		$item['license'] = $this->license_name( 'mit' );
+		$item['langs']   = L10n::get_language_markup( [ 'en' ] );
+		$list[]          = $item;
+		$item['name']    = 'Chartist-JS';
+		$item['version'] = '0.11.4';
+		$item['author']  = sprintf( esc_html__( '%s & contributors', 'opcache-manager' ), 'Gion Kunz' );
+		$item['url']     = 'https://github.com/gionkunz/chartist-js';
+		$item['license'] = $this->license_name( 'mit' );
 		$item['langs']   = L10n::get_language_markup( [ 'en' ] );
 		$list[]          = $item;
 		usort( $list, function ( $a, $b ) { return strcmp( strtolower( $a['name'] ), strtolower( $b['name'] ) );} );
