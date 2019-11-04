@@ -53,22 +53,6 @@ class Analytics {
 	private $end = '';
 
 	/**
-	 * The initial start date.
-	 *
-	 * @since  1.0.0
-	 * @var    string    $istart    The initial start date.
-	 */
-	private $istart = '';
-
-	/**
-	 * The initial end date.
-	 *
-	 * @since  1.0.0
-	 * @var    string    $iend    The initial end date.
-	 */
-	private $iend = '';
-
-	/**
 	 * The period duration in seconds.
 	 *
 	 * @since  1.0.0
@@ -101,62 +85,20 @@ class Analytics {
 	private $previous = [];
 
 	/**
+	 * Is the start date today's date.
+	 *
+	 * @since  1.0.0
+	 * @var    boolean    $today    Is the start date today's date.
+	 */
+	private $is_today = false;
+
+	/**
 	 * Colors for graphs.
 	 *
 	 * @since  1.0.0
 	 * @var    array    $colors    The colors array.
 	 */
 	private $colors = [ '#73879C', '#3398DB', '#9B59B6', '#b2c326', '#BDC3C6' ];
-
-	public function construct( $domain, $type, $context, $site, $start, $end, $id, $reload, $extra ) {
-
-		if ( $start === $end ) {
-			$this->filter[] = "timestamp='" . $start . "'";
-		} else {
-			$this->filter[] = "timestamp>='" . $start . "' and timestamp<='" . $end . "'";
-		}
-		$this->start = $start;
-		$this->end   = $end;
-		$this->timezone     = Timezone::network_get();
-		$datetime           = new \DateTime( 'now', $this->timezone );
-		$this->is_today     = ( $this->start === $datetime->format( 'Y-m-d' ) || $this->end === $datetime->format( 'Y-m-d' ) );
-		$bounds             = Schema::get_distinct_context( $this->filter, ! $this->is_today );
-		$this->has_inbound  = ( in_array( 'inbound', $bounds, true ) );
-		$this->has_outbound = ( in_array( 'outbound', $bounds, true ) );
-		$this->is_inbound   = ( 'inbound' === $context || 'both' === $context );
-		$this->is_outbound  = ( 'outbound' === $context || 'both' === $context );
-		if ( 'inbound' === $context && ! $this->has_inbound ) {
-			$this->is_inbound  = false;
-			$this->is_outbound = true;
-		}
-		if ( 'outbound' === $context && ! $this->has_outbound ) {
-			$this->is_inbound  = true;
-			$this->is_outbound = false;
-		}
-		if ( $this->is_inbound xor $this->is_outbound ) {
-			$context = 'outbound';
-			if ( $this->is_inbound ) {
-				$context = 'inbound';
-			}
-			$this->filter[]   = "context='" . $context . "'";
-			$this->previous[] = "context='" . $context . "'";
-		}
-		$start = new \DateTime( $this->start, $this->timezone );
-		$end   = new \DateTime( $this->end, $this->timezone );
-		$start->sub( new \DateInterval( 'P1D' ) );
-		$end->sub( new \DateInterval( 'P1D' ) );
-		$delta = $start->diff( $end, true );
-		if ( $delta ) {
-			$start->sub( $delta );
-			$end->sub( $delta );
-		}
-		$this->duration = $delta->days + 1;
-		if ( $start === $end ) {
-			$this->previous[] = "timestamp='" . $start->format( 'Y-m-d' ) . "'";
-		} else {
-			$this->previous[] = "timestamp>='" . $start->format( 'Y-m-d' ) . "' and timestamp<='" . $end->format( 'Y-m-d' ) . "'";
-		}
-	}
 
 	/**
 	 * Initialize the class and set its properties.
@@ -170,6 +112,8 @@ class Analytics {
 		$this->timezone = Timezone::site_get();
 		$this->start    = $start;
 		$this->end      = $end;
+		$datetime       = new \DateTime( 'now' );
+		$this->is_today = ( $this->start === $datetime->format( 'Y-m-d' ) || $this->end === $datetime->format( 'Y-m-d' ) );
 		$start          = Date::get_mysql_utc_from_date( $this->start . ' 00:00:00', $this->timezone->getName() );
 		$end            = Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() );
 		$this->filter[] = "timestamp>='" . $start . "' and timestamp<='" . $end . "'";
@@ -195,12 +139,12 @@ class Analytics {
 	 * @since    1.0.0
 	 */
 	public function query( $query, $queried ) {
-		/*switch ( $query ) {
-			case 'main-chart':
-				return $this->query_chart();
+		switch ( $query ) {
+			/*case 'main-chart':
+				return $this->query_chart();*/
 			case 'kpi':
 				return $this->query_kpi( $queried );
-			case 'top-domains':
+			/*case 'top-domains':
 				return $this->query_top( 'domains', (int) $queried );
 			case 'top-authorities':
 				return $this->query_top( 'authorities', (int) $queried );
@@ -227,8 +171,8 @@ class Analytics {
 			case 'security':
 				return $this->query_pie( 'security', (int) $queried );
 			case 'method':
-				return $this->query_pie( 'method', (int) $queried );
-		}*/
+				return $this->query_pie( 'method', (int) $queried );*/
+		}
 		return [];
 	}
 
@@ -909,7 +853,106 @@ class Analytics {
 	 */
 	private function query_kpi( $queried ) {
 		$result = [];
-		if ( 'call' === $queried ) {
+		if ( 'ratio' === $queried || 'memory' === $queried || 'key' === $queried || 'buffer' === $queried ) {
+			$data     = Schema::get_std_kpi( $this->filter, ! $this->is_today );
+			$pdata    = Schema::get_std_kpi( $this->previous );
+			$base_value  = 0.0;
+			$pbase_value = 0.0;
+			$data_value  = 0.0;
+			$pdata_value = 0.0;
+			$current     = 0.0;
+			$previous    = 0.0;
+			if ( 'ratio' === $queried ) {
+				if ( is_array( $data ) && array_key_exists( 'avg_hit', $data ) && ! empty( $data['avg_hit'] ) && array_key_exists( 'avg_miss', $data ) && ! empty( $data['avg_miss'] ) ) {
+					$base_value = (float) $data['avg_hit'] + (float) $data['avg_miss'];
+					$data_value = (float) $data['avg_hit'];
+				}
+				if ( is_array( $pdata ) && array_key_exists( 'avg_hit', $pdata ) && ! empty( $pdata['avg_hit'] ) && array_key_exists( 'avg_miss', $pdata ) && ! empty( $pdata['avg_miss'] ) ) {
+					$pbase_value = (float) $pdata['avg_hit'] + (float) $pdata['avg_miss'];
+					$pdata_value = (float) $pdata['avg_hit'];
+				}
+			}
+			if ( 'key' === $queried ) {
+				if ( is_array( $data ) && array_key_exists( 'avg_key_used', $data ) && ! empty( $data['avg_key_used'] ) && array_key_exists( 'avg_key_total', $data ) && ! empty( $data['avg_key_total'] ) ) {
+					$base_value = (float) $data['avg_key_total'];
+					$data_value = (float) $data['avg_key_used'];
+				}
+				if ( is_array( $pdata ) && array_key_exists( 'avg_key_used', $pdata ) && ! empty( $pdata['avg_key_used'] ) && array_key_exists( 'avg_key_total', $pdata ) && ! empty( $pdata['avg_key_total'] ) ) {
+					$pbase_value = (float) $pdata['avg_key_total'];
+					$pdata_value = (float) $pdata['avg_key_used'];
+				}
+			}
+			if ( 'buffer' === $queried ) {
+				if ( is_array( $data ) && array_key_exists( 'avg_buf_used', $data ) && ! empty( $data['avg_buf_used'] ) && array_key_exists( 'avg_buf_total', $data ) && ! empty( $data['avg_buf_total'] ) ) {
+					$base_value = (float) $data['avg_buf_total'];
+					$data_value = (float) $data['avg_buf_used'];
+				}
+				if ( is_array( $pdata ) && array_key_exists( 'avg_buf_used', $pdata ) && ! empty( $pdata['avg_buf_used'] ) && array_key_exists( 'avg_buf_total', $pdata ) && ! empty( $pdata['avg_buf_total'] ) ) {
+					$pbase_value = (float) $pdata['avg_buf_total'];
+					$pdata_value = (float) $pdata['avg_buf_used'];
+				}
+			}
+			if ( 'memory' === $queried ) {
+				if ( is_array( $data ) && array_key_exists( 'avg_mem_total', $data ) && ! empty( $data['avg_mem_total'] ) && array_key_exists( 'avg_mem_used', $data ) && ! empty( $data['avg_mem_used'] ) && array_key_exists( 'avg_mem_wasted', $data ) && ! empty( $data['avg_mem_wasted'] ) ) {
+					$base_value = (float) $data['avg_mem_total'];
+					$data_value = (float) $data['avg_mem_total'] - (float) $data['avg_mem_used'] - (float) $data['avg_mem_wasted'];
+				}
+				if ( is_array( $pdata ) && array_key_exists( 'avg_mem_total', $pdata ) && ! empty( $pdata['avg_mem_total'] ) && array_key_exists( 'avg_mem_used', $pdata ) && ! empty( $pdata['avg_mem_used'] ) && array_key_exists( 'avg_mem_wasted', $pdata ) && ! empty( $pdata['avg_mem_wasted'] ) ) {
+					$base_value  = (float) $pdata['avg_mem_total'];
+					$pdata_value = (float) $pdata['avg_mem_total'] - (float) $pdata['avg_mem_used'] - (float) $pdata['avg_mem_wasted'];
+				}
+			}
+			if ( 0.0 !== $base_value && 0.0 !== $data_value ) {
+				$current                          = 100 * $data_value / $base_value;
+				$result[ 'kpi-main-' . $queried ] = round( $current, 1 ) . '%';
+			} else {
+				if ( 0.0 !== $data_value ) {
+					$result[ 'kpi-main-' . $queried ] = '100%';
+				} elseif ( 0.0 !== $base_value ) {
+					$result[ 'kpi-main-' . $queried ] = '0%';
+				} else {
+					$result[ 'kpi-main-' . $queried ] = '-';
+				}
+			}
+			if ( 0.0 !== $pbase_value && 0.0 !== $pdata_value ) {
+				$previous = 100 * $pdata_value / $pbase_value;
+			} else {
+				if ( 0.0 !== $pdata_value ) {
+					$previous = 100.0;
+				}
+			}
+			if ( 0.0 !== $current && 0.0 !== $previous ) {
+				$percent = round( 100 * ( $current - $previous ) / $previous, 1 );
+				if ( 0.1 > abs( $percent ) ) {
+					$percent = 0;
+				}
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
+			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
+			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:#E74C3C;">-∞</span>';
+			}
+			switch ( $queried ) {
+				case 'ratio':
+					if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) && ! empty( $data['sum_hit'] ) ) {
+						$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s hits', 'opcache-manager' ), Conversion::number_shorten( $data['sum_hit'], 2 ) ) . '</span>';
+					}
+					break;
+				case 'memory':
+					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'total memory: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0 ) ) . '</span>';
+					break;
+				case 'buffer':
+					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'buffer size: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0 ) ) . '</span>';
+					break;
+				case 'key':
+					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s keys (avg.)', 'opcache-manager' ), (int) round( $data_value, 0 ) ) . '</span>';
+					break;
+			}
+		}
+
+
+
+		if ( 'calls' === $queried ) {
 			$data     = Schema::get_std_kpi( $this->filter, ! $this->is_today );
 			$pdata    = Schema::get_std_kpi( $this->previous );
 			$current  = 0.0;
@@ -1064,125 +1107,6 @@ class Analytics {
 	}
 
 	/**
-	 * Get the title selector.
-	 *
-	 * @return string  The selector ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_title_selector() {
-		switch ( $this->type ) {
-			case 'domains':
-				$title = esc_html__( 'Domains Details', 'opcache-manager' );
-				break;
-			case 'domain':
-				$title = esc_html__( 'Domain Summary', 'opcache-manager' );
-				break;
-			case 'authorities':
-				$title         = esc_html__( 'Domain Details', 'opcache-manager' );
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Domain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->domain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'domain',
-							'domain' => $this->domain,
-							'id'     => $this->domain,
-						]
-					),
-				];
-				break;
-			case 'authority':
-				$title         = esc_html__( 'Subdomain Summary', 'opcache-manager' );
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Domain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->domain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'domain',
-							'domain' => $this->domain,
-							'id'     => $this->domain,
-						]
-					),
-				];
-				break;
-			case 'endpoints':
-				$title         = esc_html__( 'Subdomain Details', 'opcache-manager' );
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Subdomain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->subdomain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'authority',
-							'domain' => $this->domain,
-							'id'     => $this->subdomain,
-						]
-					),
-				];
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Domain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->domain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'domain',
-							'domain' => $this->domain,
-							'id'     => $this->domain,
-						]
-					),
-				];
-				break;
-			case 'endpoint':
-				$title         = esc_html__( 'Endpoint Summary', 'opcache-manager' );
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Subdomain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->subdomain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'authority',
-							'domain' => $this->domain,
-							'id'     => $this->subdomain,
-						]
-					),
-				];
-				$breadcrumbs[] = [
-					'title'    => esc_html__( 'Domain Summary', 'opcache-manager' ),
-					'subtitle' => sprintf( esc_html__( 'Return to %s', 'opcache-manager' ), $this->domain ),
-					'url'      => $this->get_url(
-						[ 'extra' ],
-						[
-							'type'   => 'domain',
-							'domain' => $this->domain,
-							'id'     => $this->domain,
-						]
-					),
-				];
-				break;
-			case 'country':
-				$title    = esc_html__( 'Country', 'opcache-manager' );
-				$subtitle = L10n::get_country_name( $this->id );
-				break;
-
-		}
-		$breadcrumbs[] = [
-			'title'    => esc_html__( 'Main Summary', 'opcache-manager' ),
-			'subtitle' => sprintf( esc_html__( 'Return to OPcache Manager main page.', 'opcache-manager' ) ),
-			'url'      => $this->get_url( [ 'domain', 'id', 'extra', 'type' ] ),
-		];
-		$result        = '<select name="sources" id="sources" class="opcm-select sources" placeholder="' . $title . '" style="display:none;">';
-		foreach ( $breadcrumbs as $breadcrumb ) {
-			$result .= '<option value="' . $breadcrumb['url'] . '">' . $breadcrumb['title'] . '~-' . $breadcrumb['subtitle'] . '-~</span></option>';
-		}
-		$result .= '</select>';
-		$result .= '';
-
-		return $result;
-	}
-
-	/**
 	 * Get the title bar.
 	 *
 	 * @return string  The bar ready to print.
@@ -1207,47 +1131,15 @@ class Analytics {
 	public function get_kpi_bar() {
 		$result  = '<div class="opcm-box opcm-box-full-line">';
 		$result .= '<div class="opcm-kpi-bar">';
-		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'call' ) . '</div>';
-		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'data' ) . '</div>';
-		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'server' ) . '</div>';
-		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'quota' ) . '</div>';
-		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'pass' ) . '</div>';
+		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'ratio' ) . '</div>';
+		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'memory' ) . '</div>';
+		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'script' ) . '</div>';
+		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'key' ) . '</div>';
+		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'buffer' ) . '</div>';
 		$result .= '<div class="opcm-kpi-large">' . $this->get_large_kpi( 'uptime' ) . '</div>';
 		$result .= '</div>';
 		$result .= '</div>';
 		return $result;
-	}
-
-	/**
-	 * Get the main chart.
-	 *
-	 * @return string  The main chart ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_main_chart() {
-		if ( 1 < $this->duration ) {
-			$help_calls  = esc_html__( 'Responses types distribution.', 'opcache-manager' );
-			$help_data   = esc_html__( 'Data volume distribution.', 'opcache-manager' );
-			$help_uptime = esc_html__( 'Uptime distribution.', 'opcache-manager' );
-			$detail      = '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-calls" data-position="left" data-tooltip="' . $help_calls . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'hash', 'none', '#73879C' ) . '" /></span>';
-			$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-data" data-position="left" data-tooltip="' . $help_data . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'link-2', 'none', '#73879C' ) . '" /></span>&nbsp;&nbsp;&nbsp;';
-			$detail     .= '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-uptime" data-position="left" data-tooltip="' . $help_uptime . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'activity', 'none', '#73879C' ) . '" /></span>';
-			$result      = '<div class="opcm-row">';
-			$result     .= '<div class="opcm-box opcm-box-full-line">';
-			$result     .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Metrics Variations', 'opcache-manager' ) . '<span class="opcm-module-more">' . $detail . '</span></span></div>';
-			$result     .= '<div class="opcm-module-content" id="opcm-main-chart">' . $this->get_graph_placeholder( 274 ) . '</div>';
-			$result     .= '</div>';
-			$result     .= '</div>';
-			$result     .= $this->get_refresh_script(
-				[
-					'query'   => 'main-chart',
-					'queried' => 0,
-				]
-			);
-			return $result;
-		} else {
-			return '';
-		}
 	}
 
 	/**
@@ -1665,35 +1557,35 @@ class Analytics {
 	 */
 	private function get_large_kpi( $kpi ) {
 		switch ( $kpi ) {
-			case 'call':
-				$icon  = Feather\Icons::get_base64( 'hash', 'none', '#73879C' );
-				$title = esc_html_x( 'Number of Calls', 'Noun - Number API calls.', 'opcache-manager' );
-				$help  = esc_html__( 'Number of API calls.', 'opcache-manager' );
+			case 'ratio':
+				$icon  = Feather\Icons::get_base64( 'award', 'none', '#73879C' );
+				$title = esc_html_x( 'Hit Ratio', 'Noun - Cache hit ratio.', 'opcache-manager' );
+				$help  = esc_html__( 'The ratio between hit and total calls.', 'opcache-manager' );
 				break;
-			case 'data':
-				$icon  = Feather\Icons::get_base64( 'link-2', 'none', '#73879C' );
-				$title = esc_html_x( 'Data Volume', 'Noun - Volume of transferred data.', 'opcache-manager' );
-				$help  = esc_html__( 'Volume of transferred data.', 'opcache-manager' );
+			case 'memory':
+				$icon  = Feather\Icons::get_base64( 'cpu', 'none', '#73879C' );
+				$title = esc_html_x( 'Free Memory', 'Noun - Memory free of allocation.', 'opcache-manager' );
+				$help  = esc_html__( 'Ratio of free available memory.', 'opcache-manager' );
 				break;
-			case 'server':
-				$icon  = Feather\Icons::get_base64( 'x-octagon', 'none', '#73879C' );
-				$title = esc_html_x( 'Server Error Rate', 'Noun - Ratio of the number of HTTP errors to the total number of calls.', 'opcache-manager' );
-				$help  = esc_html__( 'Ratio of the number of HTTP errors to the total number of calls.', 'opcache-manager' );
+			case 'script':
+				$icon  = Feather\Icons::get_base64( 'file', 'none', '#73879C' );
+				$title = esc_html_x( 'Cached Files', 'Noun - Number of already cached files.', 'opcache-manager' );
+				$help  = esc_html__( 'Number of compiled and cached files.', 'opcache-manager' );
 				break;
-			case 'quota':
-				$icon  = Feather\Icons::get_base64( 'shield-off', 'none', '#73879C' );
-				$title = esc_html_x( 'Quotas Error Rate', 'Noun - Ratio of the quota enforcement number to the total number of calls.', 'opcache-manager' );
-				$help  = esc_html__( 'Ratio of the quota enforcement number to the total number of calls.', 'opcache-manager' );
+			case 'key':
+				$icon  = Feather\Icons::get_base64( 'key', 'none', '#73879C' );
+				$title = esc_html_x( 'Keys Saturation', 'Noun - Ratio of the allocated keys to the total available keys slots.', 'opcache-manager' );
+				$help  = esc_html__( 'Ratio of the allocated keys to the total available keys slots.', 'opcache-manager' );
 				break;
-			case 'pass':
-				$icon  = Feather\Icons::get_base64( 'check-circle', 'none', '#73879C' );
-				$title = esc_html_x( 'Effective Pass Rate', 'Noun - Ratio of the number of HTTP success to the total number of calls.', 'opcache-manager' );
-				$help  = esc_html__( 'Ratio of the number of HTTP success to the total number of calls.', 'opcache-manager' );
+			case 'buffer':
+				$icon  = Feather\Icons::get_base64( 'database', 'none', '#73879C' );
+				$title = esc_html_x( 'Buffer Saturation', 'Noun - Ratio of the used buffer to the total buffer size.', 'opcache-manager' );
+				$help  = esc_html__( 'Ratio of the used buffer to the total buffer size.', 'opcache-manager' );
 				break;
 			case 'uptime':
 				$icon  = Feather\Icons::get_base64( 'activity', 'none', '#73879C' );
-				$title = esc_html_x( 'Perceived Uptime', 'Noun - Perceived uptime, from the viewpoint of the site.', 'opcache-manager' );
-				$help  = esc_html__( 'Perceived uptime, from the viewpoint of the site.', 'opcache-manager' );
+				$title = esc_html_x( 'Availability', 'Noun - Ratio of time when OPcache is not disabled.', 'opcache-manager' );
+				$help  = esc_html__( 'Time ratio with an operational OPcache.', 'opcache-manager' );
 				break;
 		}
 		$top       = '<img style="width:12px;vertical-align:baseline;" src="' . $icon . '" />&nbsp;&nbsp;<span style="cursor:help;" class="opcm-kpi-large-top-text bottom" data-position="bottom" data-tooltip="' . $help . '">' . $title . '</span>';

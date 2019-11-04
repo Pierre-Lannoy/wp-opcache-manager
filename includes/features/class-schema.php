@@ -241,9 +241,6 @@ class Schema {
 	 * @since    1.0.0
 	 */
 	public static function get_std_kpi( $filter, $cache = true, $extra_field = '', $extras = [], $not = false ) {
-		if ( array_key_exists( 'context', $filter ) ) {
-			unset( $filter['context'] );
-		}
 		// phpcs:ignore
 		$id = Cache::id( __FUNCTION__ . serialize( $filter ) . $extra_field . serialize( $extras ) . ( $not ? 'no' : 'yes') );
 		if ( $cache ) {
@@ -257,7 +254,7 @@ class Schema {
 			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( $extras, "', '" ) . "' )";
 		}
 		global $wpdb;
-		$sql = 'SELECT sum(hit) as sum_hit, sum(kb_in) as sum_kb_in, sum(kb_out) as sum_kb_out, sum(hit*latency_avg)/sum(hit) as avg_latency, min(latency_min) as min_latency, max(latency_max) as max_latency FROM ' . $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra;
+		$sql = 'SELECT count(*) as records, sum(hit) as sum_hit, avg(hit) as avg_hit, avg(miss) as avg_miss, avg(mem_total) as avg_mem_total, avg(mem_used) as avg_mem_used, avg(mem_wasted) as avg_mem_wasted, avg(key_total) as avg_key_total, avg(key_used) as avg_key_used, avg(buf_total) as avg_buf_total, avg(buf_used) as avg_buf_used, avg(strings) as avg_strings, min(strings) as min_strings, max(strings) as max_strings, avg(scripts) as avg_scripts, min(scripts) as min_scripts, max(scripts) as max_scripts FROM ' . $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra;
 		// phpcs:ignore
 		$result = $wpdb->get_results( $sql, ARRAY_A );
 		if ( is_array( $result ) && 1 === count( $result ) ) {
