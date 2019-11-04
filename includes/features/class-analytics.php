@@ -108,6 +108,56 @@ class Analytics {
 	 */
 	private $colors = [ '#73879C', '#3398DB', '#9B59B6', '#b2c326', '#BDC3C6' ];
 
+	public function construct( $domain, $type, $context, $site, $start, $end, $id, $reload, $extra ) {
+
+		if ( $start === $end ) {
+			$this->filter[] = "timestamp='" . $start . "'";
+		} else {
+			$this->filter[] = "timestamp>='" . $start . "' and timestamp<='" . $end . "'";
+		}
+		$this->start = $start;
+		$this->end   = $end;
+		$this->timezone     = Timezone::network_get();
+		$datetime           = new \DateTime( 'now', $this->timezone );
+		$this->is_today     = ( $this->start === $datetime->format( 'Y-m-d' ) || $this->end === $datetime->format( 'Y-m-d' ) );
+		$bounds             = Schema::get_distinct_context( $this->filter, ! $this->is_today );
+		$this->has_inbound  = ( in_array( 'inbound', $bounds, true ) );
+		$this->has_outbound = ( in_array( 'outbound', $bounds, true ) );
+		$this->is_inbound   = ( 'inbound' === $context || 'both' === $context );
+		$this->is_outbound  = ( 'outbound' === $context || 'both' === $context );
+		if ( 'inbound' === $context && ! $this->has_inbound ) {
+			$this->is_inbound  = false;
+			$this->is_outbound = true;
+		}
+		if ( 'outbound' === $context && ! $this->has_outbound ) {
+			$this->is_inbound  = true;
+			$this->is_outbound = false;
+		}
+		if ( $this->is_inbound xor $this->is_outbound ) {
+			$context = 'outbound';
+			if ( $this->is_inbound ) {
+				$context = 'inbound';
+			}
+			$this->filter[]   = "context='" . $context . "'";
+			$this->previous[] = "context='" . $context . "'";
+		}
+		$start = new \DateTime( $this->start, $this->timezone );
+		$end   = new \DateTime( $this->end, $this->timezone );
+		$start->sub( new \DateInterval( 'P1D' ) );
+		$end->sub( new \DateInterval( 'P1D' ) );
+		$delta = $start->diff( $end, true );
+		if ( $delta ) {
+			$start->sub( $delta );
+			$end->sub( $delta );
+		}
+		$this->duration = $delta->days + 1;
+		if ( $start === $end ) {
+			$this->previous[] = "timestamp='" . $start->format( 'Y-m-d' ) . "'";
+		} else {
+			$this->previous[] = "timestamp>='" . $start->format( 'Y-m-d' ) . "' and timestamp<='" . $end->format( 'Y-m-d' ) . "'";
+		}
+	}
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -117,18 +167,16 @@ class Analytics {
 	 * @since 1.0.0
 	 */
 	public function __construct( $start, $end, $reload ) {
-		$this->istart = $start;
-		$this->iend   = $end;
-		error_log('=======================================================================' );
-		error_log($start . ' => ' . $end );
 		$this->timezone = Timezone::site_get();
-		$this->start    = Date::get_mysql_utc_from_date( $start . ' 01:00:00', $this->timezone->getName() );
-		$this->end      = Date::get_mysql_utc_from_date( $end . ' 23:59:59', $this->timezone->getName() );
-		$this->filter[] = "timestamp>='" . $this->start . "' and timestamp<='" . $this->end . "'";
-		$start          = new \DateTime( $this->start, $this->timezone );
-		$end            = new \DateTime( $this->end,  $this->timezone );
-		$start->sub( new \DateInterval( 'P1D' ) );
-		$end->sub( new \DateInterval( 'P1D' ) );
+		$this->start    = $start;
+		$this->end      = $end;
+		$start          = Date::get_mysql_utc_from_date( $this->start . ' 00:00:00', $this->timezone->getName() );
+		$end            = Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() );
+		$this->filter[] = "timestamp>='" . $start . "' and timestamp<='" . $end . "'";
+		$start          = new \DateTime( $start, $this->timezone );
+		$end            = new \DateTime( $end, $this->timezone );
+		$start->sub( new \DateInterval( 'PT1S' ) );
+		$end->sub( new \DateInterval( 'PT1S' ) );
 		$delta = $start->diff( $end, true );
 		if ( $delta ) {
 			$start->sub( $delta );
@@ -136,8 +184,6 @@ class Analytics {
 		}
 		$this->duration   = $delta->days + 1;
 		$this->previous[] = "timestamp>='" . $start->format( 'Y-m-d H:i:s' ) . "' and timestamp<='" . $end->format( 'Y-m-d H:i:s' ) . "'";
-		error_log('current => ' . $this->filter[0] );
-		error_log('previous => ' . $this->previous[0] );
 	}
 
 	/**
@@ -1718,8 +1764,8 @@ class Analytics {
 			$result .= '  context:"' . $this->context . '",';
 		}
 		$result .= '  site:"' . $this->site . '",';
-		$result .= '  start:"' . $this->istart . '",';
-		$result .= '  end:"' . $this->iend . '",';
+		$result .= '  start:"' . $this->start . '",';
+		$result .= '  end:"' . $this->end . '",';
 		$result .= ' };';
 		$result .= ' $.post(ajaxurl, data, function(response) {';
 		$result .= ' var val = JSON.parse(response);';
@@ -1752,8 +1798,8 @@ class Analytics {
 		if ( '' !== $this->extra ) {
 			$params['extra'] = $this->extra;
 		}
-		$params['start'] = $this->istart;
-		$params['end']   = $this->iend;
+		$params['start'] = $this->start;
+		$params['end']   = $this->end;
 		if ( ! ( $this->is_inbound && $this->is_outbound ) ) {
 			if ( $this->is_inbound ) {
 				$params['context'] = 'inbound';
@@ -1847,8 +1893,8 @@ class Analytics {
 		$result .= '<script>';
 		$result .= 'jQuery(function ($) {';
 		$result .= ' moment.locale("' . L10n::get_display_locale() . '");';
-		$result .= ' var start = moment("' . $this->istart . '");';
-		$result .= ' var end = moment("' . $this->iend . '");';
+		$result .= ' var start = moment("' . $this->start . '");';
+		$result .= ' var end = moment("' . $this->end . '");';
 		$result .= ' function changeDate(start, end) {';
 		$result .= '  $("span.opcm-datepicker-value").html(start.format("ll") + " - " + end.format("ll"));';
 		$result .= ' }';
