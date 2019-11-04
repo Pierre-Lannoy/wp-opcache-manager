@@ -13,14 +13,14 @@ use OPcacheManager\System\Role;
 
 wp_enqueue_script( 'opcm-moment-with-locale' );
 wp_enqueue_script( 'opcm-daterangepicker' );
-//wp_enqueue_script( 'opcm-chartist' );
-//wp_enqueue_script( 'opcm-chartist-tooltip' );
+wp_enqueue_script( 'opcm-chartist' );
+wp_enqueue_script( 'opcm-chartist-tooltip' );
 wp_enqueue_script( OPCM_ASSETS_ID );
 wp_enqueue_style( OPCM_ASSETS_ID );
 wp_enqueue_style( 'opcm-daterangepicker' );
-//wp_enqueue_style( 'opcm-tooltip' );
-//wp_enqueue_style( 'opcm-chartist' );
-//wp_enqueue_style( 'opcm-chartist-tooltip' );
+wp_enqueue_style( 'opcm-tooltip' );
+wp_enqueue_style( 'opcm-chartist' );
+wp_enqueue_style( 'opcm-chartist-tooltip' );
 
 
 ?>

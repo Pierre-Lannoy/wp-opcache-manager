@@ -54,7 +54,10 @@ class Opcache_Manager_Admin {
 	 */
 	public function enqueue_styles() {
 		$this->assets->register_style( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'css/opcache-manager.min.css' );
-		$this->assets->register_style( 'opcm-daterangepicker', TRAFFIC_ADMIN_URL, 'css/daterangepicker.min.css' );
+		$this->assets->register_style( 'opcm-daterangepicker', OPCM_ADMIN_URL, 'css/daterangepicker.min.css' );
+		$this->assets->register_style( 'opcm-tooltip', OPCM_ADMIN_URL, 'css/tooltip.min.css' );
+		$this->assets->register_style( 'opcm-chartist', OPCM_ADMIN_URL, 'css/chartist.min.css' );
+		$this->assets->register_style( 'opcm-chartist-tooltip', OPCM_ADMIN_URL, 'css/chartist-plugin-tooltip.min.css' );
 	}
 
 	/**
@@ -64,8 +67,10 @@ class Opcache_Manager_Admin {
 	 */
 	public function enqueue_scripts() {
 		$this->assets->register_script( OPCM_ASSETS_ID, OPCM_ADMIN_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
-		$this->assets->register_script( 'opcm-moment-with-locale', TRAFFIC_ADMIN_URL, 'js/moment-with-locales.min.js', [ 'jquery' ] );
-		$this->assets->register_script( 'opcm-daterangepicker', TRAFFIC_ADMIN_URL, 'js/daterangepicker.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-moment-with-locale', OPCM_ADMIN_URL, 'js/moment-with-locales.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-daterangepicker', OPCM_ADMIN_URL, 'js/daterangepicker.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-chartist', OPCM_ADMIN_URL, 'js/chartist.min.js', [ 'jquery' ] );
+		$this->assets->register_script( 'opcm-chartist-tooltip', OPCM_ADMIN_URL, 'js/chartist-plugin-tooltip.min.js', [ 'opcm-chartist' ] );
 	}
 
 	/**
