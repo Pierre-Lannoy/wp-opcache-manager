@@ -853,15 +853,39 @@ class Analytics {
 	 */
 	private function query_kpi( $queried ) {
 		$result = [];
-		if ( 'ratio' === $queried || 'memory' === $queried || 'key' === $queried || 'buffer' === $queried ) {
-			$data     = Schema::get_std_kpi( $this->filter, ! $this->is_today );
-			$pdata    = Schema::get_std_kpi( $this->previous );
+		if ( 'ratio' === $queried || 'memory' === $queried || 'key' === $queried || 'buffer' === $queried || 'uptime' === $queried ) {
+			$data        = Schema::get_std_kpi( $this->filter, ! $this->is_today );
+			$pdata       = Schema::get_std_kpi( $this->previous );
 			$base_value  = 0.0;
 			$pbase_value = 0.0;
 			$data_value  = 0.0;
 			$pdata_value = 0.0;
 			$current     = 0.0;
 			$previous    = 0.0;
+			if ( 'uptime' === $queried ) {
+				$disabled_data  = Schema::get_std_kpi( $this->filter, ! $this->is_today, 'status', ['disabled'] );
+				$disabled_pdata = Schema::get_std_kpi( $this->previous, true,  'status', ['disabled'] );
+				if ( is_array( $data ) && array_key_exists( 'records', $data ) && is_array( $disabled_data ) && array_key_exists( 'records', $disabled_data ) ) {
+					if ( empty( $data['records'] ) ) {
+						$data['records'] = 0;
+					}
+					if ( ! is_array( $disabled_data ) || ! array_key_exists( 'records', $disabled_data ) ) {
+						$disabled_data['records'] = 0;
+					}
+					$base_value = (float) $data['records'] + $disabled_data['records'];
+					$data_value = (float) $data['records'];
+				}
+				if ( is_array( $pdata ) && array_key_exists( 'records', $pdata ) && is_array( $disabled_pdata ) && array_key_exists( 'records', $disabled_pdata ) ) {
+					if ( empty( $pdata['records'] ) ) {
+						$pdata['records'] = 0;
+					}
+					if ( ! is_array( $disabled_pdata ) || ! array_key_exists( 'records', $disabled_pdata ) ) {
+						$disabled_pdata['records'] = 0;
+					}
+					$pbase_value = (float) $pdata['records'] + $disabled_pdata['records'];
+					$pdata_value = (float) $pdata['records'];
+				}
+			}
 			if ( 'ratio' === $queried ) {
 				if ( is_array( $data ) && array_key_exists( 'avg_hit', $data ) && ! empty( $data['avg_hit'] ) && array_key_exists( 'avg_miss', $data ) && ! empty( $data['avg_miss'] ) ) {
 					$base_value = (float) $data['avg_hit'] + (float) $data['avg_miss'];
@@ -947,160 +971,50 @@ class Analytics {
 				case 'key':
 					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s keys (avg.)', 'opcache-manager' ), (int) round( $data_value, 0 ) ) . '</span>';
 					break;
-			}
-		}
-
-
-
-		if ( 'calls' === $queried ) {
-			$data     = Schema::get_std_kpi( $this->filter, ! $this->is_today );
-			$pdata    = Schema::get_std_kpi( $this->previous );
-			$current  = 0.0;
-			$previous = 0.0;
-			if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) && ! empty( $data['sum_hit'] ) ) {
-				$current = (float) $data['sum_hit'];
-			}
-			if ( is_array( $pdata ) && array_key_exists( 'sum_hit', $pdata ) && ! empty( $pdata['sum_hit'] ) ) {
-				$previous = (float) $pdata['sum_hit'];
-			}
-			$result[ 'kpi-main-' . $queried ] = Conversion::number_shorten( $current, 1 );
-			if ( 0.0 !== $current && 0.0 !== $previous ) {
-				$percent = round( 100 * ( $current - $previous ) / $previous, 1 );
-				if ( 0.1 > abs( $percent ) ) {
-					$percent = 0;
-				}
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
-			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
-			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#E74C3C;">-∞</span>';
-			}
-			if ( is_array( $data ) && array_key_exists( 'avg_latency', $data ) && ! empty( $data['avg_latency'] ) ) {
-				$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'avg latency: %sms.', 'opcache-manager' ), (int) $data['avg_latency'] ) . '</span>';
-			}
-		}
-		if ( 'data' === $queried ) {
-			$data         = Schema::get_std_kpi( $this->filter, ! $this->is_today );
-			$pdata        = Schema::get_std_kpi( $this->previous );
-			$current_in   = 0.0;
-			$current_out  = 0.0;
-			$previous_in  = 0.0;
-			$previous_out = 0.0;
-			if ( is_array( $data ) && array_key_exists( 'sum_kb_in', $data ) && ! empty( $data['sum_kb_in'] ) ) {
-				$current_in = (float) $data['sum_kb_in'] * 1024;
-			}
-			if ( is_array( $data ) && array_key_exists( 'sum_kb_out', $data ) && ! empty( $data['sum_kb_out'] ) ) {
-				$current_out = (float) $data['sum_kb_out'] * 1024;
-			}
-			if ( is_array( $pdata ) && array_key_exists( 'sum_kb_in', $pdata ) && ! empty( $pdata['sum_kb_in'] ) ) {
-				$previous_in = (float) $pdata['sum_kb_in'] * 1024;
-			}
-			if ( is_array( $pdata ) && array_key_exists( 'sum_kb_out', $pdata ) && ! empty( $pdata['sum_kb_out'] ) ) {
-				$previous_out = (float) $pdata['sum_kb_out'] * 1024;
-			}
-			$current                          = $current_in + $current_out;
-			$previous                         = $previous_in + $previous_out;
-			$result[ 'kpi-main-' . $queried ] = Conversion::data_shorten( $current, 1 );
-			if ( 0.0 !== $current && 0.0 !== $previous ) {
-				$percent = round( 100 * ( $current - $previous ) / $previous, 1 );
-				if ( 0.1 > abs( $percent ) ) {
-					$percent = 0;
-				}
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
-			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
-			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#E74C3C;">-∞</span>';
-			}
-			$in                                 = '<img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'arrow-down-right', 'none', '#73879C' ) . '" /><span class="opcm-kpi-large-bottom-text">' . Conversion::data_shorten( $current_in, 2 ) . '</span>';
-			$out                                = '<span class="opcm-kpi-large-bottom-text">' . Conversion::data_shorten( $current_out, 2 ) . '</span><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'arrow-up-right', 'none', '#73879C' ) . '" />';
-			$result[ 'kpi-bottom-' . $queried ] = $in . ' &nbsp;&nbsp; ' . $out;
-		}
-		if ( 'server' === $queried || 'quota' === $queried || 'pass' === $queried || 'uptime' === $queried ) {
-			$not = false;
-			if ( 'server' === $queried ) {
-				$codes = Http::$http_error_codes;
-			} elseif ( 'quota' === $queried ) {
-				$codes = Http::$http_quota_codes;
-			} elseif ( 'pass' === $queried ) {
-				$codes = Http::$http_effective_pass_codes;
-			} elseif ( 'uptime' === $queried ) {
-				$codes = Http::$http_failure_codes;
-				$not   = true;
-			}
-			$base        = Schema::get_std_kpi( $this->filter, ! $this->is_today );
-			$pbase       = Schema::get_std_kpi( $this->previous );
-			$data        = Schema::get_std_kpi( $this->filter, ! $this->is_today, 'code', $codes, $not );
-			$pdata       = Schema::get_std_kpi( $this->previous, true, 'code', $codes, $not );
-			$base_value  = 0.0;
-			$pbase_value = 0.0;
-			$data_value  = 0.0;
-			$pdata_value = 0.0;
-			$current     = 0.0;
-			$previous    = 0.0;
-			if ( is_array( $data ) && array_key_exists( 'sum_hit', $base ) && ! empty( $base['sum_hit'] ) ) {
-				$base_value = (float) $base['sum_hit'];
-			}
-			if ( is_array( $pbase ) && array_key_exists( 'sum_hit', $pbase ) && ! empty( $pbase['sum_hit'] ) ) {
-				$pbase_value = (float) $pbase['sum_hit'];
-			}
-			if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) && ! empty( $data['sum_hit'] ) ) {
-				$data_value = (float) $data['sum_hit'];
-			}
-			if ( is_array( $pdata ) && array_key_exists( 'sum_hit', $pdata ) && ! empty( $pdata['sum_hit'] ) ) {
-				$pdata_value = (float) $pdata['sum_hit'];
-			}
-			if ( 0.0 !== $base_value && 0.0 !== $data_value ) {
-				$current                          = 100 * $data_value / $base_value;
-				$result[ 'kpi-main-' . $queried ] = round( $current, 1 ) . '%';
-			} else {
-				if ( 0.0 !== $data_value ) {
-					$result[ 'kpi-main-' . $queried ] = '100%';
-				} elseif ( 0.0 !== $base_value ) {
-					$result[ 'kpi-main-' . $queried ] = '0%';
-				} else {
-					$result[ 'kpi-main-' . $queried ] = '-';
-				}
-			}
-			if ( 0.0 !== $pbase_value && 0.0 !== $pdata_value ) {
-				$previous = 100 * $pdata_value / $pbase_value;
-			} else {
-				if ( 0.0 !== $pdata_value ) {
-					$previous = 100.0;
-				}
-			}
-			if ( 0.0 !== $current && 0.0 !== $previous ) {
-				$percent = round( 100 * ( $current - $previous ) / $previous, 1 );
-				if ( 0.1 > abs( $percent ) ) {
-					$percent = 0;
-				}
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
-			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
-			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:#E74C3C;">-∞</span>';
-			}
-			switch ( $queried ) {
-				case 'server':
-					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s calls in error', 'opcache-manager' ), Conversion::number_shorten( $data_value, 2 ) ) . '</span>';
-					break;
-				case 'quota':
-					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s blocked calls', 'opcache-manager' ), Conversion::number_shorten( $data_value, 2 ) ) . '</span>';
-					break;
-				case 'pass':
-					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s successful calls', 'opcache-manager' ), Conversion::number_shorten( $data_value, 2 ) ) . '</span>';
-					break;
 				case 'uptime':
 					if ( 0.0 !== $base_value ) {
-						$duration = implode( ', ', Date::get_age_array_from_seconds( $this->duration * DAY_IN_SECONDS * ( 1 - ( $data_value / $base_value ) ), true, true ) );
+						$duration = implode( ', ', Date::get_age_array_from_seconds( $this->duration * DAY_IN_SECONDS * ( $data_value / $base_value ), true, true ) );
 						if ( '' === $duration ) {
-							$duration = esc_html__( 'no downtime', 'opcache-manager' );
+							$duration = esc_html__( 'no availability', 'opcache-manager' );
 						} else {
-							$duration = sprintf( esc_html__( 'down %s', 'opcache-manager' ), $duration );
+							$duration = sprintf( esc_html__( 'available %s', 'opcache-manager' ), $duration );
 						}
 						$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . $duration . '</span>';
 					}
 					break;
+			}
+		}
+		if ( 'script' === $queried ) {
+			$data     = Schema::get_std_kpi( $this->filter, ! $this->is_today );
+			$pdata    = Schema::get_std_kpi( $this->previous );
+			$current  = 0.0;
+			$previous = 0.0;
+			if ( is_array( $data ) && array_key_exists( 'avg_scripts', $data ) && ! empty( $data['avg_scripts'] ) ) {
+				$current = (float) $data['avg_scripts'];
+			}
+			if ( is_array( $pdata ) && array_key_exists( 'avg_scripts', $pdata ) && ! empty( $pdata['avg_scripts'] ) ) {
+				$previous = (float) $pdata['avg_scripts'];
+			}
+			$result[ 'kpi-main-' . $queried ] = (int) round( $current, 0 );
+			if ( 0.0 !== $current && 0.0 !== $previous ) {
+				$percent = round( 100 * ( $current - $previous ) / $previous, 1 );
+				if ( 0.1 > abs( $percent ) ) {
+					$percent = 0;
+				}
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
+			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
+			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:#E74C3C;">-∞</span>';
+			}
+			if ( is_array( $data ) && array_key_exists( 'min_scripts', $data ) && array_key_exists( 'max_scripts', $data ) ) {
+				if ( empty( $data['min_scripts'] ) ) {
+					$data['min_scripts'] = 0;
+				}
+				if ( empty( $data['max_scripts'] ) ) {
+					$data['max_scripts'] = 0;
+				}
+				$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . (int) round( $data['min_scripts'], 0 ) . '&nbsp;<img style="width:12px;vertical-align:middle;" src="' . Feather\Icons::get_base64( 'arrow-right', 'none', '#73879C' ) . '" />&nbsp;' . (int) round( $data['max_scripts'], 0 ) . '&nbsp;</span>';
 			}
 		}
 		return $result;
@@ -1113,7 +1027,6 @@ class Analytics {
 	 * @since    1.0.0
 	 */
 	public function get_title_bar() {
-
 		$result  = '<div class="opcm-box opcm-box-full-line">';
 		$result .= '<span class="opcm-title">' . esc_html__( 'OPcache Analytics', 'opcache-manager' ) . '</span>';
 		$result .= '<span class="opcm-subtitle">' . OPcache::name() . '</span>';
@@ -1568,7 +1481,7 @@ class Analytics {
 				$help  = esc_html__( 'Ratio of free available memory.', 'opcache-manager' );
 				break;
 			case 'script':
-				$icon  = Feather\Icons::get_base64( 'file', 'none', '#73879C' );
+				$icon  = Feather\Icons::get_base64( 'file-text', 'none', '#73879C' );
 				$title = esc_html_x( 'Cached Files', 'Noun - Number of already cached files.', 'opcache-manager' );
 				$help  = esc_html__( 'Number of compiled and cached files.', 'opcache-manager' );
 				break;
