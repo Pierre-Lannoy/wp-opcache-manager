@@ -279,7 +279,7 @@ class Schema {
 	 * @since    1.0.0
 	 */
 	public static function get_time_series( $filter, $cache = true, $extra_field = '', $extras = [], $not = false, $limit = 0 ) {
-		$data   = self::get_grouped_list( 'timestamp', [], $filter, $cache, $extra_field, $extras, $not, 'ORDER BY timestamp ASC', $limit );
+		$data   = self::get_list( $filter, $cache, $extra_field, $extras, $not, 'ORDER BY timestamp ASC', $limit );
 		$result = [];
 		foreach ( $data as $datum ) {
 			$result[ $datum['timestamp'] ] = $datum;
@@ -290,8 +290,6 @@ class Schema {
 	/**
 	 * Get the standard KPIs.
 	 *
-	 * @param   string  $group       The group of the query.
-	 * @param   array   $count       The sub-groups of the query.
 	 * @param   array   $filter      The filter of the query.
 	 * @param   boolean $cache       Has the query to be cached.
 	 * @param   string  $extra_field Optional. The extra field to filter.
@@ -302,9 +300,9 @@ class Schema {
 	 * @return  array   The standard KPIs.
 	 * @since    1.0.0
 	 */
-	public static function get_grouped_list( $group, $count, $filter, $cache = true, $extra_field = '', $extras = [], $not = false, $order = '', $limit = 0 ) {
+	public static function get_list( $filter, $cache = true, $extra_field = '', $extras = [], $not = false, $order = '', $limit = 0 ) {
 		// phpcs:ignore
-		$id = Cache::id( __FUNCTION__ . $group . serialize( $count ) . serialize( $filter ) . $extra_field . serialize( $extras ) . ( $not ? 'no' : 'yes') . $order . (string) $limit);
+		$id = Cache::id( __FUNCTION__ . serialize( $filter ) . $extra_field . serialize( $extras ) . ( $not ? 'no' : 'yes') . $order . (string) $limit);
 		if ( $cache ) {
 			$result = Cache::get_global( $id );
 			if ( $result ) {
@@ -315,17 +313,8 @@ class Schema {
 		if ( 0 < count( $extras ) && '' !== $extra_field ) {
 			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( $extras, "', '" ) . "' )";
 		}
-		$cnt = [];
-		foreach ( $count as $c ) {
-			$cnt[] = 'count(distinct(' . $c . ')) as cnt_' . $c;
-		}
-		$c = implode( ', ', $cnt );
-		if ( 0 < strlen( $c ) ) {
-			$c = $c . ', ';
-		}
 		global $wpdb;
-		$sql  = 'SELECT ' . ( '' !== $group && 'id' !== $group && 'authority' !== $group ? $group . ', ' : '' ) . $c . 'id, authority, sum(hit) as sum_hit, sum(kb_in) as sum_kb_in, sum(kb_out) as sum_kb_out, sum(hit*latency_avg)/sum(hit) as avg_latency, min(latency_min) as min_latency, max(latency_max) as max_latency FROM ';
-		$sql .= $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra . ' GROUP BY ' . $group . ' ' . $order . ( $limit > 0 ? 'LIMIT ' . $limit : '') .';';
+		$sql = 'SELECT * FROM ' . $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra . ' ' . $order . ( $limit > 0 ? 'LIMIT ' . $limit : '' ) . ';';
 		// phpcs:ignore
 		$result = $wpdb->get_results( $sql, ARRAY_A );
 		if ( is_array( $result ) && 0 < count( $result ) ) {
