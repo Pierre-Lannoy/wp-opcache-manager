@@ -144,6 +144,8 @@ class Analytics {
 				return $this->query_chart();*/
 			case 'kpi':
 				return $this->query_kpi( $queried );
+			case 'events':
+				return $this->query_events();
 			/*case 'top-domains':
 				return $this->query_top( 'domains', (int) $queried );
 			case 'top-authorities':
@@ -369,57 +371,206 @@ class Analytics {
 	/**
 	 * Query statistics table.
 	 *
+	 * @return array  The result of the query, ready to encode.
+	 * @since    1.0.0
+	 */
+	private function query_events() {
+		$data    = Schema::get_list( $this->filter, ! $this->is_today, '', [], false, 'ORDER BY timestamp ASC' );
+		$result  = '<table class="opcm-table">';
+		$result .= '<tr>';
+		$result .= '<th>&nbsp;</th>';
+		$result .= '<th>' . esc_html__( 'Timeframe', 'opcache-manager' ) . '</th>';
+		$result .= '<th>' . esc_html__( 'Details', 'opcache-manager' ) . '</th>';
+		$result .= '</tr>';
+		$found   = false;
+		foreach ( $data as $key => $row ) {
+			$op      = $row['reset'];
+			$name    = '';
+			$time    = '';
+			$details = '';
+			$str     = [];
+			switch ( $row['reset'] ) {
+				case 'oom':
+					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'cpu', 'none', '#73879C' ) . '" />';
+					$name = esc_html__( 'Reset due to free memory exhaustion.', 'opcache-manager' );
+					break;
+				case 'hash':
+					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'database', 'none', '#73879C' ) . '" />';
+					$name = esc_html__( 'Reset due to excessive keys saturation.', 'opcache-manager' );
+					break;
+				case 'manual':
+					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'settings', 'none', '#73879C' ) . '" />';
+					$name = esc_html__( 'Programmatic or manual reset.', 'opcache-manager' );
+			}
+			switch ( $row['status'] ) {
+				case 'reset_warmup':
+					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'clock', 'none', '#73879C' ) . '" />';
+					$name = esc_html__( 'Programmatic reset and warm-up.', 'opcache-manager' );
+					$op   = $row['status'];
+					break;
+				case 'warmup':
+					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'mouse-pointer', 'none', '#73879C' ) . '" />';
+					$name = esc_html__( 'Manual warm-up.', 'opcache-manager' );
+					$op   = $row['status'];
+					break;
+				case 'cache_full':
+					if ( array_key_exists( $key - 1, $data ) && 'cache_full' !== $data[ $key - 1 ]['status'] ) {
+						$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'alert-triangle', 'none', '#73879C' ) . '" />';
+						$name = esc_html__( 'Cache is full.', 'opcache-manager' );
+						$op   = $row['status'];
+					}
+					break;
+			}
+			switch ( $row['status'] ) {
+				case 'disabled':
+					if ( array_key_exists( $key - 1, $data ) && 'disabled' !== $data[ $key - 1 ]['status'] ) {
+						$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'power', 'none', '#73879C' ) . '" />';
+						$name = esc_html__( 'OPcache disabled.', 'opcache-manager' );
+						$op   = $row['status'];
+					}
+					break;
+				default:
+					if ( array_key_exists( $key - 1, $data ) && 'disabled' === $data[ $key - 1 ]['status'] ) {
+						$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'power', 'none', '#73879C' ) . '" />';
+						$name = esc_html__( 'OPcache enabled.', 'opcache-manager' );
+						$op   = 'enabled';
+					}
+			}
+			if ( array_key_exists( $key - 1, $data ) && 'recycle_in_progress' === $data[ $key - 1 ]['status'] ) {
+				$op = 'recycle_in_progress';
+			}
+			$conf = [];
+			if ( array_key_exists( $key - 1, $data ) ) {
+				foreach ( [ 'mem', 'key', 'buf' ] as $idx ) {
+					if ( $row[ $idx . '_total' ] !== $data[ $key - 1 ][ $idx . '_total' ] ) {
+						$conf[] = $idx;
+					}
+				}
+			}
+			if ( 0 < count( $conf ) && 'disabled' !== $op && 'enabled' !== $op && 'recycle_in_progress' !== $op ) {
+				foreach ( $conf as $idx ) {
+					$val = $row[ $idx . '_total' ] - $data[ $key - 1 ][ $idx . '_total' ];
+					switch ( $idx ) {
+						case 'mem':
+							if ( 0 < $val ) {
+								$str[] = sprintf( esc_html__( 'Total memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							} elseif ( 0 > $val ) {
+								$str[] = sprintf( esc_html__( 'Total memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							}
+							$op = 'settings';
+							break;
+						case 'buf':
+							if ( 0 < $val ) {
+								$str[] = sprintf( esc_html__( 'Total buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							} elseif ( 0 > $val ) {
+								$str[] = sprintf( esc_html__( 'Total buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							}
+							$op = 'settings';
+							break;
+						case 'key':
+							if ( 0 < $val ) {
+								$str[] = sprintf( esc_html__( 'Maximum keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+							} elseif ( 0 > $val ) {
+								$str[] = sprintf( esc_html__( 'Maximum keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+							}
+							$op = 'settings';
+							break;
+					}
+				}
+			}
+			if ( 'none' === $op || '' === $name ) {
+				continue;
+			}
+			$found     = true;
+			$timestamp = new \DateTime( $row['timestamp'] );
+			$timestamp->setTimezone( $this->timezone );
+			$time = $timestamp->format( 'Y-m-d H:i:s' );
+
+
+
+
+
+			if ( 0 < count( $str ) ) {
+				$sicon    = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'tool', 'none', '#73879C' ) . '" />';
+				$sname    = esc_html__( 'Settings changed.', 'opcache-manager' );
+				$sdetails = implode( ' ', $str );
+				$row_str  = '<tr>';
+				$row_str .= '<td data-th="">' . $sicon . '&nbsp;&nbsp;<span class="opcm-table-text">' . $sname . '</span></td>';
+				$row_str .= '<td data-th="' . esc_html__( 'Timeframe', 'opcache-manager' ) . '">' . $time . '</td>';
+				$row_str .= '<td data-th="' . esc_html__( 'Details', 'opcache-manager' ) . '">' . $sdetails . '</td>';
+				$row_str .= '</tr>';
+				$result  .= $row_str;
+			}
+			$str = [];
+			switch ( $op ) {
+				case 'oom':
+				case 'hash':
+				case 'manual':
+				case 'reset_warmup':
+					if ( array_key_exists( $key - 1, $data ) ) {
+						$val = ( $row['mem_total'] - $row['mem_used'] - $row['mem_wasted'] ) - ( $data[ $key - 1 ]['mem_total'] - $data[ $key - 1 ]['mem_used'] - $data[ $key - 1 ]['mem_wasted'] );
+						if ( 0 < $val ) {
+							$str[] = sprintf( esc_html__( 'Free memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+						} elseif ( 0 > $val ) {
+							$str[] = sprintf( esc_html__( 'Free memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+						}
+						$val = ( $row['buf_total'] - $row['buf_used'] ) - ( $data[ $key - 1 ]['buf_total'] - $data[ $key - 1 ]['buf_used'] );
+						if ( 0 < $val ) {
+							$str[] = sprintf( esc_html__( 'Free buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+						} elseif ( 0 > $val ) {
+							$str[] = sprintf( esc_html__( 'Free buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+						}
+						$val = ( $row['key_total'] - $row['key_used'] ) - ( $data[ $key - 1 ]['key_total'] - $data[ $key - 1 ]['key_used'] );
+						if ( 0 < $val ) {
+							$str[] = sprintf( esc_html__( 'Free keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+						} elseif ( 0 > $val ) {
+							$str[] = sprintf( esc_html__( 'Free keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+						}
+					}
+					$details = implode( ' ', $str );
+					break;
+				case 'warmup':
+				case 'disabled':
+				case 'enabled':
+					break;
+				case 'cache_full':
+					$details = sprintf( esc_html__( 'Current wasted memory: %s.', 'opcache-manager' ), Conversion::data_shorten( $row['mem_wasted'], 0 ) );
+					break;
+			}
+			if ( '' === $details ) {
+				$details = '-';
+			}
+			$row_str  = '<tr>';
+			$row_str .= '<td data-th="">' . $icon . '&nbsp;&nbsp;<span class="opcm-table-text">' . $name . '</span></td>';
+			$row_str .= '<td data-th="' . esc_html__( 'Timeframe', 'opcache-manager' ) . '">' . $time . '</td>';
+			$row_str .= '<td data-th="' . esc_html__( 'Details', 'opcache-manager' ) . '">' . $details . '</td>';
+			$row_str .= '</tr>';
+			$result  .= $row_str;
+		}
+		if ( ! $found ) {
+			$row_str  = '<tr>';
+			$row_str .= '<td data-th=""><em>' . esc_html__( 'No status events in the selected time range.', 'opcache-manager' ) . '</em></span></td>';
+			$row_str .= '<td data-th="' . esc_html__( 'Timeframe', 'opcache-manager' ) . '">&nbsp;</td>';
+			$row_str .= '<td data-th="' . esc_html__( 'Details', 'opcache-manager' ) . '">&nbsp;</td>';
+			$row_str .= '</tr>';
+			$result  .= $row_str;
+		}
+		$result .= '</table>';
+		return [ 'opcm-events' => $result ];
+	}
+
+	/**
+	 * Query statistics table.
+	 *
 	 * @param   string $type    The type of list.
 	 * @return array  The result of the query, ready to encode.
 	 * @since    1.0.0
 	 */
 	private function query_list( $type ) {
-		$follow     = '';
-		$has_detail = false;
-		$detail     = '';
-		switch ( $type ) {
-			case 'domains':
-				$group      = 'id';
-				$follow     = 'domain';
-				$has_detail = true;
-				break;
-			case 'authorities':
-				$group      = 'authority';
-				$follow     = 'authority';
-				$has_detail = true;
-				break;
-			case 'endpoints':
-				$group  = 'endpoint';
-				$follow = 'endpoint';
-				break;
-			case 'codes':
-				$group = 'code';
-				break;
-			case 'schemes':
-				$group = 'scheme';
-				break;
-			case 'methods':
-				$group = 'verb';
-				break;
-			case 'countries':
-				$group = 'country';
-				break;
-			case 'sites':
-				$group  = 'site';
-				$follow = 'summary';
-				break;
-		}
-		$data         = Schema::get_grouped_list( $group, [ 'authority', 'endpoint' ], $this->filter, ! $this->is_today, '', [], false, 'ORDER BY sum_hit DESC' );
-		$detail_name  = esc_html__( 'Details', 'opcache-manager' );
-		$calls_name   = esc_html__( 'Calls', 'opcache-manager' );
-		$data_name    = esc_html__( 'Data Volume', 'opcache-manager' );
-		$latency_name = esc_html__( 'Latency', 'opcache-manager' );
+		$data         = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
 		$result       = '<table class="opcm-table">';
 		$result      .= '<tr>';
 		$result      .= '<th>&nbsp;</th>';
-		if ( $has_detail ) {
-			$result .= '<th>' . $detail_name . '</th>';
-		}
 		$result   .= '<th>' . $calls_name . '</th>';
 		$result   .= '<th>' . $data_name . '</th>';
 		$result   .= '<th>' . $latency_name . '</th>';
@@ -1061,111 +1212,14 @@ class Analytics {
 	 * @return string  The table ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_sites_list() {
+	public function get_events_list() {
 		$result  = '<div class="opcm-box opcm-box-full-line">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'All Sites', 'opcache-manager' ) . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-sites">' . $this->get_graph_placeholder( 200 ) . '</div>';
+		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Status Events', 'opcache-manager' ) . '</span></div>';
+		$result .= '<div class="opcm-module-content" id="opcm-events">' . $this->get_graph_placeholder( 200 ) . '</div>';
 		$result .= '</div>';
 		$result .= $this->get_refresh_script(
 			[
-				'query'   => 'sites',
-				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the domains list.
-	 *
-	 * @return string  The table ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_domains_list() {
-		$result  = '<div class="opcm-box opcm-box-full-line">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'All Domains', 'opcache-manager' ) . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-domains">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'domains',
-				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the authorities list.
-	 *
-	 * @return string  The table ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_authorities_list() {
-		$result  = '<div class="opcm-box opcm-box-full-line">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'All Subdomains', 'opcache-manager' ) . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-authorities">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'authorities',
-				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the endpoints list.
-	 *
-	 * @return string  The table ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_endpoints_list() {
-		$result  = '<div class="opcm-box opcm-box-full-line">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'All Endpoints', 'opcache-manager' ) . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-endpoints">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'endpoints',
-				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the extra list.
-	 *
-	 * @return string  The table ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_extra_list() {
-		switch ( $this->extra ) {
-			case 'codes':
-				$title = esc_html__( 'All HTTP Codes', 'opcache-manager' );
-				break;
-			case 'schemes':
-				$title = esc_html__( 'All Protocols', 'opcache-manager' );
-				break;
-			case 'methods':
-				$title = esc_html__( 'All Methods', 'opcache-manager' );
-				break;
-			case 'countries':
-				$title = esc_html__( 'All Countries', 'opcache-manager' );
-				break;
-			default:
-				$title = esc_html__( 'All Endpoints', 'opcache-manager' );
-
-		}
-		$result  = '<div class="opcm-box opcm-box-full-line">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . $title . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-' . $this->extra . '">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => $this->extra,
+				'query'   => 'events',
 				'queried' => 0,
 			]
 		);
@@ -1561,14 +1615,6 @@ class Analytics {
 			}
 			$result .= $s . ',';
 		}
-		if ( '' !== $this->id ) {
-			$result .= '  id:"' . $this->id . '",';
-		}
-		$result .= '  type:"' . $this->type . '",';
-		if ( '' !== $this->context ) {
-			$result .= '  context:"' . $this->context . '",';
-		}
-		$result .= '  site:"' . $this->site . '",';
 		$result .= '  start:"' . $this->start . '",';
 		$result .= '  end:"' . $this->end . '",';
 		$result .= ' };';
@@ -1594,25 +1640,9 @@ class Analytics {
 	 * @since    1.0.0
 	 */
 	private function get_url( $exclude = [], $replace = [] ) {
-		$params         = [];
-		$params['type'] = $this->type;
-		$params['site'] = $this->site;
-		if ( '' !== $this->id ) {
-			$params['id'] = $this->id;
-		}
-		if ( '' !== $this->extra ) {
-			$params['extra'] = $this->extra;
-		}
+		$params          = [];
 		$params['start'] = $this->start;
 		$params['end']   = $this->end;
-		if ( ! ( $this->is_inbound && $this->is_outbound ) ) {
-			if ( $this->is_inbound ) {
-				$params['context'] = 'inbound';
-			}
-			if ( $this->is_outbound ) {
-				$params['context'] = 'outbound';
-			}
-		}
 		foreach ( $exclude as $arg ) {
 			unset( $params[ $arg ] );
 		}
@@ -1626,65 +1656,6 @@ class Analytics {
 			}
 		}
 		return $url;
-	}
-
-	/**
-	 * Get a large kpi box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	private function get_switch_box( $bound ) {
-		$enabled = false;
-		$other   = false;
-		$other_t = 'both';
-		if ( 'inbound' === $bound ) {
-			$enabled = $this->has_inbound;
-			$other   = $this->is_outbound;
-			$other_t = 'outbound';
-		}
-		if ( 'outbound' === $bound ) {
-			$enabled = $this->has_outbound;
-			$other   = $this->is_inbound;
-			$other_t = 'inbound';
-		}
-		if ( $enabled ) {
-			$opacity = '';
-			if ( 'inbound' === $bound ) {
-				$checked = $this->is_inbound;
-			}
-			if ( 'outbound' === $bound ) {
-				$checked = $this->is_outbound;
-			}
-		} else {
-			$opacity = ' style="opacity:0.4"';
-			$checked = false;
-		}
-		$result = '<input type="checkbox" class="opcm-input-' . $bound . '-switch"' . ( $checked ? ' checked' : '' ) . ' />';
-		// phpcs:ignore
-		$result .= '&nbsp;<span class="opcm-text-' . $bound . '-switch"' . $opacity . '>' . esc_html__( $bound, 'opcache-manager' ) . '</span>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var elem = document.querySelector(".opcm-input-' . $bound . '-switch");';
-		$result .= ' var params = {size: "small", color: "#5A738E", disabledOpacity:0.6 };';
-		$result .= ' var ' . $bound . ' = new Switchery(elem, params);';
-		if ( $enabled ) {
-			$result .= ' ' . $bound . '.enable();';
-		} else {
-			$result .= ' ' . $bound . '.disable();';
-		}
-		$result .= ' elem.onchange = function() {';
-		$result .= '  var url="' . $this->get_url( [ 'context' ], [ 'domain' => $this->domain ] ) . '";';
-		if ( $other ) {
-			$result .= ' if (!elem.checked) {url = url + "&context=' . $other_t . '";}';
-		} else {
-			$result .= ' if (elem.checked) {url = url + "&context=' . $other_t . '";}';
-		}
-		$result .= '  $(location).attr("href", url);';
-		$result .= ' };';
-		$result .= '});';
-		$result .= '</script>';
-		return $result;
 	}
 
 	/**
@@ -1721,7 +1692,7 @@ class Analytics {
 		$result .= ' }, changeDate);';
 		$result .= ' changeDate(start, end);';
 		$result .= ' $(".opcm-datepicker").on("apply.daterangepicker", function(ev, picker) {';
-		$result .= '  var url = "' . $this->get_url( [ 'start', 'end' ], [ 'domain' => $this->domain ] ) . '" + "&start=" + picker.startDate.format("YYYY-MM-DD") + "&end=" + picker.endDate.format("YYYY-MM-DD");';
+		$result .= '  var url = "' . $this->get_url( [ 'start', 'end' ] ) . '" + "&start=" + picker.startDate.format("YYYY-MM-DD") + "&end=" + picker.endDate.format("YYYY-MM-DD");';
 		$result .= '  $(location).attr("href", url);';
 		$result .= ' });';
 		$result .= '});';

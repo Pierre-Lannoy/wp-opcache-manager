@@ -33,64 +33,8 @@ wp_enqueue_style( 'opcm-chartist-tooltip' );
         <div class="opcm-row">
 	        <?php echo $analytics->get_kpi_bar() ?>
         </div>
-        <?php if ( 'summary' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-                <div class="opcm-box opcm-box-40-60-line">
-                    <?php echo $analytics->get_top_domain_box() ?>
-                    <?php echo $analytics->get_map_box() ?>
-                </div>
-            </div>
-		<?php } ?>
-		<?php if ( 'domain' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-                <div class="opcm-box opcm-box-40-60-line">
-					<?php echo $analytics->get_top_authority_box() ?>
-					<?php echo $analytics->get_map_box() ?>
-                </div>
-            </div>
-		<?php } ?>
-		<?php if ( 'authority' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-                <div class="opcm-box opcm-box-40-60-line">
-					<?php echo $analytics->get_top_endpoint_box() ?>
-					<?php echo $analytics->get_map_box() ?>
-                </div>
-            </div>
-		<?php } ?>
-		<?php if ( ( 'summary' === $analytics->type || 'domain' === $analytics->type || 'authority' === $analytics->type || 'endpoint' === $analytics->type ) && '' === $analytics->extra ) { ?>
-			<?php echo $analytics->get_main_chart() ?>
-            <div class="opcm-row">
-                <div class="opcm-box opcm-box-33-33-33-line">
-					<?php echo $analytics->get_codes_box() ?>
-					<?php echo $analytics->get_security_box() ?>
-					<?php echo $analytics->get_method_box() ?>
-                </div>
-            </div>
-		<?php } ?>
-		<?php if ( 'summary' === $analytics->type && '' === $analytics->extra && Role::SUPER_ADMIN === Role::admin_type() && 'all' === $analytics->site) { ?>
-            <div class="opcm-row last-row">
-	            <?php echo $analytics->get_sites_list() ?>
-            </div>
-		<?php } ?>
-		<?php if ( 'domains' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-	            <?php echo $analytics->get_domains_list() ?>
-            </div>
-		<?php } ?>
-		<?php if ( 'authorities' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-				<?php echo $analytics->get_authorities_list() ?>
-            </div>
-		<?php } ?>
-		<?php if ( 'endpoints' === $analytics->type && '' === $analytics->extra ) { ?>
-            <div class="opcm-row">
-				<?php echo $analytics->get_endpoints_list() ?>
-            </div>
-		<?php } ?>
-		<?php if ( '' !== $analytics->extra ) { ?>
-            <div class="opcm-row">
-				<?php echo $analytics->get_extra_list() ?>
-            </div>
-		<?php } ?>
+        <div class="opcm-row">
+			<?php echo $analytics->get_events_list() ?>
+        </div>
 	</div>
 </div>
