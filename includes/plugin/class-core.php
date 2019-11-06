@@ -88,6 +88,12 @@ class Core {
 		add_shortcode( 'opcm-changelog', [ $updater, 'sc_get_changelog' ] );
 		add_shortcode( 'opcm-libraries', [ $libraries, 'sc_get_list' ] );
 		add_shortcode( 'opcm-statistics', [ 'OPcacheManager\System\Statistics', 'sc_get_raw' ] );
+		$event = wp_get_scheduled_event( OPCM_CRON_RESET_NAME );
+		if ( false !== $event ) {
+			if ( Option::network_get( 'reset_frequency' ) !== $event->schedule ) {
+				wp_clear_scheduled_hook( OPCM_CRON_RESET_NAME );
+			}
+		}
 		if ( 'never' !== Option::network_get( 'reset_frequency' ) ) {
 			$this->loader->add_action( OPCM_CRON_RESET_NAME, 'OPcacheManager\System\OPcache', 'reset' );
 		}
