@@ -484,12 +484,9 @@ class Analytics {
 			$found     = true;
 			$timestamp = new \DateTime( $row['timestamp'] );
 			$timestamp->setTimezone( $this->timezone );
-			$time = $timestamp->format( 'Y-m-d H:i:s' );
-
-
-
-
-
+			$time = $timestamp->format( 'H:i' );
+			$timestamp->sub( new \DateInterval( 'PT5M' ) );
+			$time = $timestamp->format( 'Y-m-d H:i' ) . ' ⇥ ' . $time;
 			if ( 0 < count( $str ) ) {
 				$sicon    = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'tool', 'none', '#73879C' ) . '" />';
 				$sname    = esc_html__( 'Settings changed.', 'opcache-manager' );
@@ -1073,7 +1070,7 @@ class Analytics {
 					$data_value = (float) $data['avg_mem_total'] - (float) $data['avg_mem_used'] - (float) $data['avg_mem_wasted'];
 				}
 				if ( is_array( $pdata ) && array_key_exists( 'avg_mem_total', $pdata ) && ! empty( $pdata['avg_mem_total'] ) && array_key_exists( 'avg_mem_used', $pdata ) && ! empty( $pdata['avg_mem_used'] ) && array_key_exists( 'avg_mem_wasted', $pdata ) && ! empty( $pdata['avg_mem_wasted'] ) ) {
-					$base_value  = (float) $pdata['avg_mem_total'];
+					$pbase_value = (float) $pdata['avg_mem_total'];
 					$pdata_value = (float) $pdata['avg_mem_total'] - (float) $pdata['avg_mem_used'] - (float) $pdata['avg_mem_wasted'];
 				}
 			}
@@ -1109,7 +1106,7 @@ class Analytics {
 			}
 			switch ( $queried ) {
 				case 'ratio':
-					if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) && ! empty( $data['sum_hit'] ) ) {
+					if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) ) {
 						$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s hits', 'opcache-manager' ), Conversion::number_shorten( $data['sum_hit'], 2 ) ) . '</span>';
 					}
 					break;
