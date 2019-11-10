@@ -12,6 +12,7 @@ namespace OPcacheManager\Plugin;
 use OPcacheManager\Plugin\Feature\Analytics;
 use OPcacheManager\Plugin\Feature\AnalyticsFactory;
 use OPcacheManager\System\Assets;
+use OPcacheManager\System\Environment;
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Role;
 use OPcacheManager\System\Option;
@@ -272,7 +273,7 @@ class Opcache_Manager_Admin {
 		}
 		add_settings_field(
 			'opcm_plugin_options_logger',
-			__( 'Logging', 'opcache-manager' ),
+			esc_html__( 'Logging', 'opcache-manager' ),
 			[ $form, 'echo_field_simple_text' ],
 			'opcm_plugin_options_section',
 			'opcm_plugin_options_section',
@@ -283,7 +284,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_logger' );
 		add_settings_field(
 			'opcm_plugin_options_usecdn',
-			__( 'Resources', 'opcache-manager' ),
+			esc_html__( 'Resources', 'opcache-manager' ),
 			[ $form, 'echo_field_checkbox' ],
 			'opcm_plugin_options_section',
 			'opcm_plugin_options_section',
@@ -299,7 +300,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_usecdn' );
 		add_settings_field(
 			'opcm_plugin_options_autoupdate',
-			__( 'Plugin updates', 'opcache-manager' ),
+			esc_html__( 'Plugin updates', 'opcache-manager' ),
 			[ $form, 'echo_field_checkbox' ],
 			'opcm_plugin_options_section',
 			'opcm_plugin_options_section',
@@ -315,7 +316,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_autoupdate' );
 		add_settings_field(
 			'opcm_plugin_options_nag',
-			__( 'Admin notices', 'opcache-manager' ),
+			esc_html__( 'Admin notices', 'opcache-manager' ),
 			[ $form, 'echo_field_checkbox' ],
 			'opcm_plugin_options_section',
 			'opcm_plugin_options_section',
@@ -374,7 +375,7 @@ class Opcache_Manager_Admin {
 		$form = new Form();
 		add_settings_field(
 			'opcm_plugin_features_analytics',
-			__( 'Analytics', 'opcache-manager' ),
+			esc_html__( 'Analytics', 'opcache-manager' ),
 			[ $form, 'echo_field_checkbox' ],
 			'opcm_plugin_features_section',
 			'opcm_plugin_features_section',
@@ -390,7 +391,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_analytics' );
 		add_settings_field(
 			'opcm_plugin_features_history',
-			__( 'Historical data', 'opcache-manager' ),
+			esc_html__( 'Historical data', 'opcache-manager' ),
 			[ $form, 'echo_field_select' ],
 			'opcm_plugin_features_section',
 			'opcm_plugin_features_section',
@@ -406,7 +407,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_history' );
 		add_settings_field(
 			'opcm_plugin_features_reset_frequency',
-			__( 'Reset OPcache', 'opcache-manager' ),
+			esc_html__( 'Reset OPcache', 'opcache-manager' ),
 			[ $form, 'echo_field_select' ],
 			'opcm_plugin_features_section',
 			'opcm_plugin_features_section',
@@ -420,10 +421,16 @@ class Opcache_Manager_Admin {
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_reset_frequency' );
-
+		if ( Environment::is_wordpress_multisite() ) {
+			$warmup      = esc_html__( 'Network warm-up', 'opcache-manager' );
+			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full network (all sites) after each automatic reset.', 'opcache-manager' );
+		} else {
+			$warmup      = esc_html__( 'Site warm-up', 'opcache-manager' );
+			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager' );
+		}
 		add_settings_field(
 			'opcm_plugin_features_warmup',
-			__( 'Site warm-up', 'opcache-manager' ),
+			$warmup,
 			[ $form, 'echo_field_checkbox' ],
 			'opcm_plugin_features_section',
 			'opcm_plugin_features_section',
@@ -431,7 +438,7 @@ class Opcache_Manager_Admin {
 				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
 				'id'          => 'opcm_plugin_features_warmup',
 				'checked'     => Option::network_get( 'warmup' ),
-				'description' => esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager' ),
+				'description' => $description,
 				'full_width'  => true,
 				'enabled'     => true,
 			]

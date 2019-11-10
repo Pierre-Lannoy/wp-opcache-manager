@@ -162,11 +162,25 @@ class OPcache {
 	 * @since   1.0.0
 	 */
 	public static function reset( $automatic = true ) {
-		if ( function_exists( 'opcache_reset' ) ) {
-			opcache_reset();
-			Logger::info( $automatic ? 'OPcache reset initiated via cron.' : 'OPcache reset initiated via manual action.' );
-			if ( $automatic && Option::network_get( 'warmup' ) ) {
-				self::warmup();
+		if ( $automatic && Option::network_get( 'warmup' ) ) {
+			self::warmup( $automatic, true );
+		} else {
+			$files = [];
+			if ( function_exists( 'opcache_get_status' ) ) {
+				try {
+					$raw = opcache_get_status( true );
+					if ( array_key_exists( 'scripts', $raw ) ) {
+						foreach ( $raw['scripts'] as $script ) {
+							if ( false === strpos( $script['full_path'], ABSPATH ) ) {
+								continue;
+							}
+							$files[] = str_replace( ABSPATH, './', $script['full_path'] );
+						}
+						self::invalidate( $files, true );
+					}
+				} catch ( \Throwable $e ) {
+					Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
+				}
 			}
 		}
 	}
@@ -175,22 +189,31 @@ class OPcache {
 	 * Warm-up the site.
 	 *
 	 * @param   boolean $automatic Optional. Is the warmup done (via cron, for example).
+	 * @param   boolean $force Optional. Has invalidation to be forced.
 	 * @return integer The number of recompiled files.
 	 * @since   1.0.0
 	 */
-	public static function warmup( $automatic = true ) {
+	public static function warmup( $automatic = true, $force = false ) {
 		$files = [];
 		foreach ( File::list_files( ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
 			$files[] = str_replace( ABSPATH, './', $file );
 		}
-		Logger::info( $automatic ? 'Site warm-up initiated via cron.' : 'Site warmed-up initiated via manual action.' );
-		$result = self::recompile( $files );
+		if ( Environment::is_wordpress_multisite() ) {
+			Logger::info( $automatic ? 'Network reset and warm-up initiated via cron.' : 'Network warm-up initiated via manual action.' );
+		} else {
+			Logger::info( $automatic ? 'Site reset and warm-up initiated via cron.' : 'Site warm-up initiated via manual action.' );
+		}
+		$result = self::recompile( $files, $force );
 		if ( $automatic ) {
 			Cache::set_global( '/Data/ResetWarmupTimestamp', time(), 'check' );
 		} else {
 			Cache::set_global( '/Data/WarmupTimestamp', time(), 'check' );
 		}
-		Logger::info( sprintf( 'Site warm-up terminated. %d files were recompiled', $result ) );
+		if ( Environment::is_wordpress_multisite() ) {
+			Logger::info( sprintf( 'Network warm-up terminated. %d files were recompiled', $result ) );
+		} else {
+			Logger::info( sprintf( 'Site warm-up terminated. %d files were recompiled', $result ) );
+		}
 		return $result;
 	}
 

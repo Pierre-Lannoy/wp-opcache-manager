@@ -16,6 +16,7 @@ use OPcacheManager\System\Logger;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\OPcache;
+use OPcacheManager\System\Environment;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -650,9 +651,14 @@ class Scripts extends \WP_List_Table {
 	public function process_action() {
 		switch ( $this->action ) {
 			case 'warmup':
-				// phpcs:ignore
-				$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
-				$code    = 0;
+				if ( Environment::is_wordpress_multisite() ) {
+					// phpcs:ignore
+					$message = esc_html( sprintf( __( 'Network warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
+				} else {
+					// phpcs:ignore
+					$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
+				}
+				$code = 0;
 				break;
 			case 'reset':
 				OPcache::reset( false );
