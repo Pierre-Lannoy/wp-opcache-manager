@@ -23,10 +23,6 @@
     --kpi-small-font-size: 10px;
     --kpi-small-font-weight: 100;
     --kpi-small-letter-spacing: 0.1px;
-
-    --tooltip-font-color: #FFFFFF;
-    --tooltip-background-color: #73879C;
-    --tooltip-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
 }
 
 .opcm-about-logo {

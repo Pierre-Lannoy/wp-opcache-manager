@@ -1,7 +1,7 @@
 :root {
-    --tooltip-font-color: #FFFFFF;
-    --tooltip-background-color: #73879C;
-    --tooltip-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
+    --tooltip-font-color: #FFFFFF !important;
+    --tooltip-background-color: #73879C !important;
+    --tooltip-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 

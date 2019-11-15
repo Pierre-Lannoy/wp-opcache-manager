@@ -346,7 +346,7 @@ class Analytics {
 			$result .= '</div>';
 			$result .= '<div class="opcm-top-line-content">';
 			$result .= '<div class="opcm-bar-graph"><div class="opcm-bar-graph-value" style="width:' . $percent . '%"></div></div>';
-			$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $data[ $cpt ]['sum_hit'], 2 ) . '</div>';
+			$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $data[ $cpt ]['sum_hit'], 2, false, '&nbsp;' ) . '</div>';
 			$result .= '</div>';
 			$result .= '</div>';
 			++$cpt;
@@ -362,7 +362,7 @@ class Analytics {
 		$result .= '</div>';
 		$result .= '<div class="opcm-top-line-content">';
 		$result .= '<div class="opcm-bar-graph"><div class="opcm-bar-graph-value" style="width:' . $percent . '%"></div></div>';
-		$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $other, 2 ) . '</div>';
+		$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $other, 2, false, '&nbsp;' ) . '</div>';
 		$result .= '</div>';
 		$result .= '</div>';
 		return [ 'opcm-top-' . $type => $result ];
@@ -453,25 +453,25 @@ class Analytics {
 					switch ( $idx ) {
 						case 'mem':
 							if ( 0 < $val ) {
-								$str[] = sprintf( esc_html__( 'Total memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Total memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 							} elseif ( 0 > $val ) {
-								$str[] = sprintf( esc_html__( 'Total memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Total memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 							}
 							$op = 'settings';
 							break;
 						case 'buf':
 							if ( 0 < $val ) {
-								$str[] = sprintf( esc_html__( 'Total buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Total buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 							} elseif ( 0 > $val ) {
-								$str[] = sprintf( esc_html__( 'Total buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Total buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 							}
 							$op = 'settings';
 							break;
 						case 'key':
 							if ( 0 < $val ) {
-								$str[] = sprintf( esc_html__( 'Maximum keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Maximum keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0, false, '' ) );
 							} elseif ( 0 > $val ) {
-								$str[] = sprintf( esc_html__( 'Maximum keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+								$str[] = sprintf( esc_html__( 'Maximum keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0, false, '' ) );
 							}
 							$op = 'settings';
 							break;
@@ -507,21 +507,21 @@ class Analytics {
 					if ( array_key_exists( $key - 1, $data ) ) {
 						$val = ( $row['mem_total'] - $row['mem_used'] - $row['mem_wasted'] ) - ( $data[ $key - 1 ]['mem_total'] - $data[ $key - 1 ]['mem_used'] - $data[ $key - 1 ]['mem_wasted'] );
 						if ( 0 < $val ) {
-							$str[] = sprintf( esc_html__( 'Free memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free memory size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 						} elseif ( 0 > $val ) {
-							$str[] = sprintf( esc_html__( 'Free memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free memory size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 						}
 						$val = ( $row['buf_total'] - $row['buf_used'] ) - ( $data[ $key - 1 ]['buf_total'] - $data[ $key - 1 ]['buf_used'] );
 						if ( 0 < $val ) {
-							$str[] = sprintf( esc_html__( 'Free buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free buffer size increased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 						} elseif ( 0 > $val ) {
-							$str[] = sprintf( esc_html__( 'Free buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free buffer size decreased by %s.', 'opcache-manager' ), Conversion::data_shorten( abs( $val ), 0, false, '&nbsp;' ) );
 						}
 						$val = ( $row['key_total'] - $row['key_used'] ) - ( $data[ $key - 1 ]['key_total'] - $data[ $key - 1 ]['key_used'] );
 						if ( 0 < $val ) {
-							$str[] = sprintf( esc_html__( 'Free keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free keys slots increased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0, false, '' ) );
 						} elseif ( 0 > $val ) {
-							$str[] = sprintf( esc_html__( 'Free keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0 ) );
+							$str[] = sprintf( esc_html__( 'Free keys slots decreased by %s.', 'opcache-manager' ), Conversion::number_shorten( abs( $val ), 0, false, '' ) );
 						}
 					}
 					$details = implode( ' ', $str );
@@ -531,7 +531,7 @@ class Analytics {
 				case 'enabled':
 					break;
 				case 'cache_full':
-					$details = sprintf( esc_html__( 'Current wasted memory: %s.', 'opcache-manager' ), Conversion::data_shorten( $row['mem_wasted'], 0 ) );
+					$details = sprintf( esc_html__( 'Current wasted memory: %s.', 'opcache-manager' ), Conversion::data_shorten( $row['mem_wasted'], 0, false, '&nbsp;' ) );
 					break;
 			}
 			if ( '' === $details ) {
@@ -568,6 +568,9 @@ class Analytics {
 		$data   = [];
 		$series = [];
 		$labels = [];
+		$items  = [ 'mem_total', 'mem_used', 'mem_wasted', 'key_used', 'buf_total', 'buf_used', 'hit', 'miss', 'strings', 'scripts' ];
+		$maxhit = 0;
+		// Data normalization.
 		if ( 1 === $this->duration ) {
 			foreach ( $query as $timestamp => $row ) {
 				$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
@@ -577,35 +580,83 @@ class Analytics {
 			}
 			$end       = new \DateTime( Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() ), $this->timezone );
 			$end       = $end->getTimestamp();
-			$timestamp = new \DateTime( $timestamp, $this->timezone );
-			$timestamp = $timestamp->getTimestamp() + 300;
-			while ( $timestamp < $end ) {
-				$datetime    = new \DateTime( date( 'Y-m-d H:i:s', $timestamp ), new \DateTimeZone( 'UTC' ) );
-				$offset      = $this->timezone->getOffset( $datetime );
-				$ts          = $datetime->getTimestamp() + $offset;
-				$record      = [
-					'timestamp'  => $timestamp,
-					'status'     => 'disabled',
-					'reset'      => 'none',
-					'mem_total'  => 0,
-					'mem_used'   => 0,
-					'mem_wasted' => 0,
-					'key_used'   => 0,
-					'buf_total'  => 0,
-					'buf_used'   => 0,
-					'hit'        => 0,
-					'miss'       => 0,
-					'strings'    => 0,
-					'scripts'    => 0,
-				];
+			$datetime  = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+			$offset    = $this->timezone->getOffset( $datetime );
+			$timestamp = $datetime->getTimestamp() + 300;
+			while ( $timestamp <= $end + $offset ) {
+				$datetime = new \DateTime( date( 'Y-m-d H:i:s', $timestamp ), new \DateTimeZone( 'UTC' ) );
+				$offset   = $this->timezone->getOffset( $datetime );
+				$ts       = $datetime->getTimestamp() + $offset;
+				$record   = [];
+				foreach ( $items as $item ) {
+					$record[ $item ] = 0;
+				}
 				$data[ $ts ] = $record;
 				$timestamp   = $timestamp + 300;
 			}
 		} else {
-
+			$buffer = [];
+			foreach ( $query as $timestamp => $row ) {
+				$datetime = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+				$datetime->setTimezone( $this->timezone );
+				$buffer[ $datetime->format( 'Y-m-d' ) ][] = $row;
+			}
+			foreach ( $buffer as $timestamp => $rows ) {
+				$record = [];
+				foreach ( $items as $item ) {
+					$record[ $item ] = 0;
+				}
+				foreach ( $rows as $row ) {
+					foreach ( $items as $item ) {
+						$record[ $item ] = $record[ $item ] + $row[ $item ];
+					}
+				}
+				$cpt = count( $rows );
+				if ( 0 < $cpt ) {
+					foreach ( $items as $item ) {
+						$record[ $item ] = (int) round( $record[ $item ] / $cpt, 0 );
+					}
+				}
+				$data[ strtotime( $timestamp . ' 12:00:00' ) ] = $record;
+			}
 		}
-		$cpt = 0;
+		// Series computation.
 		foreach ( $data as $timestamp => $datum ) {
+			$ts = 'new Date(' . (string) $timestamp . '000)';
+			// Hit ratio.
+			$val = 'null';
+			if ( 0 !== (int) $datum['hit'] + (int) $datum['miss'] ) {
+				$val = round (100 * $datum['hit'] / ( $datum['hit'] + $datum['miss'] ), 3 ) ;
+			}
+			$series['ratio'][] = [
+				'x' => $ts,
+				'y' => $val,
+			];
+			// Hit distribution.
+			$val = 'null';
+			$val = (int) $datum['hit'] ;
+			$series['hit'][] = [
+				'x' => $ts,
+				'y' => $val,
+			];
+			if ( $maxhit < $val ) {
+				$maxhit = $val;
+			}
+			// Miss distribution.
+			$val = (int) $datum['miss'] ;
+			$series['miss'][] = [
+				'x' => $ts,
+				'y' => $val,
+			];
+			if ( $maxhit < $val ) {
+				$maxhit = $val;
+			}
+
+
+
+
+
+			
 			// Memory.
 			$factor                = 1024 * 1024;
 			$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
@@ -613,20 +664,19 @@ class Analytics {
 			$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
 
 
+
 			// Labels.
 			$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
-			if ( 150 > $control ) {
+			if ( 300 > $control ) {
 				$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
 				if ( 1 === strlen( $hour ) ) {
 					$hour = '0' . $hour;
 				}
-				$labels[] = $hour . ':00' ;
+				$labels[] = $hour . ':00';
 			} else {
 				$labels[] = 'null';
 			}
-
 		}
-
 
 
 
@@ -638,12 +688,129 @@ class Analytics {
 		);
 		$json_memory = str_replace( '"null"', 'null', $json_memory );
 
+		if ( 1 < $this->duration ) {
+			$shift = 86400;
+		} else {
+			$shift = 0;
+		}
+		$datetime = new \DateTime( $this->start . ' 00:00:00', $this->timezone );
+		$offset   = $this->timezone->getOffset( $datetime );
+		$datetime = $datetime->getTimestamp() + $offset;
+		$before   = [
+			'x' => 'new Date(' . (string) ( $datetime - $shift ) . '000)',
+			'y' => 'null',
+		];
+		$datetime = new \DateTime( $this->end . ' 23:59:59', $this->timezone );
+		$offset   = $this->timezone->getOffset( $datetime );
+		$datetime = $datetime->getTimestamp() + $offset;
+		$after    = [
+			'x' => 'new Date(' . (string) ( $datetime + $shift ) . '000)',
+			'y' => 'null',
+		];
+		// Hit ratio.
+		array_unshift( $series['ratio'], $before );
+		$series['ratio'][] = $after;
+		$json_ratio        = wp_json_encode(
+			[
+				'series' => [
+					[
+						'name' => esc_html__( 'Hit Ratio', 'opcache-manager' ),
+						'data' => $series['ratio'],
+					],
+				],
+			]
+		);
+		$json_ratio        = str_replace( '"x":"new', '"x":new', $json_ratio );
+		$json_ratio        = str_replace( ')","y"', '),"y"', $json_ratio );
+		$json_ratio        = str_replace( '"null"', 'null', $json_ratio );
+		// Hit & miss distribution.
+		array_unshift( $series['hit'], $before );
+		$series['hit'][] = $after;
+		array_unshift( $series['miss'], $before );
+		$series['miss'][] = $after;
+		$json_hit        = wp_json_encode(
+			[
+				'series' => [
+					[
+						'name' => esc_html__( 'Hit Count', 'traffic' ),
+						'data' => $series['hit'],
+					],
+					[
+						'name' => esc_html__( 'Miss Count', 'traffic' ),
+						'data' => $series['miss'],
+					],
+				],
+			]
+		);
+		$json_hit        = str_replace( '"x":"new', '"x":new', $json_hit );
+		$json_hit        = str_replace( ')","y"', '),"y"', $json_hit );
+		$json_hit        = str_replace( '"null"', 'null', $json_hit );
 
 
-
-
+		// Rendering.
+		if ( 4 < $this->duration ) {
+			if ( 1 === $this->duration % 2 ) {
+				$divisor = 6;
+			} else {
+				$divisor = 5;
+			}
+		} else {
+			$divisor = $this->duration + 1;
+		}
 		$result  = '<div class="opcm-multichart-handler">';
-		$result .= '<div class="opcm-multichart-item active" id="opcm-chart-memory">';
+		$result .= '<div class="opcm-multichart-item active" id="opcm-chart-ratio">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var ratio_data' . $uuid . ' = ' . $json_ratio . ';';
+		$result .= ' var ratio_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var ratio_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  fullWidth: true,';
+		$result .= '  showArea: true,';
+		$result .= '  showLine: true,';
+		$result .= '  showPoint: false,';
+		$result .= '  plugins: [ratio_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+		} else {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+		}
+		$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
+		$result .= ' };';
+		$result .= ' new Chartist.Line("#opcm-chart-ratio", ratio_data' . $uuid . ', ratio_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-hit">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var hit_data' . $uuid . ' = ' . $json_hit . ';';
+		$result .= ' var hit_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var hit_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  fullWidth: true,';
+		$result .= '  showArea: true,';
+		$result .= '  showLine: true,';
+		$result .= '  showPoint: false,';
+		$result .= '  plugins: [hit_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+		} else {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+		}
+		if ( $maxhit < 1000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+		} elseif ( $maxhit < 1000000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+		} else {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+		}
+		$result .= ' };';
+		$result .= ' new Chartist.Line("#opcm-chart-hit", hit_data' . $uuid . ', hit_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-memory">';
 		$result .= '</div>';
 		$result .= '<script>';
 		$result .= 'jQuery(function ($) {';
@@ -663,267 +830,6 @@ class Analytics {
 		$result .= '</script>';
 		$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
 		$result .= '</div>';
-
-
-/*
-
-		$data_uptime    = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', Http::$http_failure_codes, true );
-		$data_error     = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', array_diff( Http::$http_error_codes, Http::$http_quota_codes ), false );
-		$data_success   = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', Http::$http_success_codes, false );
-		$data_quota     = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', Http::$http_quota_codes, false );
-		$series_uptime  = [];
-		$suc            = [];
-		$err            = [];
-		$quo            = [];
-		$series_success = [];
-		$series_error   = [];
-		$series_quota   = [];
-		$call_max       = 0;
-		$kbin           = [];
-		$kbout          = [];
-		$series_kbin    = [];
-		$series_kbout   = [];
-		$data_max       = 0;
-		$start          = '';
-		foreach ( $data_total as $timestamp => $total ) {
-			if ( '' === $start ) {
-				$start = $timestamp;
-			}
-			$ts = 'new Date(' . (string) strtotime( $timestamp ) . '000)';
-			// Calls.
-			if ( array_key_exists( $timestamp, $data_success ) ) {
-				$val = $data_success[ $timestamp ]['sum_hit'];
-				if ( $val > $call_max ) {
-					$call_max = $val;
-				}
-				$suc[] = [
-					'x' => $ts,
-					'y' => $val,
-				];
-			} else {
-				$suc[] = [
-					'x' => $ts,
-					'y' => 0,
-				];
-			}
-			if ( array_key_exists( $timestamp, $data_error ) ) {
-				$val = $data_error[ $timestamp ]['sum_hit'];
-				if ( $val > $call_max ) {
-					$call_max = $val;
-				}
-				$err[] = [
-					'x' => $ts,
-					'y' => $val,
-				];
-			} else {
-				$err[] = [
-					'x' => $ts,
-					'y' => 0,
-				];
-			}
-			if ( array_key_exists( $timestamp, $data_quota ) ) {
-				$val = $data_quota[ $timestamp ]['sum_hit'];
-				if ( $val > $call_max ) {
-					$call_max = $val;
-				}
-				$quo[] = [
-					'x' => $ts,
-					'y' => $val,
-				];
-			} else {
-				$quo[] = [
-					'x' => $ts,
-					'y' => 0,
-				];
-			}
-			// Data.
-			$val = $total['sum_kb_in'] * 1024;
-			if ( $val > $data_max ) {
-				$data_max = $val;
-			}
-			$kbin[] = [
-				'x' => $ts,
-				'y' => $val,
-			];
-			$val    = $total['sum_kb_out'] * 1024;
-			if ( $val > $data_max ) {
-				$data_max = $val;
-			}
-			$kbout[] = [
-				'x' => $ts,
-				'y' => $val,
-			];
-			// Uptime.
-			if ( array_key_exists( $timestamp, $data_uptime ) ) {
-				if ( 0 !== $total['sum_hit'] ) {
-					$val             = round( $data_uptime[ $timestamp ]['sum_hit'] * 100 / $total['sum_hit'], 2 );
-					$series_uptime[] = [
-						'x' => $ts,
-						'y' => $val,
-					];
-				} else {
-					$series_uptime[] = [
-						'x' => $ts,
-						'y' => 100,
-					];
-				}
-			} else {
-				$series_uptime[] = [
-					'x' => $ts,
-					'y' => 100,
-				];
-			}
-		}
-		$before = [
-			'x' => 'new Date(' . (string) ( strtotime( $start ) - 86400 ) . '000)',
-			'y' => 'null',
-		];
-		$after  = [
-			'x' => 'new Date(' . (string) ( strtotime( $timestamp ) + 86400 ) . '000)',
-			'y' => 'null',
-		];
-		// Calls.
-		$short     = Conversion::number_shorten( $call_max, 2, true );
-		$call_max  = 0.5 + floor( $call_max / $short['divisor'] );
-		$call_abbr = $short['abbreviation'];
-		foreach ( $suc as $item ) {
-			$item['y']        = $item['y'] / $short['divisor'];
-			$series_success[] = $item;
-		}
-		foreach ( $err as $item ) {
-			$item['y']      = $item['y'] / $short['divisor'];
-			$series_error[] = $item;
-		}
-		foreach ( $quo as $item ) {
-			$item['y']      = $item['y'] / $short['divisor'];
-			$series_quota[] = $item;
-		}
-		array_unshift( $series_success, $before );
-		array_unshift( $series_error, $before );
-		array_unshift( $series_quota, $before );
-		$series_success[] = $after;
-		$series_error[]   = $after;
-		$series_quota[]   = $after;
-		$json_call        = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Success', 'opcache-manager' ),
-						'data' => $series_success,
-					],
-					[
-						'name' => esc_html__( 'Error', 'opcache-manager' ),
-						'data' => $series_error,
-					],
-					[
-						'name' => esc_html__( 'Quota Error', 'opcache-manager' ),
-						'data' => $series_quota,
-					],
-				],
-			]
-		);
-		$json_call        = str_replace( '"x":"new', '"x":new', $json_call );
-		$json_call        = str_replace( ')","y"', '),"y"', $json_call );
-		$json_call        = str_replace( '"null"', 'null', $json_call );
-		// Data.
-		$short     = Conversion::data_shorten( $data_max, 2, true );
-		$data_max  = (int) ceil( $data_max / $short['divisor'] );
-		$data_abbr = $short['abbreviation'];
-		foreach ( $kbin as $kb ) {
-			$kb['y']       = $kb['y'] / $short['divisor'];
-			$series_kbin[] = $kb;
-		}
-		foreach ( $kbout as $kb ) {
-			$kb['y']        = $kb['y'] / $short['divisor'];
-			$series_kbout[] = $kb;
-		}
-		array_unshift( $series_kbin, $before );
-		array_unshift( $series_kbout, $before );
-		$series_kbin[]  = $after;
-		$series_kbout[] = $after;
-		$json_data      = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Incoming Data', 'opcache-manager' ),
-						'data' => $series_kbin,
-					],
-					[
-						'name' => esc_html__( 'Outcoming Data', 'opcache-manager' ),
-						'data' => $series_kbout,
-					],
-				],
-			]
-		);
-		$json_data      = str_replace( '"x":"new', '"x":new', $json_data );
-		$json_data      = str_replace( ')","y"', '),"y"', $json_data );
-		$json_data      = str_replace( '"null"', 'null', $json_data );
-		// Uptime.
-		array_unshift( $series_uptime, $before );
-		$series_uptime[] = $after;
-		$json_uptime     = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Perceived Uptime', 'opcache-manager' ),
-						'data' => $series_uptime,
-					],
-				],
-			]
-		);
-		$json_uptime     = str_replace( '"x":"new', '"x":new', $json_uptime );
-		$json_uptime     = str_replace( ')","y"', '),"y"', $json_uptime );
-		$json_uptime     = str_replace( '"null"', 'null', $json_uptime );
-		// Rendering.
-		if ( 4 < $this->duration ) {
-			if ( 1 === $this->duration % 2 ) {
-				$divisor = 6;
-			} else {
-				$divisor = 5;
-			}
-		} else {
-			$divisor = $this->duration + 1;
-		}
-
-		*/
-
-		/*$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var data_data' . $uuid . ' = ' . $json_data . ';';
-		$result .= ' var data_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var data_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [data_tooltip' . $uuid . '],';
-		$result .= '  axisX: {type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
-		$result .= '  axisY: {type: Chartist.AutoScaleAxis, low: 0, high: ' . $data_max . ', labelInterpolationFnc: function (value) {return value.toString() + "' . $data_abbr . '";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-data", data_data' . $uuid . ', data_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-uptime">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var uptime_data' . $uuid . ' = ' . $json_uptime . ';';
-		$result .= ' var uptime_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var uptime_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [uptime_tooltip' . $uuid . '],';
-		$result .= '  axisX: {scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
-		$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + "%";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-uptime", uptime_data' . $uuid . ', uptime_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '</div>';*/
 		return [ 'opcm-main-chart' => $result ];
 	}
 
@@ -1011,12 +917,12 @@ class Analytics {
 			}
 			if ( 0.0 !== $base_value && 0.0 !== $data_value ) {
 				$current                          = 100 * $data_value / $base_value;
-				$result[ 'kpi-main-' . $queried ] = round( $current, 1 ) . '%';
+				$result[ 'kpi-main-' . $queried ] = round( $current, 1 ) . '&nbsp;%';
 			} else {
 				if ( 0.0 !== $data_value ) {
-					$result[ 'kpi-main-' . $queried ] = '100%';
+					$result[ 'kpi-main-' . $queried ] = '100&nbsp;%';
 				} elseif ( 0.0 !== $base_value ) {
-					$result[ 'kpi-main-' . $queried ] = '0%';
+					$result[ 'kpi-main-' . $queried ] = '0&nbsp;%';
 				} else {
 					$result[ 'kpi-main-' . $queried ] = '-';
 				}
@@ -1033,7 +939,7 @@ class Analytics {
 				if ( 0.1 > abs( $percent ) ) {
 					$percent = 0;
 				}
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '&nbsp;%</span>';
 			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
 				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
 			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
@@ -1042,14 +948,14 @@ class Analytics {
 			switch ( $queried ) {
 				case 'ratio':
 					if ( is_array( $data ) && array_key_exists( 'sum_hit', $data ) ) {
-						$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s hits', 'opcache-manager' ), Conversion::number_shorten( $data['sum_hit'], 2 ) ) . '</span>';
+						$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s hits', 'opcache-manager' ), Conversion::number_shorten( $data['sum_hit'], 2, false, '&nbsp;' ) ) . '</span>';
 					}
 					break;
 				case 'memory':
-					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'total memory: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0 ) ) . '</span>';
+					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'total memory: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0, false, '&nbsp;' ) ) . '</span>';
 					break;
 				case 'buffer':
-					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'buffer size: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0 ) ) . '</span>';
+					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( 'buffer size: %s', 'opcache-manager' ), Conversion::data_shorten( $base_value, 0, false, '&nbsp;' ) ) . '</span>';
 					break;
 				case 'key':
 					$result[ 'kpi-bottom-' . $queried ] = '<span class="opcm-kpi-large-bottom-text">' . sprintf( esc_html__( '%s keys (avg.)', 'opcache-manager' ), (int) round( $data_value, 0 ) ) . '</span>';
@@ -1084,7 +990,7 @@ class Analytics {
 				if ( 0.1 > abs( $percent ) ) {
 					$percent = 0;
 				}
-				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '%</span>';
+				$result[ 'kpi-index-' . $queried ] = '<span style="color:' . ( 0 <= $percent ? '#18BB9C' : '#E74C3C' ) . ';">' . ( 0 < $percent ? '+' : '' ) . $percent . '&nbsp;%</span>';
 			} elseif ( 0.0 === $previous && 0.0 !== $current ) {
 				$result[ 'kpi-index-' . $queried ] = '<span style="color:#18BB9C;">+∞</span>';
 			} elseif ( 0.0 !== $previous && 100 !== $previous && 0.0 === $current ) {
@@ -1145,12 +1051,14 @@ class Analytics {
 	 * @since    1.0.0
 	 */
 	public function get_main_chart() {
+		$help_ratio  = esc_html__( 'Hit ratio variation.', 'opcache-manager' );
+		$help_hit    = esc_html__( 'Hit and miss distribution.', 'opcache-manager' );
 		$help_memory = esc_html__( 'Memory distribution.', 'opcache-manager' );
-		$help_data   = esc_html__( 'Data volume distribution.', 'opcache-manager' );
 		$help_uptime = esc_html__( 'Uptime distribution.', 'opcache-manager' );
-		$detail      = '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-memory" data-position="left" data-tooltip="' . $help_memory . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'cpu', 'none', '#73879C' ) . '" /></span>';
-		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-data" data-position="left" data-tooltip="' . $help_data . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'link-2', 'none', '#73879C' ) . '" /></span>&nbsp;&nbsp;&nbsp;';
-		$detail     .= '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-uptime" data-position="left" data-tooltip="' . $help_uptime . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'activity', 'none', '#73879C' ) . '" /></span>';
+		$detail      = '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-ratio" data-position="left" data-tooltip="' . $help_ratio . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'award', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-hit" data-position="left" data-tooltip="' . $help_hit . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'hash', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-memory" data-position="left" data-tooltip="' . $help_memory . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'cpu', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-uptime" data-position="left" data-tooltip="' . $help_uptime . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'activity', 'none', '#73879C' ) . '" /></span>';
 		$result      = '<div class="opcm-row">';
 		$result     .= '<div class="opcm-box opcm-box-full-line">';
 		$result     .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Metrics Variations', 'opcache-manager' ) . '<span class="opcm-module-more">' . $detail . '</span></span></div>';
@@ -1531,7 +1439,7 @@ class Analytics {
 		$result .= ' $.each(val, function(index, value) {$("#" + index).html(value);});';
 		if ( array_key_exists( 'query', $args ) && 'main-chart' === $args['query'] ) {
 			$result .= '$(".opcm-chart-button").removeClass("not-ready");';
-			$result .= '$("#opcm-chart-button-calls").addClass("active");';
+			$result .= '$("#opcm-chart-button-ratio").addClass("active");';
 		}
 		$result .= ' });';
 		$result .= '});';

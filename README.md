@@ -17,3 +17,12 @@ Scripts
 
 % Availability
  (all but disabled)
+ 
+ 
+ 
+ 
+ 
+ graph:
+ - hit ratio
+ - hit distribution
+ - memory distribution

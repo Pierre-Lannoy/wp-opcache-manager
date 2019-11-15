@@ -2,37 +2,56 @@ jQuery(document).ready( function($) {
 	$('.opcm-about-logo').css({opacity:1});
 
 
-	$( "#traffic-chart-button-memory" ).on(
+	$( "#opcm-chart-button-ratio" ).on(
 		"click",
 		function() {
-			$( "#traffic-chart-memory" ).addClass( "active" );
-			$( "#traffic-chart-data" ).removeClass( "active" );
-			$( "#traffic-chart-uptime" ).removeClass( "active" );
-			$( "#traffic-chart-button-memory" ).addClass( "active" );
-			$( "#traffic-chart-button-data" ).removeClass( "active" );
-			$( "#traffic-chart-button-uptime" ).removeClass( "active" );
+			$( "#opcm-chart-ratio" ).addClass( "active" );
+			$( "#opcm-chart-hit" ).removeClass( "active" );
+			$( "#opcm-chart-memory" ).removeClass( "active" );
+			$( "#opcm-chart-uptime" ).removeClass( "active" );
+			$( "#opcm-chart-button-ratio" ).addClass( "active" );
+			$( "#opcm-chart-button-hit" ).removeClass( "active" );
+			$( "#opcm-chart-button-memory" ).removeClass( "active" );
+			$( "#opcm-chart-button-uptime" ).removeClass( "active" );
 		}
 	);
-	$( "#traffic-chart-button-data" ).on(
+	$( "#opcm-chart-button-hit" ).on(
 		"click",
 		function() {
-			$( "#traffic-chart-memory" ).removeClass( "active" );
-			$( "#traffic-chart-data" ).addClass( "active" );
-			$( "#traffic-chart-uptime" ).removeClass( "active" );
-			$( "#traffic-chart-button-memory" ).removeClass( "active" );
-			$( "#traffic-chart-button-data" ).addClass( "active" );
-			$( "#traffic-chart-button-uptime" ).removeClass( "active" );
+			$( "#opcm-chart-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-hit" ).addClass( "active" );
+			$( "#opcm-chart-memory" ).removeClass( "active" );
+			$( "#opcm-chart-uptime" ).removeClass( "active" );
+			$( "#opcm-chart-button-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-button-hit" ).addClass( "active" );
+			$( "#opcm-chart-button-memory" ).removeClass( "active" );
+			$( "#opcm-chart-button-uptime" ).removeClass( "active" );
 		}
 	);
-	$( "#traffic-chart-button-uptime" ).on(
+	$( "#opcm-chart-button-memory" ).on(
 		"click",
 		function() {
-			$( "#traffic-chart-memory" ).removeClass( "active" );
-			$( "#traffic-chart-data" ).removeClass( "active" );
-			$( "#traffic-chart-uptime" ).addClass( "active" );
-			$( "#traffic-chart-button-memory" ).removeClass( "active" );
-			$( "#traffic-chart-button-data" ).removeClass( "active" );
-			$( "#traffic-chart-button-uptime" ).addClass( "active" );
+			$( "#opcm-chart-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-hit" ).removeClass( "active" );
+			$( "#opcm-chart-memory" ).addClass( "active" );
+			$( "#opcm-chart-uptime" ).removeClass( "active" );
+			$( "#opcm-chart-button-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-button-hit" ).removeClass( "active" );
+			$( "#opcm-chart-button-memory" ).addClass( "active" );
+			$( "#opcm-chart-button-uptime" ).removeClass( "active" );
+		}
+	);
+	$( "#opcm-chart-button-uptime" ).on(
+		"click",
+		function() {
+			$( "#opcm-chart-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-hit" ).removeClass( "active" );
+			$( "#opcm-chart-memory" ).removeClass( "active" );
+			$( "#opcm-chart-uptime" ).addClass( "active" );
+			$( "#opcm-chart-button-ratio" ).removeClass( "active" );
+			$( "#opcm-chart-button-hit" ).removeClass( "active" );
+			$( "#opcm-chart-button-memory" ).removeClass( "active" );
+			$( "#opcm-chart-button-uptime" ).addClass( "active" );
 		}
 	);
 } );
