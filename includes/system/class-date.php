@@ -117,9 +117,9 @@ class Date {
 	public static function get_age_array_from_seconds( $age, $legend = false, $abbrev = false ) {
 		if ( $abbrev ) {
 			$intervals = [
-				[ 60, _x( 'sec.', 'Abbreviation - Stands for "second".', 'opcache-manager' ), _x( 'sec.', 'Abbreviation - Stands for "second".', 'opcache-manager' ) ],
-				[ 60, _x( 'min.', 'Abbreviation - Stands for "minute".', 'opcache-manager' ), _x( 'min.', 'Abbreviation - Stands for "minute".', 'opcache-manager' ) ],
-				[ 100000, _x( 'hr.', 'Abbreviation - Stands for "hour".', 'opcache-manager' ), _x( 'hr.', 'Abbreviation - Stands for "hour".', 'opcache-manager' ) ],
+				[ 60, _x( 'sec', 'Unit abbreviation - Stands for "second".', 'opcache-manager' ), _x( 'sec', 'Unit abbreviation - Stands for "second".', 'opcache-manager' ) ],
+				[ 60, _x( 'min', 'Unit abbreviation - Stands for "minute".', 'opcache-manager' ), _x( 'min', 'Unit abbreviation - Stands for "minute".', 'opcache-manager' ) ],
+				[ 100000, _x( 'hr', 'Unit abbreviation - Stands for "hour".', 'opcache-manager' ), _x( 'hr', 'Unit abbreviation - Stands for "hour".', 'opcache-manager' ) ],
 			];
 		} else {
 			$intervals = [

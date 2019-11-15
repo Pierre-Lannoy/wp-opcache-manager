@@ -53,10 +53,10 @@ class Analytics {
 	private $end = '';
 
 	/**
-	 * The period duration in seconds.
+	 * The period duration in days.
 	 *
 	 * @since  1.0.0
-	 * @var    integer    $duration    The period duration in seconds.
+	 * @var    integer    $duration    The period duration in days.
 	 */
 	private $duration = 0;
 
@@ -140,8 +140,8 @@ class Analytics {
 	 */
 	public function query( $query, $queried ) {
 		switch ( $query ) {
-			/*case 'main-chart':
-				return $this->query_chart();*/
+			case 'main-chart':
+				return $this->query_chart();
 			case 'kpi':
 				return $this->query_kpi( $queried );
 			case 'events':
@@ -296,7 +296,7 @@ class Analytics {
 	 * @return array  The result of the query, ready to encode.
 	 * @since    1.0.0
 	 */
-	private function query_top( $type, $limit ) {
+	private function _D_query_top( $type, $limit ) {
 		switch ( $type ) {
 			case 'authorities':
 				$group  = 'authority';
@@ -559,160 +559,114 @@ class Analytics {
 	/**
 	 * Query statistics table.
 	 *
-	 * @param   string $type    The type of list.
-	 * @return array  The result of the query, ready to encode.
-	 * @since    1.0.0
-	 */
-	private function query_list( $type ) {
-		$data         = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
-		$result       = '<table class="opcm-table">';
-		$result      .= '<tr>';
-		$result      .= '<th>&nbsp;</th>';
-		$result   .= '<th>' . $calls_name . '</th>';
-		$result   .= '<th>' . $data_name . '</th>';
-		$result   .= '<th>' . $latency_name . '</th>';
-		$result   .= '</tr>';
-		$other     = false;
-		$other_str = '';
-		foreach ( $data as $key => $row ) {
-			$url         = $this->get_url(
-				[],
-				[
-					'type'   => $follow,
-					'id'     => $row[ $group ],
-					'domain' => $row['id'],
-				]
-			);
-			$name        = $row[ $group ];
-			$other       = ( 'countries' === $type && ( empty( $name ) || 2 !== strlen( $name ) ) );
-			$authorities = sprintf( esc_html( _n( '%d subdomain', '%d subdomains', $row['cnt_authority'], 'opcache-manager' ) ), $row['cnt_authority'] );
-			$endpoints   = sprintf( esc_html( _n( '%d endpoint', '%d endpoints', $row['cnt_endpoint'], 'opcache-manager' ) ), $row['cnt_endpoint'] );
-			switch ( $type ) {
-				case 'sites':
-					if ( 0 === (int) $row['sum_hit'] ) {
-						break;
-					}
-					$url  = $this->get_url(
-						[],
-						[
-							'type' => $follow,
-							'site' => $row['site'],
-						]
-					);
-					$site = Blog::get_blog_url( $row['site'] );
-					$name = '<img style="width:16px;vertical-align:bottom;" src="' . Favicon::get_base64( $site ) . '" />&nbsp;&nbsp;<span class="opcm-table-text"><a href="' . esc_url( $url ) . '">' . $site . '</a></span>';
-					break;
-				case 'domains':
-					$detail = $authorities . ' - ' . $endpoints;
-					$name   = '<img style="width:16px;vertical-align:bottom;" src="' . Favicon::get_base64( $row['id'] ) . '" />&nbsp;&nbsp;<span class="opcm-table-text"><a href="' . esc_url( $url ) . '">' . $name . '</a></span>';
-					break;
-				case 'authorities':
-					$detail = $endpoints;
-					$name   = '<img style="width:16px;vertical-align:bottom;" src="' . Favicon::get_base64( $row['id'] ) . '" />&nbsp;&nbsp;<span class="opcm-table-text"><a href="' . esc_url( $url ) . '">' . $name . '</a></span>';
-					break;
-				case 'endpoints':
-					$name = '<img style="width:16px;vertical-align:bottom;" src="' . Favicon::get_base64( $row['id'] ) . '" />&nbsp;&nbsp;<span class="opcm-table-text"><a href="' . esc_url( $url ) . '">' . $name . '</a></span>';
-					break;
-				case 'codes':
-					if ( '0' === $name ) {
-						$name = '000';
-					}
-					$code = (int) $name;
-					if ( 100 > $code ) {
-						$http = '0xx';
-					} elseif ( 200 > $code ) {
-						$http = '1xx';
-					} elseif ( 300 > $code ) {
-						$http = '2xx';
-					} elseif ( 400 > $code ) {
-						$http = '3xx';
-					} elseif ( 500 > $code ) {
-						$http = '4xx';
-					} elseif ( 600 > $code ) {
-						$http = '5xx';
-					} else {
-						$http = 'nxx';
-					}
-					$name  = '<span class="opcm-http opcm-http-' . $http . '">' . $name . '</span>&nbsp;&nbsp;<span class="opcm-table-text">' . Http::$http_status_codes[ $code ] . '</span>';
-					$group = 'code';
-					break;
-				case 'schemes':
-					$icon = Feather\Icons::get_base64( 'unlock', 'none', '#E74C3C' );
-					if ( 'HTTPS' === strtoupper( $name ) ) {
-						$icon = Feather\Icons::get_base64( 'lock', 'none', '#18BB9C' );
-					}
-					$name  = '<img style="width:14px;vertical-align:text-top;" src="' . $icon . '" />&nbsp;&nbsp;<span class="opcm-table-text">' . strtoupper( $name ) . '</span>';
-					$group = 'scheme';
-					break;
-				case 'methods':
-					$name  = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'code', 'none', '#73879C' ) . '" />&nbsp;&nbsp;<span class="opcm-table-text">' . strtoupper( $name ) . '</span>';
-					$group = 'verb';
-					break;
-				case 'countries':
-					if ( $other ) {
-						$name = esc_html__( 'Other', 'opcache-manager' );
-					} else {
-						$country_name = L10n::get_country_name( $name );
-						if ( $country_name === $name ) {
-							$country_name = '';
-						}
-						$name = '<img style="width:16px;vertical-align:baseline;" src="' . Flagiconcss\Flags::get_base64( strtolower( $name ) ) . '" />&nbsp;&nbsp;<span class="opcm-table-text" style="vertical-align: text-bottom;">' . $country_name . '</span>';
-					}
-					$group = 'country';
-					break;
-			}
-			$calls = Conversion::number_shorten( $row['sum_hit'], 2 );
-			$in    = '<img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'arrow-down-right', 'none', '#73879C' ) . '" /><span class="opcm-table-text">' . Conversion::data_shorten( $row['sum_kb_in'] * 1024, 2 ) . '</span>';
-			$out   = '<span class="opcm-table-text">' . Conversion::data_shorten( $row['sum_kb_out'] * 1024, 2 ) . '</span><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'arrow-up-right', 'none', '#73879C' ) . '" />';
-			$data  = $in . ' &nbsp;&nbsp; ' . $out;
-			if ( 1 < $row['sum_hit'] ) {
-				$min = Conversion::number_shorten( $row['min_latency'], 0 );
-				if ( false !== strpos( $min, 'K' ) ) {
-					$min = str_replace( 'K', 's', $min );
-				} else {
-					$min = $min . 'ms';
-				}
-				$max = Conversion::number_shorten( $row['max_latency'], 0 );
-				if ( false !== strpos( $max, 'K' ) ) {
-					$max = str_replace( 'K', 's', $max );
-				} else {
-					$max = $max . 'ms';
-				}
-				$latency = (int) $row['avg_latency'] . 'ms&nbsp;<small>' . $min . '→' . $max . '</small>';
-			} else {
-				$latency = (int) $row['avg_latency'] . 'ms';
-			}
-			if ( 'codes' === $type && '0' === $row[ $group ] ) {
-				$latency = '-';
-			}
-			$row_str  = '<tr>';
-			$row_str .= '<td data-th="">' . $name . '</td>';
-			if ( $has_detail ) {
-				$row_str .= '<td data-th="' . $detail_name . '">' . $detail . '</td>';
-			}
-			$row_str .= '<td data-th="' . $calls_name . '">' . $calls . '</td>';
-			$row_str .= '<td data-th="' . $data_name . '">' . $data . '</td>';
-			$row_str .= '<td data-th="' . $latency_name . '">' . $latency . '</td>';
-			$row_str .= '</tr>';
-			if ( $other ) {
-				$other_str = $row_str;
-			} else {
-				$result .= $row_str;
-			}
-		}
-		$result .= $other_str . '</table>';
-		return [ 'opcm-' . $type => $result ];
-	}
-
-	/**
-	 * Query statistics table.
-	 *
 	 * @return array The result of the query, ready to encode.
 	 * @since    1.0.0
 	 */
 	private function query_chart() {
-		$uuid           = UUID::generate_unique_id( 5 );
-		$data_total     = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
+		$uuid   = UUID::generate_unique_id( 5 );
+		$query  = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
+		$data   = [];
+		$series = [];
+		$labels = [];
+		if ( 1 === $this->duration ) {
+			foreach ( $query as $timestamp => $row ) {
+				$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+				$offset      = $this->timezone->getOffset( $datetime );
+				$ts          = $datetime->getTimestamp() + $offset;
+				$data[ $ts ] = $row;
+			}
+			$end       = new \DateTime( Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() ), $this->timezone );
+			$end       = $end->getTimestamp();
+			$timestamp = new \DateTime( $timestamp, $this->timezone );
+			$timestamp = $timestamp->getTimestamp() + 300;
+			while ( $timestamp < $end ) {
+				$datetime    = new \DateTime( date( 'Y-m-d H:i:s', $timestamp ), new \DateTimeZone( 'UTC' ) );
+				$offset      = $this->timezone->getOffset( $datetime );
+				$ts          = $datetime->getTimestamp() + $offset;
+				$record      = [
+					'timestamp'  => $timestamp,
+					'status'     => 'disabled',
+					'reset'      => 'none',
+					'mem_total'  => 0,
+					'mem_used'   => 0,
+					'mem_wasted' => 0,
+					'key_used'   => 0,
+					'buf_total'  => 0,
+					'buf_used'   => 0,
+					'hit'        => 0,
+					'miss'       => 0,
+					'strings'    => 0,
+					'scripts'    => 0,
+				];
+				$data[ $ts ] = $record;
+				$timestamp   = $timestamp + 300;
+			}
+		} else {
+
+		}
+		$cpt = 0;
+		foreach ( $data as $timestamp => $datum ) {
+			// Memory.
+			$factor                = 1024 * 1024;
+			$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
+			$series['memory'][1][] = round( ( $datum['mem_total'] - $datum['mem_used'] - $datum['mem_wasted'] ) / $factor, 2 );
+			$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
+
+
+			// Labels.
+			$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
+			if ( 150 > $control ) {
+				$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
+				if ( 1 === strlen( $hour ) ) {
+					$hour = '0' . $hour;
+				}
+				$labels[] = $hour . ':00' ;
+			} else {
+				$labels[] = 'null';
+			}
+
+		}
+
+
+
+
+		$json_memory  = wp_json_encode(
+			[
+				'labels' => $labels,
+				'series' => $series['memory'],
+			]
+		);
+		$json_memory = str_replace( '"null"', 'null', $json_memory );
+
+
+
+
+
+		$result  = '<div class="opcm-multichart-handler">';
+		$result .= '<div class="opcm-multichart-item active" id="opcm-chart-memory">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var memory_data' . $uuid . ' = ' . $json_memory . ';';
+		$result .= ' var memory_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var memory_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  stackBars: true,';
+		$result .= '  stackMode: "accumulate",';
+		$result .= '  seriesBarDistance: 1,';
+		$result .= '  plugins: [memory_tooltip' . $uuid . '],';
+		$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
+		$result .= ' };';
+		$result .= ' new Chartist.Bar("#opcm-chart-memory", memory_data' . $uuid . ', memory_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
+		$result .= '</div>';
+
+
+/*
+
 		$data_uptime    = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', Http::$http_failure_codes, true );
 		$data_error     = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', array_diff( Http::$http_error_codes, Http::$http_quota_codes ), false );
 		$data_success   = Schema::get_time_series( $this->filter, ! $this->is_today, 'code', Http::$http_success_codes, false );
@@ -930,29 +884,10 @@ class Analytics {
 		} else {
 			$divisor = $this->duration + 1;
 		}
-		$result  = '<div class="opcm-multichart-handler">';
-		$result .= '<div class="opcm-multichart-item active" id="opcm-chart-calls">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var call_data' . $uuid . ' = ' . $json_call . ';';
-		$result .= ' var call_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var call_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [call_tooltip' . $uuid . '],';
-		$result .= '  axisX: {scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
-		$result .= '  axisY: {type: Chartist.AutoScaleAxis, low: 0, high: ' . $call_max . ', labelInterpolationFnc: function (value) {return value.toString() + "' . $call_abbr . '";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-calls", call_data' . $uuid . ', call_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
-		$result .= '</div>';
-		$result .= '<script>';
+
+		*/
+
+		/*$result .= '<script>';
 		$result .= 'jQuery(function ($) {';
 		$result .= ' var data_data' . $uuid . ' = ' . $json_data . ';';
 		$result .= ' var data_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
@@ -988,7 +923,7 @@ class Analytics {
 		$result .= ' new Chartist.Line("#opcm-chart-uptime", uptime_data' . $uuid . ', uptime_option' . $uuid . ');';
 		$result .= '});';
 		$result .= '</script>';
-		$result .= '</div>';
+		$result .= '</div>';*/
 		return [ 'opcm-main-chart' => $result ];
 	}
 
@@ -1204,6 +1139,34 @@ class Analytics {
 	}
 
 	/**
+	 * Get the main chart.
+	 *
+	 * @return string  The main chart ready to print.
+	 * @since    1.0.0
+	 */
+	public function get_main_chart() {
+		$help_memory = esc_html__( 'Memory distribution.', 'opcache-manager' );
+		$help_data   = esc_html__( 'Data volume distribution.', 'opcache-manager' );
+		$help_uptime = esc_html__( 'Uptime distribution.', 'opcache-manager' );
+		$detail      = '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-memory" data-position="left" data-tooltip="' . $help_memory . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'cpu', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-data" data-position="left" data-tooltip="' . $help_data . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'link-2', 'none', '#73879C' ) . '" /></span>&nbsp;&nbsp;&nbsp;';
+		$detail     .= '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-uptime" data-position="left" data-tooltip="' . $help_uptime . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'activity', 'none', '#73879C' ) . '" /></span>';
+		$result      = '<div class="opcm-row">';
+		$result     .= '<div class="opcm-box opcm-box-full-line">';
+		$result     .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Metrics Variations', 'opcache-manager' ) . '<span class="opcm-module-more">' . $detail . '</span></span></div>';
+		$result     .= '<div class="opcm-module-content" id="opcm-main-chart">' . $this->get_graph_placeholder( 274 ) . '</div>';
+		$result     .= '</div>';
+		$result     .= '</div>';
+		$result     .= $this->get_refresh_script(
+			[
+				'query'   => 'main-chart',
+				'queried' => 0,
+			]
+		);
+		return $result;
+	}
+
+	/**
 	 * Get the domains list.
 	 *
 	 * @return string  The table ready to print.
@@ -1229,7 +1192,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_top_domain_box() {
+	public function _D_get_top_domain_box() {
 		$url     = $this->get_url( [ 'domain' ], [ 'type' => 'domains' ] );
 		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
 		$help    = esc_html__( 'View the details of all domains.', 'opcache-manager' );
@@ -1252,7 +1215,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_top_authority_box() {
+	public function _D_get_top_authority_box() {
 		$url     = $this->get_url(
 			[],
 			[
@@ -1281,7 +1244,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_top_endpoint_box() {
+	public function _D_get_top_endpoint_box() {
 		$url     = $this->get_url(
 			[],
 			[
@@ -1310,59 +1273,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_map_box() {
-		switch ( $this->type ) {
-			case 'domain':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'authorities',
-						'domain' => $this->domain,
-						'extra'  => 'countries',
-					]
-				);
-				break;
-			case 'authority':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'endpoints',
-						'domain' => $this->domain,
-						'extra'  => 'countries',
-					]
-				);
-				break;
-			default:
-				$url = $this->get_url(
-					[ 'domain' ],
-					[
-						'type'  => 'domains',
-						'extra' => 'countries',
-					]
-				);
-		}
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all countries.', 'opcache-manager' );
-		$result  = '<div class="opcm-60-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Countries', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-map">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'map',
-				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the map box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function get_codes_box() {
+	public function _D_get_codes_box() {
 		switch ( $this->type ) {
 			case 'domain':
 				$url = $this->get_url(
@@ -1414,7 +1325,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_security_box() {
+	public function _D_get_security_box() {
 		switch ( $this->type ) {
 			case 'domain':
 				$url = $this->get_url(
@@ -1466,7 +1377,7 @@ class Analytics {
 	 * @return string  The box ready to print.
 	 * @since    1.0.0
 	 */
-	public function get_method_box() {
+	public function _D_get_method_box() {
 		switch ( $this->type ) {
 			case 'domain':
 				$url = $this->get_url(

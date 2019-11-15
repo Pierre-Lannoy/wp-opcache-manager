@@ -34,6 +34,9 @@ wp_enqueue_style( 'opcm-chartist-tooltip' );
 	        <?php echo $analytics->get_kpi_bar() ?>
         </div>
         <div class="opcm-row">
+	        <?php echo $analytics->get_main_chart() ?>
+        </div>
+        <div class="opcm-row">
 			<?php echo $analytics->get_events_list() ?>
         </div>
 	</div>
