@@ -563,13 +563,15 @@ class Analytics {
 	 * @since    1.0.0
 	 */
 	private function query_chart() {
-		$uuid   = UUID::generate_unique_id( 5 );
-		$query  = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
-		$data   = [];
-		$series = [];
-		$labels = [];
-		$items  = [ 'mem_total', 'mem_used', 'mem_wasted', 'key_used', 'buf_total', 'buf_used', 'hit', 'miss', 'strings', 'scripts' ];
-		$maxhit = 0;
+		$uuid       = UUID::generate_unique_id( 5 );
+		$query      = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
+		$data       = [];
+		$series     = [];
+		$labels     = [];
+		$items      = [ 'mem_total', 'mem_used', 'mem_wasted', 'key_used', 'buf_total', 'buf_used', 'hit', 'miss', 'strings', 'scripts' ];
+		$maxhit     = 0;
+		$maxstrings = 0;
+		$maxscripts = 0;
 		// Data normalization.
 		if ( 1 === $this->duration ) {
 			foreach ( $query as $timestamp => $row ) {
@@ -626,68 +628,77 @@ class Analytics {
 			// Hit ratio.
 			$val = 'null';
 			if ( 0 !== (int) $datum['hit'] + (int) $datum['miss'] ) {
-				$val = round (100 * $datum['hit'] / ( $datum['hit'] + $datum['miss'] ), 3 ) ;
+				$val = round( 100 * $datum['hit'] / ( $datum['hit'] + $datum['miss'] ), 3 );
 			}
 			$series['ratio'][] = [
 				'x' => $ts,
 				'y' => $val,
 			];
-			// Hit distribution.
-			$val = 'null';
-			$val = (int) $datum['hit'] ;
-			$series['hit'][] = [
+			// Availablility.
+			$series['availability'][] = [
 				'x' => $ts,
-				'y' => $val,
+				'y' => ( 'disabled' === $datum['status'] ? 0 : 100 ),
 			];
-			if ( $maxhit < $val ) {
-				$maxhit = $val;
-			}
-			// Miss distribution.
-			$val = (int) $datum['miss'] ;
-			$series['miss'][] = [
-				'x' => $ts,
-				'y' => $val,
-			];
-			if ( $maxhit < $val ) {
-				$maxhit = $val;
-			}
-
-
-
-
-
-			
-			// Memory.
-			$factor                = 1024 * 1024;
-			$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
-			$series['memory'][1][] = round( ( $datum['mem_total'] - $datum['mem_used'] - $datum['mem_wasted'] ) / $factor, 2 );
-			$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
-
-
-
-			// Labels.
-			$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
-			if ( 300 > $control ) {
-				$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
-				if ( 1 === strlen( $hour ) ) {
-					$hour = '0' . $hour;
+			// Time series.
+			foreach ( [ 'hit', 'miss', 'strings', 'scripts' ] as $item ) {
+				$val               = (int) $datum[ $item ];
+				$series[ $item ][] = [
+					'x' => $ts,
+					'y' => $val,
+				];
+				switch ( $item ) {
+					case 'hit':
+					case 'miss':
+						if ( $maxhit < $val ) {
+							$maxhit = $val;
+						}
+						break;
+					case 'strings':
+						if ( $maxstrings < $val ) {
+							$maxstrings = $val;
+						}
+						break;
+					case 'scripts':
+						if ( $maxscripts < $val ) {
+							$maxscripts = $val;
+						}
+						break;
 				}
-				$labels[] = $hour . ':00';
+			}
+			// Time series (free vs.used).
+			foreach ( [ 'buf', 'key', 'mem' ] as $item ) {
+				if ( 'key' === $item ) {
+					$factor = 1024;
+				} else {
+					$factor = 1024 * 1024;
+				}
+				if ( 'mem' === $item ) {
+					$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
+					$series['memory'][1][] = round( ( $datum['mem_total'] - $datum['mem_used'] - $datum['mem_wasted'] ) / $factor, 2 );
+					$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
+				} else {
+					$series[ $item ][0][] = round( $datum[ $item . '_used' ] / $factor, 2 );
+					$series[ $item ][1][] = round( ( $datum[ $item . '_total' ] - $datum[ $item . '_used' ] ) / $factor, 2 );
+				}
+
+			}
+			// Labels.
+			if ( 1 < $this->duration ) {
+				$labels[] = 'moment(' . $timestamp . '000).format("MMM DD")';
 			} else {
-				$labels[] = 'null';
+				$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
+				if ( 300 > $control ) {
+					$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
+					if ( 1 === strlen( $hour ) ) {
+						$hour = '0' . $hour;
+					}
+					$labels[] = $hour . ':00';
+				} else {
+					$labels[] = 'null';
+				}
 			}
 		}
-
-
-
-		$json_memory  = wp_json_encode(
-			[
-				'labels' => $labels,
-				'series' => $series['memory'],
-			]
-		);
-		$json_memory = str_replace( '"null"', 'null', $json_memory );
-
+		// Result encoding.
 		if ( 1 < $this->duration ) {
 			$shift = 86400;
 		} else {
@@ -723,12 +734,30 @@ class Analytics {
 		$json_ratio        = str_replace( '"x":"new', '"x":new', $json_ratio );
 		$json_ratio        = str_replace( ')","y"', '),"y"', $json_ratio );
 		$json_ratio        = str_replace( '"null"', 'null', $json_ratio );
+
+		// Availability.
+		array_unshift( $series['availability'], $before );
+		$series['availability'][] = $after;
+		$json_availability        = wp_json_encode(
+			[
+				'series' => [
+					[
+						'name' => esc_html__( 'Availability', 'opcache-manager' ),
+						'data' => $series['availability'],
+					],
+				],
+			]
+		);
+		$json_availability        = str_replace( '"x":"new', '"x":new', $json_availability );
+		$json_availability        = str_replace( ')","y"', '),"y"', $json_availability );
+		$json_availability        = str_replace( '"null"', 'null', $json_availability );
+		
 		// Hit & miss distribution.
 		array_unshift( $series['hit'], $before );
 		$series['hit'][] = $after;
 		array_unshift( $series['miss'], $before );
 		$series['miss'][] = $after;
-		$json_hit        = wp_json_encode(
+		$json_hit         = wp_json_encode(
 			[
 				'series' => [
 					[
@@ -742,9 +771,82 @@ class Analytics {
 				],
 			]
 		);
-		$json_hit        = str_replace( '"x":"new', '"x":new', $json_hit );
-		$json_hit        = str_replace( ')","y"', '),"y"', $json_hit );
-		$json_hit        = str_replace( '"null"', 'null', $json_hit );
+		$json_hit         = str_replace( '"x":"new', '"x":new', $json_hit );
+		$json_hit         = str_replace( ')","y"', '),"y"', $json_hit );
+		$json_hit         = str_replace( '"null"', 'null', $json_hit );
+
+		// Scripts variation.
+		array_unshift( $series['scripts'], $before );
+		$series['scripts'][] = $after;
+		$json_scripts        = wp_json_encode(
+			[
+				'series' => [
+					[
+						'name' => esc_html__( 'Files Count', 'traffic' ),
+						'data' => $series['scripts'],
+					],
+				],
+			]
+		);
+		$json_scripts        = str_replace( '"x":"new', '"x":new', $json_scripts );
+		$json_scripts        = str_replace( ')","y"', '),"y"', $json_scripts );
+		$json_scripts        = str_replace( '"null"', 'null', $json_scripts );
+
+		// Strings variation.
+		array_unshift( $series['strings'], $before );
+		$series['strings'][] = $after;
+		$json_strings        = wp_json_encode(
+			[
+				'series' => [
+					[
+						'name' => esc_html__( 'Strings Count', 'traffic' ),
+						'data' => $series['strings'],
+					],
+				],
+			]
+		);
+		$json_strings        = str_replace( '"x":"new', '"x":new', $json_strings );
+		$json_strings        = str_replace( ')","y"', '),"y"', $json_strings );
+		$json_strings        = str_replace( '"null"', 'null', $json_strings );
+
+		// Memory.
+		$json_memory = wp_json_encode(
+			[
+				'labels' => $labels,
+				'series' => $series['memory'],
+			]
+		);
+		$json_memory = str_replace( '"null"', 'null', $json_memory );
+		$json_memory = str_replace( '"labels":["moment', '"labels":[moment', $json_memory );
+		$json_memory = str_replace( '","moment', ',moment', $json_memory );
+		$json_memory = str_replace( '"],"series":', '],"series":', $json_memory );
+		$json_memory = str_replace( '\\"', '"', $json_memory );
+
+		// Key.
+		$json_key = wp_json_encode(
+			[
+				'labels' => $labels,
+				'series' => $series['key'],
+			]
+		);
+		$json_key = str_replace( '"null"', 'null', $json_key );
+		$json_key = str_replace( '"labels":["moment', '"labels":[moment', $json_key );
+		$json_key = str_replace( '","moment', ',moment', $json_key );
+		$json_key = str_replace( '"],"series":', '],"series":', $json_key );
+		$json_key = str_replace( '\\"', '"', $json_key );
+
+		// Buf.
+		$json_buf = wp_json_encode(
+			[
+				'labels' => $labels,
+				'series' => $series['buf'],
+			]
+		);
+		$json_buf = str_replace( '"null"', 'null', $json_buf );
+		$json_buf = str_replace( '"labels":["moment', '"labels":[moment', $json_buf );
+		$json_buf = str_replace( '","moment', ',moment', $json_buf );
+		$json_buf = str_replace( '"],"series":', '],"series":', $json_buf );
+		$json_buf = str_replace( '\\"', '"', $json_buf );
 
 
 		// Rendering.
@@ -781,6 +883,29 @@ class Analytics {
 		$result .= ' new Chartist.Line("#opcm-chart-ratio", ratio_data' . $uuid . ', ratio_option' . $uuid . ');';
 		$result .= '});';
 		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-uptime">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var uptime_data' . $uuid . ' = ' . $json_availability . ';';
+		$result .= ' var uptime_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var uptime_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  fullWidth: true,';
+		$result .= '  showArea: true,';
+		$result .= '  showLine: true,';
+		$result .= '  showPoint: false,';
+		$result .= '  plugins: [uptime_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+		} else {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+		}
+		$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
+		$result .= ' };';
+		$result .= ' new Chartist.Line("#opcm-chart-uptime", uptime_data' . $uuid . ', uptime_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
 		$result .= '<div class="opcm-multichart-item" id="opcm-chart-hit">';
 		$result .= '</div>';
 		$result .= '<script>';
@@ -810,7 +935,72 @@ class Analytics {
 		$result .= ' new Chartist.Line("#opcm-chart-hit", hit_data' . $uuid . ', hit_option' . $uuid . ');';
 		$result .= '});';
 		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-string">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var string_data' . $uuid . ' = ' . $json_strings . ';';
+		$result .= ' var string_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var string_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  fullWidth: true,';
+		$result .= '  showArea: true,';
+		$result .= '  showLine: true,';
+		$result .= '  showPoint: false,';
+		$result .= '  plugins: [string_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+		} else {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+		}
+		if ( $maxstrings < 1000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+		} elseif ( $maxstrings < 1000000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+		} else {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+		}
+		$result .= ' };';
+		$result .= ' new Chartist.Line("#opcm-chart-string", string_data' . $uuid . ', string_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-file">';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var file_data' . $uuid . ' = ' . $json_scripts . ';';
+		$result .= ' var file_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var file_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  fullWidth: true,';
+		$result .= '  showArea: true,';
+		$result .= '  showLine: true,';
+		$result .= '  showPoint: false,';
+		$result .= '  plugins: [file_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+		} else {
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+		}
+		if ( $maxscripts < 1000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+		} elseif ( $maxscripts < 1000000 ) {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+		} else {
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+		}
+		$result .= ' };';
+		$result .= ' new Chartist.Line("#opcm-chart-file", file_data' . $uuid . ', file_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
 		$result .= '<div class="opcm-multichart-item" id="opcm-chart-memory">';
+		$result .= '<style>';
+		if ( 1 < $this->duration ) {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+		} else {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+		}
+		$result .= '</style>';
 		$result .= '</div>';
 		$result .= '<script>';
 		$result .= 'jQuery(function ($) {';
@@ -822,10 +1012,72 @@ class Analytics {
 		$result .= '  stackMode: "accumulate",';
 		$result .= '  seriesBarDistance: 1,';
 		$result .= '  plugins: [memory_tooltip' . $uuid . '],';
-		$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+		} else {
+			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+		}
 		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
 		$result .= ' };';
 		$result .= ' new Chartist.Bar("#opcm-chart-memory", memory_data' . $uuid . ', memory_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-buffer">';
+		$result .= '<style>';
+		if ( 1 < $this->duration ) {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+		} else {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+		}
+		$result .= '</style>';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var buffer_data' . $uuid . ' = ' . $json_buf . ';';
+		$result .= ' var buffer_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var buffer_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  stackBars: true,';
+		$result .= '  stackMode: "accumulate",';
+		$result .= '  seriesBarDistance: 1,';
+		$result .= '  plugins: [buffer_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+		} else {
+			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+		}
+		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
+		$result .= ' };';
+		$result .= ' new Chartist.Bar("#opcm-chart-buffer", buffer_data' . $uuid . ', buffer_option' . $uuid . ');';
+		$result .= '});';
+		$result .= '</script>';
+		$result .= '<div class="opcm-multichart-item" id="opcm-chart-key">';
+		$result .= '<style>';
+		if ( 1 < $this->duration ) {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+		} else {
+			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+		}
+		$result .= '</style>';
+		$result .= '</div>';
+		$result .= '<script>';
+		$result .= 'jQuery(function ($) {';
+		$result .= ' var key_data' . $uuid . ' = ' . $json_key . ';';
+		$result .= ' var key_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+		$result .= ' var key_option' . $uuid . ' = {';
+		$result .= '  height: 300,';
+		$result .= '  stackBars: true,';
+		$result .= '  stackMode: "accumulate",';
+		$result .= '  seriesBarDistance: 1,';
+		$result .= '  plugins: [key_tooltip' . $uuid . '],';
+		if ( 1 < $this->duration ) {
+			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+		} else {
+			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+		}
+		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'K', 'Abbreviation - Stands for "thousand".', 'opcache-manager' ) . '";}},';
+		$result .= ' };';
+		$result .= ' new Chartist.Bar("#opcm-chart-key", key_data' . $uuid . ', key_option' . $uuid . ');';
 		$result .= '});';
 		$result .= '</script>';
 		$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
@@ -1054,10 +1306,18 @@ class Analytics {
 		$help_ratio  = esc_html__( 'Hit ratio variation.', 'opcache-manager' );
 		$help_hit    = esc_html__( 'Hit and miss distribution.', 'opcache-manager' );
 		$help_memory = esc_html__( 'Memory distribution.', 'opcache-manager' );
-		$help_uptime = esc_html__( 'Uptime distribution.', 'opcache-manager' );
+		$help_file   = esc_html__( 'Files variation.', 'opcache-manager' );
+		$help_key    = esc_html__( 'Keys distribution.', 'opcache-manager' );
+		$help_string = esc_html__( 'Strings variation.', 'opcache-manager' );
+		$help_buffer = esc_html__( 'Buffer distribution.', 'opcache-manager' );
+		$help_uptime = esc_html__( 'Availability variation.', 'opcache-manager' );
 		$detail      = '<span class="opcm-chart-button not-ready left" id="opcm-chart-button-ratio" data-position="left" data-tooltip="' . $help_ratio . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'award', 'none', '#73879C' ) . '" /></span>';
 		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-hit" data-position="left" data-tooltip="' . $help_hit . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'hash', 'none', '#73879C' ) . '" /></span>';
 		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-memory" data-position="left" data-tooltip="' . $help_memory . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'cpu', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-file" data-position="left" data-tooltip="' . $help_file . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'file-text', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-key" data-position="left" data-tooltip="' . $help_key . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'key', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-string" data-position="left" data-tooltip="' . $help_string . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'tag', 'none', '#73879C' ) . '" /></span>';
+		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-buffer" data-position="left" data-tooltip="' . $help_buffer . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'database', 'none', '#73879C' ) . '" /></span>';
 		$detail     .= '&nbsp;&nbsp;&nbsp;<span class="opcm-chart-button not-ready left" id="opcm-chart-button-uptime" data-position="left" data-tooltip="' . $help_uptime . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'activity', 'none', '#73879C' ) . '" /></span>';
 		$result      = '<div class="opcm-row">';
 		$result     .= '<div class="opcm-box opcm-box-full-line">';

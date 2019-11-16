@@ -428,8 +428,18 @@
     display: none;
 }
 
-.ct-labels {
+#opcm-chart-memory .ct-labels foreignObject:first-child,
+#opcm-chart-buf .ct-labels foreignObject:first-child,
+#opcm-chart-key .ct-labels foreignObject:first-child{
+    display: block !important;
+}
+
+.ct-labels .ct-horizontal {
     transform: translateX(-18px);
+}
+
+.ct-labels .ct-vertical {
+    transform: translateX(-6px) translateY(6px);
 }
 
 .opcm-minor-data {
