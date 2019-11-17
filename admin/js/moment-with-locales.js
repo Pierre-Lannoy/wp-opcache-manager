@@ -5975,7 +5975,7 @@
             LTS : 'H:mm:ss',
             L : 'DD/MM/YYYY',
             LL : 'D MMMM [de] YYYY',
-            ll : 'D MMM YYYY',
+            ll : 'D MMM',
             LLL : 'D MMMM [de] YYYY [a les] H:mm',
             lll : 'D MMM YYYY, H:mm',
             LLLL : 'dddd D MMMM [de] YYYY [a les] H:mm',
@@ -7483,7 +7483,7 @@
             LLL : 'YYYY[ko] MMMM[ren] D[a] HH:mm',
             LLLL : 'dddd, YYYY[ko] MMMM[ren] D[a] HH:mm',
             l : 'YYYY-M-D',
-            ll : 'YYYY[ko] MMM D[a]',
+            ll : 'MMM D[a]',
             lll : 'YYYY[ko] MMM D[a] HH:mm',
             llll : 'ddd, YYYY[ko] MMM D[a] HH:mm'
         },
@@ -7674,7 +7674,7 @@
             LLL : 'Do MMMM[ta] YYYY, [klo] HH.mm',
             LLLL : 'dddd, Do MMMM[ta] YYYY, [klo] HH.mm',
             l : 'D.M.YYYY',
-            ll : 'Do MMM YYYY',
+            ll : 'Do MMM',
             lll : 'Do MMM YYYY, [klo] HH.mm',
             llll : 'ddd, Do MMM YYYY, [klo] HH.mm'
         },
@@ -8453,7 +8453,7 @@
             LLL : 'D [ב]MMMM YYYY HH:mm',
             LLLL : 'dddd, D [ב]MMMM YYYY HH:mm',
             l : 'D/M/YYYY',
-            ll : 'D MMM YYYY',
+            ll : 'D MMM',
             lll : 'D MMM YYYY HH:mm',
             llll : 'ddd, D MMM YYYY HH:mm'
         },
@@ -9277,7 +9277,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日 dddd HH:mm',
             l : 'YYYY/MM/DD',
-            ll : 'YYYY年M月D日',
+            ll : 'M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日(ddd) HH:mm'
         },
@@ -9791,7 +9791,7 @@
             LLL : 'YYYY년 MMMM D일 A h:mm',
             LLLL : 'YYYY년 MMMM D일 dddd A h:mm',
             l : 'YYYY.MM.DD.',
-            ll : 'YYYY년 MMMM D일',
+            ll : 'MMMM D일',
             lll : 'YYYY년 MMMM D일 A h:mm',
             llll : 'YYYY년 MMMM D일 dddd A h:mm'
         },
@@ -10276,7 +10276,7 @@
             LLL : 'YYYY [m.] MMMM D [d.], HH:mm [val.]',
             LLLL : 'YYYY [m.] MMMM D [d.], dddd, HH:mm [val.]',
             l : 'YYYY-MM-DD',
-            ll : 'YYYY [m.] MMMM D [d.]',
+            ll : 'MMMM D [d.]',
             lll : 'YYYY [m.] MMMM D [d.], HH:mm [val.]',
             llll : 'YYYY [m.] MMMM D [d.], ddd, HH:mm [val.]'
         },
@@ -14336,7 +14336,7 @@
             LLL : 'D MMMM [năm] YYYY HH:mm',
             LLLL : 'dddd, D MMMM [năm] YYYY HH:mm',
             l : 'DD/M/YYYY',
-            ll : 'D MMM YYYY',
+            ll : 'D MMM',
             lll : 'D MMM YYYY HH:mm',
             llll : 'ddd, D MMM YYYY HH:mm'
         },
@@ -14494,7 +14494,7 @@
             LLL : 'YYYY年M月D日Ah点mm分',
             LLLL : 'YYYY年M月D日ddddAh点mm分',
             l : 'YYYY/M/D',
-            ll : 'YYYY年M月D日',
+            ll : 'M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
@@ -14592,7 +14592,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日dddd HH:mm',
             l : 'YYYY/M/D',
-            ll : 'YYYY年M月D日',
+            ll : 'M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
@@ -14683,7 +14683,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日dddd HH:mm',
             l : 'YYYY/M/D',
-            ll : 'YYYY年M月D日',
+            ll : 'M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
