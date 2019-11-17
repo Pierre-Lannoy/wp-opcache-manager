@@ -568,7 +568,7 @@ class Analytics {
 		$data       = [];
 		$series     = [];
 		$labels     = [];
-		$items      = [ 'mem_total', 'mem_used', 'mem_wasted', 'key_used', 'buf_total', 'buf_used', 'hit', 'miss', 'strings', 'scripts' ];
+		$items      = [ 'status', 'mem_total', 'mem_used', 'mem_wasted', 'key_total', 'key_used', 'buf_total', 'buf_used', 'hit', 'miss', 'strings', 'scripts' ];
 		$maxhit     = 0;
 		$maxstrings = 0;
 		$maxscripts = 0;
@@ -610,7 +610,11 @@ class Analytics {
 				}
 				foreach ( $rows as $row ) {
 					foreach ( $items as $item ) {
-						$record[ $item ] = $record[ $item ] + $row[ $item ];
+						if ( 'status' === $item ) {
+							$record[ $item ] = ( 'disabled' === $row[ $item ] ? 0 : 100 );
+						} else {
+							$record[ $item ] = $record[ $item ] + $row[ $item ];
+						}
 					}
 				}
 				$cpt = count( $rows );
@@ -680,7 +684,6 @@ class Analytics {
 					$series[ $item ][0][] = round( $datum[ $item . '_used' ] / $factor, 2 );
 					$series[ $item ][1][] = round( ( $datum[ $item . '_total' ] - $datum[ $item . '_used' ] ) / $factor, 2 );
 				}
-
 			}
 			// Labels.
 			if ( 1 < $this->duration ) {
@@ -847,7 +850,6 @@ class Analytics {
 		$json_buf = str_replace( '","moment', ',moment', $json_buf );
 		$json_buf = str_replace( '"],"series":', '],"series":', $json_buf );
 		$json_buf = str_replace( '\\"', '"', $json_buf );
-
 
 		// Rendering.
 		if ( 4 < $this->duration ) {
@@ -1748,7 +1750,7 @@ class Analytics {
 		$result .= ' var start = moment("' . $this->start . '");';
 		$result .= ' var end = moment("' . $this->end . '");';
 		$result .= ' function changeDate(start, end) {';
-		$result .= '  $("span.opcm-datepicker-value").html(start.format("ll") + " - " + end.format("ll"));';
+		$result .= '  $("span.opcm-datepicker-value").html(start.format("LL") + " - " + end.format("LL"));';
 		$result .= ' }';
 		$result .= ' $(".opcm-datepicker").daterangepicker({';
 		$result .= '  opens: "left",';
