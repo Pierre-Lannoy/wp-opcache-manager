@@ -687,7 +687,7 @@ class Analytics {
 			}
 			// Labels.
 			if ( 1 < $this->duration ) {
-				$labels[] = 'moment(' . $timestamp . '000).format("MMM DD")';
+				$labels[] = 'moment(' . $timestamp . '000).format("ll")';
 			} else {
 				$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
 				if ( 300 > $control ) {
@@ -876,7 +876,7 @@ class Analytics {
 		$result .= '  showPoint: false,';
 		$result .= '  plugins: [ratio_tooltip' . $uuid . '],';
 		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("YYYY-MM-DD");}},';
 		} else {
 			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
 		}
@@ -899,7 +899,7 @@ class Analytics {
 		$result .= '  showPoint: false,';
 		$result .= '  plugins: [uptime_tooltip' . $uuid . '],';
 		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
 		} else {
 			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
 		}
@@ -922,7 +922,7 @@ class Analytics {
 		$result .= '  showPoint: false,';
 		$result .= '  plugins: [hit_tooltip' . $uuid . '],';
 		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
 		} else {
 			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
 		}
@@ -951,7 +951,7 @@ class Analytics {
 		$result .= '  showPoint: false,';
 		$result .= '  plugins: [string_tooltip' . $uuid . '],';
 		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
 		} else {
 			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
 		}
@@ -980,7 +980,7 @@ class Analytics {
 		$result .= '  showPoint: false,';
 		$result .= '  plugins: [file_tooltip' . $uuid . '],';
 		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("MMM DD");}},';
+			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
 		} else {
 			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
 		}

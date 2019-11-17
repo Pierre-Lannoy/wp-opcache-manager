@@ -1,7 +1,7 @@
 ;(function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    global.moment = factory()
+        typeof define === 'function' && define.amd ? define(factory) :
+            global.moment = factory()
 }(this, (function () { 'use strict';
 
     var hookCallback;
@@ -287,7 +287,7 @@
 
     function warn(msg) {
         if (hooks.suppressDeprecationWarnings === false &&
-                (typeof console !==  'undefined') && console.warn) {
+            (typeof console !==  'undefined') && console.warn) {
             console.warn('Deprecation warning: ' + msg);
         }
     }
@@ -357,7 +357,7 @@
         // TODO: Remove "ordinalParse" fallback in next major release.
         this._dayOfMonthOrdinalParseLenient = new RegExp(
             (this._dayOfMonthOrdinalParse.source || this._ordinalParse.source) +
-                '|' + (/\d{1,2}/).source);
+            '|' + (/\d{1,2}/).source);
     }
 
     function mergeConfigs(parentConfig, childConfig) {
@@ -377,8 +377,8 @@
         }
         for (prop in parentConfig) {
             if (hasOwnProp(parentConfig, prop) &&
-                    !hasOwnProp(childConfig, prop) &&
-                    isObject(parentConfig[prop])) {
+                !hasOwnProp(childConfig, prop) &&
+                isObject(parentConfig[prop])) {
                 // make sure changes to properties don't modify parent config
                 res[prop] = extend({}, res[prop]);
             }
@@ -1844,7 +1844,7 @@
         var oldLocale = null;
         // TODO: Find a better way to register and load all the locales in Node
         if (!locales[name] && (typeof module !== 'undefined') &&
-                module && module.exports) {
+            module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
@@ -1889,10 +1889,10 @@
             config.abbr = name;
             if (locales[name] != null) {
                 deprecateSimple('defineLocaleOverride',
-                        'use moment.updateLocale(localeName, config) to change ' +
-                        'an existing locale. moment.defineLocale(localeName, ' +
-                        'config) should only be used for creating a new locale ' +
-                        'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.');
+                    'use moment.updateLocale(localeName, config) to change ' +
+                    'an existing locale. moment.defineLocale(localeName, ' +
+                    'config) should only be used for creating a new locale ' +
+                    'See http://momentjs.com/guides/#/warnings/define-locale/ for more info.');
                 parentConfig = locales[name]._config;
             } else if (config.parentLocale != null) {
                 if (locales[config.parentLocale] != null) {
@@ -1998,12 +1998,12 @@
         if (a && getParsingFlags(m).overflow === -2) {
             overflow =
                 a[MONTH]       < 0 || a[MONTH]       > 11  ? MONTH :
-                a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
-                a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
-                a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
-                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
-                a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
-                -1;
+                    a[DATE]        < 1 || a[DATE]        > daysInMonth(a[YEAR], a[MONTH]) ? DATE :
+                        a[HOUR]        < 0 || a[HOUR]        > 24 || (a[HOUR] === 24 && (a[MINUTE] !== 0 || a[SECOND] !== 0 || a[MILLISECOND] !== 0)) ? HOUR :
+                            a[MINUTE]      < 0 || a[MINUTE]      > 59  ? MINUTE :
+                                a[SECOND]      < 0 || a[SECOND]      > 59  ? SECOND :
+                                    a[MILLISECOND] < 0 || a[MILLISECOND] > 999 ? MILLISECOND :
+                                        -1;
 
             if (getParsingFlags(m)._overflowDayOfYear && (overflow < YEAR || overflow > DATE)) {
                 overflow = DATE;
@@ -2088,9 +2088,9 @@
 
         // Check for 24:00:00.000
         if (config._a[HOUR] === 24 &&
-                config._a[MINUTE] === 0 &&
-                config._a[SECOND] === 0 &&
-                config._a[MILLISECOND] === 0) {
+            config._a[MINUTE] === 0 &&
+            config._a[SECOND] === 0 &&
+            config._a[MILLISECOND] === 0) {
             config._nextDay = true;
             config._a[HOUR] = 0;
         }
@@ -2631,7 +2631,7 @@
         }
 
         if ((isObject(input) && isObjectEmpty(input)) ||
-                (isArray(input) && input.length === 0)) {
+            (isArray(input) && input.length === 0)) {
             input = undefined;
         }
         // object construction must be done this way.
@@ -2839,8 +2839,8 @@
         var minutes = +(parts[1] * 60) + toInt(parts[2]);
 
         return minutes === 0 ?
-          0 :
-          parts[0] === '+' ? minutes : -minutes;
+            0 :
+            parts[0] === '+' ? minutes : -minutes;
     }
 
     // Return a moment from input, that is local/utc/zone equivalent to model.
@@ -3134,7 +3134,7 @@
             //invert the arguments, but complain about it
             if (period !== null && !isNaN(+period)) {
                 deprecateSimple(name, 'moment().' + name  + '(period, number) is deprecated. Please use moment().' + name + '(number, period). ' +
-                'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.');
+                    'See http://momentjs.com/guides/#/warnings/add-inverted-param/ for more info.');
                 tmp = val; val = period; period = tmp;
             }
 
@@ -3177,11 +3177,11 @@
     function getCalendarFormat(myMoment, now) {
         var diff = myMoment.diff(now, 'days', true);
         return diff < -6 ? 'sameElse' :
-                diff < -1 ? 'lastWeek' :
+            diff < -1 ? 'lastWeek' :
                 diff < 0 ? 'lastDay' :
-                diff < 1 ? 'sameDay' :
-                diff < 2 ? 'nextDay' :
-                diff < 7 ? 'nextWeek' : 'sameElse';
+                    diff < 1 ? 'sameDay' :
+                        diff < 2 ? 'nextDay' :
+                            diff < 7 ? 'nextWeek' : 'sameElse';
     }
 
     function calendar$1 (time, formats) {
@@ -3376,8 +3376,8 @@
 
     function from (time, withoutSuffix) {
         if (this.isValid() &&
-                ((isMoment(time) && time.isValid()) ||
-                 createLocal(time).isValid())) {
+            ((isMoment(time) && time.isValid()) ||
+                createLocal(time).isValid())) {
             return createDuration({to: this, from: time}).locale(this.locale()).humanize(!withoutSuffix);
         } else {
             return this.localeData().invalidDate();
@@ -3390,8 +3390,8 @@
 
     function to (time, withoutSuffix) {
         if (this.isValid() &&
-                ((isMoment(time) && time.isValid()) ||
-                 createLocal(time).isValid())) {
+            ((isMoment(time) && time.isValid()) ||
+                createLocal(time).isValid())) {
             return createDuration({from: this, to: time}).locale(this.locale()).humanize(!withoutSuffix);
         } else {
             return this.localeData().invalidDate();
@@ -3670,16 +3670,16 @@
 
     function getSetWeekYear (input) {
         return getSetWeekYearHelper.call(this,
-                input,
-                this.week(),
-                this.weekday(),
-                this.localeData()._week.dow,
-                this.localeData()._week.doy);
+            input,
+            this.week(),
+            this.weekday(),
+            this.localeData()._week.dow,
+            this.localeData()._week.doy);
     }
 
     function getSetISOWeekYear (input) {
         return getSetWeekYearHelper.call(this,
-                input, this.isoWeek(), this.isoWeekday(), 1, 4);
+            input, this.isoWeek(), this.isoWeekday(), 1, 4);
     }
 
     function getISOWeeksInYear () {
@@ -3757,8 +3757,8 @@
     addRegexToken('Do', function (isStrict, locale) {
         // TODO: Remove "ordinalParse" fallback in next major release.
         return isStrict ?
-          (locale._dayOfMonthOrdinalParse || locale._ordinalParse) :
-          locale._dayOfMonthOrdinalParseLenient;
+            (locale._dayOfMonthOrdinalParse || locale._ordinalParse) :
+            locale._dayOfMonthOrdinalParseLenient;
     });
 
     addParseToken(['D', 'DD'], DATE);
@@ -4136,9 +4136,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (toInt(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         }
     });
@@ -4205,7 +4205,7 @@
         // if we have a mix of positive and negative values, bubble down first
         // check: https://github.com/moment/moment/issues/2166
         if (!((milliseconds >= 0 && days >= 0 && months >= 0) ||
-                (milliseconds <= 0 && days <= 0 && months <= 0))) {
+            (milliseconds <= 0 && days <= 0 && months <= 0))) {
             milliseconds += absCeil(monthsToDays(months) + days) * 864e5;
             days = 0;
             months = 0;
@@ -4368,16 +4368,16 @@
         var years    = round(duration.as('y'));
 
         var a = seconds <= thresholds.ss && ['s', seconds]  ||
-                seconds < thresholds.s   && ['ss', seconds] ||
-                minutes <= 1             && ['m']           ||
-                minutes < thresholds.m   && ['mm', minutes] ||
-                hours   <= 1             && ['h']           ||
-                hours   < thresholds.h   && ['hh', hours]   ||
-                days    <= 1             && ['d']           ||
-                days    < thresholds.d   && ['dd', days]    ||
-                months  <= 1             && ['M']           ||
-                months  < thresholds.M   && ['MM', months]  ||
-                years   <= 1             && ['y']           || ['yy', years];
+            seconds < thresholds.s   && ['ss', seconds] ||
+            minutes <= 1             && ['m']           ||
+            minutes < thresholds.m   && ['mm', minutes] ||
+            hours   <= 1             && ['h']           ||
+            hours   < thresholds.h   && ['hh', hours]   ||
+            days    <= 1             && ['d']           ||
+            days    < thresholds.d   && ['dd', days]    ||
+            months  <= 1             && ['M']           ||
+            months  < thresholds.M   && ['MM', months]  ||
+            years   <= 1             && ['y']           || ['yy', years];
 
         a[2] = withoutSuffix;
         a[3] = +posNegDuration > 0;
@@ -5510,29 +5510,29 @@
     //! moment.js locale configuration
 
     var symbolMap$3 = {
-        '1': '১',
-        '2': '২',
-        '3': '৩',
-        '4': '৪',
-        '5': '৫',
-        '6': '৬',
-        '7': '৭',
-        '8': '৮',
-        '9': '৯',
-        '0': '০'
-    },
-    numberMap$2 = {
-        '১': '1',
-        '২': '2',
-        '৩': '3',
-        '৪': '4',
-        '৫': '5',
-        '৬': '6',
-        '৭': '7',
-        '৮': '8',
-        '৯': '9',
-        '০': '0'
-    };
+            '1': '১',
+            '2': '২',
+            '3': '৩',
+            '4': '৪',
+            '5': '৫',
+            '6': '৬',
+            '7': '৭',
+            '8': '৮',
+            '9': '৯',
+            '0': '০'
+        },
+        numberMap$2 = {
+            '১': '1',
+            '২': '2',
+            '৩': '3',
+            '৪': '4',
+            '৫': '5',
+            '৬': '6',
+            '৭': '7',
+            '৮': '8',
+            '৯': '9',
+            '০': '0'
+        };
 
     hooks.defineLocale('bn', {
         months : 'জানুয়ারী_ফেব্রুয়ারি_মার্চ_এপ্রিল_মে_জুন_জুলাই_আগস্ট_সেপ্টেম্বর_অক্টোবর_নভেম্বর_ডিসেম্বর'.split('_'),
@@ -5588,8 +5588,8 @@
                 hour = 0;
             }
             if ((meridiem === 'রাত' && hour >= 4) ||
-                    (meridiem === 'দুপুর' && hour < 5) ||
-                    meridiem === 'বিকাল') {
+                (meridiem === 'দুপুর' && hour < 5) ||
+                meridiem === 'বিকাল') {
                 return hour + 12;
             } else {
                 return hour;
@@ -5617,29 +5617,29 @@
     //! moment.js locale configuration
 
     var symbolMap$4 = {
-        '1': '༡',
-        '2': '༢',
-        '3': '༣',
-        '4': '༤',
-        '5': '༥',
-        '6': '༦',
-        '7': '༧',
-        '8': '༨',
-        '9': '༩',
-        '0': '༠'
-    },
-    numberMap$3 = {
-        '༡': '1',
-        '༢': '2',
-        '༣': '3',
-        '༤': '4',
-        '༥': '5',
-        '༦': '6',
-        '༧': '7',
-        '༨': '8',
-        '༩': '9',
-        '༠': '0'
-    };
+            '1': '༡',
+            '2': '༢',
+            '3': '༣',
+            '4': '༤',
+            '5': '༥',
+            '6': '༦',
+            '7': '༧',
+            '8': '༨',
+            '9': '༩',
+            '0': '༠'
+        },
+        numberMap$3 = {
+            '༡': '1',
+            '༢': '2',
+            '༣': '3',
+            '༤': '4',
+            '༥': '5',
+            '༦': '6',
+            '༧': '7',
+            '༨': '8',
+            '༩': '9',
+            '༠': '0'
+        };
 
     hooks.defineLocale('bo', {
         months : 'ཟླ་བ་དང་པོ_ཟླ་བ་གཉིས་པ_ཟླ་བ་གསུམ་པ_ཟླ་བ་བཞི་པ_ཟླ་བ་ལྔ་པ_ཟླ་བ་དྲུག་པ_ཟླ་བ་བདུན་པ_ཟླ་བ་བརྒྱད་པ_ཟླ་བ་དགུ་པ_ཟླ་བ་བཅུ་པ_ཟླ་བ་བཅུ་གཅིག་པ_ཟླ་བ་བཅུ་གཉིས་པ'.split('_'),
@@ -5695,8 +5695,8 @@
                 hour = 0;
             }
             if ((meridiem === 'མཚན་མོ' && hour >= 4) ||
-                    (meridiem === 'ཉིན་གུང' && hour < 5) ||
-                    meridiem === 'དགོང་དག') {
+                (meridiem === 'ཉིན་གུང' && hour < 5) ||
+                meridiem === 'དགོང་དག') {
                 return hour + 12;
             } else {
                 return hour;
@@ -5975,7 +5975,7 @@
             LTS : 'H:mm:ss',
             L : 'DD/MM/YYYY',
             LL : 'D MMMM [de] YYYY',
-            ll : 'D MMM',
+            ll : 'D MMM YYYY',
             LLL : 'D MMMM [de] YYYY [a les] H:mm',
             lll : 'D MMM YYYY, H:mm',
             LLLL : 'dddd D MMMM [de] YYYY [a les] H:mm',
@@ -6013,14 +6013,14 @@
             M : 'un mes',
             MM : '%d mesos',
             y : 'un any',
-            yy : '%d anys'
+            yy : '%d anys',
         },
         dayOfMonthOrdinalParse: /\d{1,2}(r|n|t|è|a)/,
         ordinal : function (number, period) {
             var output = (number === 1) ? 'r' :
                 (number === 2) ? 'n' :
-                (number === 3) ? 'r' :
-                (number === 4) ? 't' : 'è';
+                    (number === 3) ? 'r' :
+                        (number === 4) ? 't' : 'è';
             if (period === 'w' || period === 'W') {
                 output = 'a';
             }
@@ -6766,9 +6766,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -6821,9 +6821,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -6876,9 +6876,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         }
     });
@@ -6927,9 +6927,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -6982,9 +6982,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -7036,9 +7036,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         }
     });
@@ -7087,9 +7087,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -7483,7 +7483,7 @@
             LLL : 'YYYY[ko] MMMM[ren] D[a] HH:mm',
             LLLL : 'dddd, YYYY[ko] MMMM[ren] D[a] HH:mm',
             l : 'YYYY-M-D',
-            ll : 'MMM D[a]',
+            ll : 'YYYY[ko] MMM D[a]',
             lll : 'YYYY[ko] MMM D[a] HH:mm',
             llll : 'ddd, YYYY[ko] MMM D[a] HH:mm'
         },
@@ -7674,7 +7674,7 @@
             LLL : 'Do MMMM[ta] YYYY, [klo] HH.mm',
             LLLL : 'dddd, Do MMMM[ta] YYYY, [klo] HH.mm',
             l : 'D.M.YYYY',
-            ll : 'Do MMM',
+            ll : 'Do MMM YYYY',
             lll : 'Do MMM YYYY, [klo] HH.mm',
             llll : 'ddd, Do MMM YYYY, [klo] HH.mm'
         },
@@ -8453,7 +8453,7 @@
             LLL : 'D [ב]MMMM YYYY HH:mm',
             LLLL : 'dddd, D [ב]MMMM YYYY HH:mm',
             l : 'D/M/YYYY',
-            ll : 'D MMM',
+            ll : 'D MMM YYYY',
             lll : 'D MMM YYYY HH:mm',
             llll : 'ddd, D MMM YYYY HH:mm'
         },
@@ -8525,29 +8525,29 @@
     //! moment.js locale configuration
 
     var symbolMap$7 = {
-        '1': '१',
-        '2': '२',
-        '3': '३',
-        '4': '४',
-        '5': '५',
-        '6': '६',
-        '7': '७',
-        '8': '८',
-        '9': '९',
-        '0': '०'
-    },
-    numberMap$6 = {
-        '१': '1',
-        '२': '2',
-        '३': '3',
-        '४': '4',
-        '५': '5',
-        '६': '6',
-        '७': '7',
-        '८': '8',
-        '९': '9',
-        '०': '0'
-    };
+            '1': '१',
+            '2': '२',
+            '3': '३',
+            '4': '४',
+            '5': '५',
+            '6': '६',
+            '7': '७',
+            '8': '८',
+            '9': '९',
+            '0': '०'
+        },
+        numberMap$6 = {
+            '१': '1',
+            '२': '2',
+            '३': '3',
+            '४': '4',
+            '५': '5',
+            '६': '6',
+            '७': '7',
+            '८': '8',
+            '९': '9',
+            '०': '0'
+        };
 
     hooks.defineLocale('hi', {
         months : 'जनवरी_फ़रवरी_मार्च_अप्रैल_मई_जून_जुलाई_अगस्त_सितम्बर_अक्टूबर_नवम्बर_दिसम्बर'.split('_'),
@@ -9277,7 +9277,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日 dddd HH:mm',
             l : 'YYYY/MM/DD',
-            ll : 'M月D日',
+            ll : 'YYYY年M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日(ddd) HH:mm'
         },
@@ -9664,29 +9664,29 @@
     //! moment.js locale configuration
 
     var symbolMap$9 = {
-        '1': '೧',
-        '2': '೨',
-        '3': '೩',
-        '4': '೪',
-        '5': '೫',
-        '6': '೬',
-        '7': '೭',
-        '8': '೮',
-        '9': '೯',
-        '0': '೦'
-    },
-    numberMap$8 = {
-        '೧': '1',
-        '೨': '2',
-        '೩': '3',
-        '೪': '4',
-        '೫': '5',
-        '೬': '6',
-        '೭': '7',
-        '೮': '8',
-        '೯': '9',
-        '೦': '0'
-    };
+            '1': '೧',
+            '2': '೨',
+            '3': '೩',
+            '4': '೪',
+            '5': '೫',
+            '6': '೬',
+            '7': '೭',
+            '8': '೮',
+            '9': '೯',
+            '0': '೦'
+        },
+        numberMap$8 = {
+            '೧': '1',
+            '೨': '2',
+            '೩': '3',
+            '೪': '4',
+            '೫': '5',
+            '೬': '6',
+            '೭': '7',
+            '೮': '8',
+            '೯': '9',
+            '೦': '0'
+        };
 
     hooks.defineLocale('kn', {
         months : 'ಜನವರಿ_ಫೆಬ್ರವರಿ_ಮಾರ್ಚ್_ಏಪ್ರಿಲ್_ಮೇ_ಜೂನ್_ಜುಲೈ_ಆಗಸ್ಟ್_ಸೆಪ್ಟೆಂಬರ್_ಅಕ್ಟೋಬರ್_ನವೆಂಬರ್_ಡಿಸೆಂಬರ್'.split('_'),
@@ -9791,7 +9791,7 @@
             LLL : 'YYYY년 MMMM D일 A h:mm',
             LLLL : 'YYYY년 MMMM D일 dddd A h:mm',
             l : 'YYYY.MM.DD.',
-            ll : 'MMMM D일',
+            ll : 'YYYY년 MMMM D일',
             lll : 'YYYY년 MMMM D일 A h:mm',
             llll : 'YYYY년 MMMM D일 dddd A h:mm'
         },
@@ -9847,42 +9847,42 @@
     //! moment.js locale configuration
 
     var symbolMap$a = {
-        '1': '١',
-        '2': '٢',
-        '3': '٣',
-        '4': '٤',
-        '5': '٥',
-        '6': '٦',
-        '7': '٧',
-        '8': '٨',
-        '9': '٩',
-        '0': '٠'
-    }, numberMap$9 = {
-        '١': '1',
-        '٢': '2',
-        '٣': '3',
-        '٤': '4',
-        '٥': '5',
-        '٦': '6',
-        '٧': '7',
-        '٨': '8',
-        '٩': '9',
-        '٠': '0'
-    },
-    months$7 = [
-        'کانونی دووەم',
-        'شوبات',
-        'ئازار',
-        'نیسان',
-        'ئایار',
-        'حوزەیران',
-        'تەمموز',
-        'ئاب',
-        'ئەیلوول',
-        'تشرینی یەكەم',
-        'تشرینی دووەم',
-        'كانونی یەکەم'
-    ];
+            '1': '١',
+            '2': '٢',
+            '3': '٣',
+            '4': '٤',
+            '5': '٥',
+            '6': '٦',
+            '7': '٧',
+            '8': '٨',
+            '9': '٩',
+            '0': '٠'
+        }, numberMap$9 = {
+            '١': '1',
+            '٢': '2',
+            '٣': '3',
+            '٤': '4',
+            '٥': '5',
+            '٦': '6',
+            '٧': '7',
+            '٨': '8',
+            '٩': '9',
+            '٠': '0'
+        },
+        months$7 = [
+            'کانونی دووەم',
+            'شوبات',
+            'ئازار',
+            'نیسان',
+            'ئایار',
+            'حوزەیران',
+            'تەمموز',
+            'ئاب',
+            'ئەیلوول',
+            'تشرینی یەكەم',
+            'تشرینی دووەم',
+            'كانونی یەکەم'
+        ];
 
 
     hooks.defineLocale('ku', {
@@ -10276,7 +10276,7 @@
             LLL : 'YYYY [m.] MMMM D [d.], HH:mm [val.]',
             LLLL : 'YYYY [m.] MMMM D [d.], dddd, HH:mm [val.]',
             l : 'YYYY-MM-DD',
-            ll : 'MMMM D [d.]',
+            ll : 'YYYY [m.] MMMM D [d.]',
             lll : 'YYYY [m.] MMMM D [d.], HH:mm [val.]',
             llll : 'YYYY [m.] MMMM D [d.], ddd, HH:mm [val.]'
         },
@@ -10676,8 +10676,8 @@
                 hour = 0;
             }
             if ((meridiem === 'രാത്രി' && hour >= 4) ||
-                    meridiem === 'ഉച്ച കഴിഞ്ഞ്' ||
-                    meridiem === 'വൈകുന്നേരം') {
+                meridiem === 'ഉച്ച കഴിഞ്ഞ്' ||
+                meridiem === 'വൈകുന്നേരം') {
                 return hour + 12;
             } else {
                 return hour;
@@ -10793,29 +10793,29 @@
     //! moment.js locale configuration
 
     var symbolMap$b = {
-        '1': '१',
-        '2': '२',
-        '3': '३',
-        '4': '४',
-        '5': '५',
-        '6': '६',
-        '7': '७',
-        '8': '८',
-        '9': '९',
-        '0': '०'
-    },
-    numberMap$a = {
-        '१': '1',
-        '२': '2',
-        '३': '3',
-        '४': '4',
-        '५': '5',
-        '६': '6',
-        '७': '7',
-        '८': '8',
-        '९': '9',
-        '०': '0'
-    };
+            '1': '१',
+            '2': '२',
+            '3': '३',
+            '4': '४',
+            '5': '५',
+            '6': '६',
+            '7': '७',
+            '8': '८',
+            '9': '९',
+            '0': '०'
+        },
+        numberMap$a = {
+            '१': '1',
+            '२': '2',
+            '३': '3',
+            '४': '4',
+            '५': '5',
+            '६': '6',
+            '७': '7',
+            '८': '8',
+            '९': '9',
+            '०': '0'
+        };
 
     function relativeTimeMr(number, withoutSuffix, string, isFuture)
     {
@@ -11260,29 +11260,29 @@
     //! moment.js locale configuration
 
     var symbolMap$d = {
-        '1': '१',
-        '2': '२',
-        '3': '३',
-        '4': '४',
-        '5': '५',
-        '6': '६',
-        '7': '७',
-        '8': '८',
-        '9': '९',
-        '0': '०'
-    },
-    numberMap$c = {
-        '१': '1',
-        '२': '2',
-        '३': '3',
-        '४': '4',
-        '५': '5',
-        '६': '6',
-        '७': '7',
-        '८': '8',
-        '९': '9',
-        '०': '0'
-    };
+            '1': '१',
+            '2': '२',
+            '3': '३',
+            '4': '४',
+            '5': '५',
+            '6': '६',
+            '7': '७',
+            '8': '८',
+            '9': '९',
+            '0': '०'
+        },
+        numberMap$c = {
+            '१': '1',
+            '२': '2',
+            '३': '3',
+            '४': '4',
+            '५': '5',
+            '६': '6',
+            '७': '7',
+            '८': '8',
+            '९': '9',
+            '०': '0'
+        };
 
     hooks.defineLocale('ne', {
         months : 'जनवरी_फेब्रुवरी_मार्च_अप्रिल_मई_जुन_जुलाई_अगष्ट_सेप्टेम्बर_अक्टोबर_नोभेम्बर_डिसेम्बर'.split('_'),
@@ -11569,29 +11569,29 @@
     //! moment.js locale configuration
 
     var symbolMap$e = {
-        '1': '੧',
-        '2': '੨',
-        '3': '੩',
-        '4': '੪',
-        '5': '੫',
-        '6': '੬',
-        '7': '੭',
-        '8': '੮',
-        '9': '੯',
-        '0': '੦'
-    },
-    numberMap$d = {
-        '੧': '1',
-        '੨': '2',
-        '੩': '3',
-        '੪': '4',
-        '੫': '5',
-        '੬': '6',
-        '੭': '7',
-        '੮': '8',
-        '੯': '9',
-        '੦': '0'
-    };
+            '1': '੧',
+            '2': '੨',
+            '3': '੩',
+            '4': '੪',
+            '5': '੫',
+            '6': '੬',
+            '7': '੭',
+            '8': '੮',
+            '9': '੯',
+            '0': '੦'
+        },
+        numberMap$d = {
+            '੧': '1',
+            '੨': '2',
+            '੩': '3',
+            '੪': '4',
+            '੫': '5',
+            '੬': '6',
+            '੭': '7',
+            '੮': '8',
+            '੯': '9',
+            '੦': '0'
+        };
 
     hooks.defineLocale('pa-in', {
         // There are months name as per Nanakshahi Calendar but they are not used as rigidly in modern Punjabi.
@@ -13001,9 +13001,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'e' :
-                (b === 1) ? 'a' :
-                (b === 2) ? 'a' :
-                (b === 3) ? 'e' : 'e';
+                    (b === 1) ? 'a' :
+                        (b === 2) ? 'a' :
+                            (b === 3) ? 'e' : 'e';
             return number + output;
         },
         week : {
@@ -13297,9 +13297,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -13524,24 +13524,24 @@
     function translateFuture(output) {
         var time = output;
         time = (output.indexOf('jaj') !== -1) ?
-        time.slice(0, -3) + 'leS' :
-        (output.indexOf('jar') !== -1) ?
-        time.slice(0, -3) + 'waQ' :
-        (output.indexOf('DIS') !== -1) ?
-        time.slice(0, -3) + 'nem' :
-        time + ' pIq';
+            time.slice(0, -3) + 'leS' :
+            (output.indexOf('jar') !== -1) ?
+                time.slice(0, -3) + 'waQ' :
+                (output.indexOf('DIS') !== -1) ?
+                    time.slice(0, -3) + 'nem' :
+                    time + ' pIq';
         return time;
     }
 
     function translatePast(output) {
         var time = output;
         time = (output.indexOf('jaj') !== -1) ?
-        time.slice(0, -3) + 'Hu’' :
-        (output.indexOf('jar') !== -1) ?
-        time.slice(0, -3) + 'wen' :
-        (output.indexOf('DIS') !== -1) ?
-        time.slice(0, -3) + 'ben' :
-        time + ' ret';
+            time.slice(0, -3) + 'Hu’' :
+            (output.indexOf('jar') !== -1) ?
+                time.slice(0, -3) + 'wen' :
+                (output.indexOf('DIS') !== -1) ?
+                    time.slice(0, -3) + 'ben' :
+                    time + ' ret';
         return time;
     }
 
@@ -13565,9 +13565,9 @@
 
     function numberAsNoun(number) {
         var hundred = Math.floor((number % 1000) / 100),
-        ten = Math.floor((number % 100) / 10),
-        one = number % 10,
-        word = '';
+            ten = Math.floor((number % 100) / 10),
+            one = number % 10,
+            word = '';
         if (hundred > 0) {
             word += numbersNouns[hundred] + 'vatlh';
         }
@@ -14336,7 +14336,7 @@
             LLL : 'D MMMM [năm] YYYY HH:mm',
             LLLL : 'dddd, D MMMM [năm] YYYY HH:mm',
             l : 'DD/M/YYYY',
-            ll : 'D MMM',
+            ll : 'D MMM YYYY',
             lll : 'D MMM YYYY HH:mm',
             llll : 'ddd, D MMM YYYY HH:mm'
         },
@@ -14419,9 +14419,9 @@
         ordinal : function (number) {
             var b = number % 10,
                 output = (~~(number % 100 / 10) === 1) ? 'th' :
-                (b === 1) ? 'st' :
-                (b === 2) ? 'nd' :
-                (b === 3) ? 'rd' : 'th';
+                    (b === 1) ? 'st' :
+                        (b === 2) ? 'nd' :
+                            (b === 3) ? 'rd' : 'th';
             return number + output;
         },
         week : {
@@ -14494,7 +14494,7 @@
             LLL : 'YYYY年M月D日Ah点mm分',
             LLLL : 'YYYY年M月D日ddddAh点mm分',
             l : 'YYYY/M/D',
-            ll : 'M月D日',
+            ll : 'YYYY年M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
@@ -14504,7 +14504,7 @@
                 hour = 0;
             }
             if (meridiem === '凌晨' || meridiem === '早上' ||
-                    meridiem === '上午') {
+                meridiem === '上午') {
                 return hour;
             } else if (meridiem === '下午' || meridiem === '晚上') {
                 return hour + 12;
@@ -14592,7 +14592,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日dddd HH:mm',
             l : 'YYYY/M/D',
-            ll : 'M月D日',
+            ll : 'YYYY年M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
@@ -14683,7 +14683,7 @@
             LLL : 'YYYY年M月D日 HH:mm',
             LLLL : 'YYYY年M月D日dddd HH:mm',
             l : 'YYYY/M/D',
-            ll : 'M月D日',
+            ll : 'YYYY年M月D日',
             lll : 'YYYY年M月D日 HH:mm',
             llll : 'YYYY年M月D日dddd HH:mm'
         },
