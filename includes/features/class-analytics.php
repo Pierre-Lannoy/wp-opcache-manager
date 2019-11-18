@@ -181,196 +181,6 @@ class Analytics {
 	/**
 	 * Query statistics table.
 	 *
-	 * @param   string  $type    The type of pie.
-	 * @param   integer $limit  The number to display.
-	 * @return array  The result of the query, ready to encode.
-	 * @since    1.0.0
-	 */
-	private function query_pie( $type, $limit ) {
-		$extra_field = '';
-		$extra       = [];
-		$not         = false;
-		$uuid        = UUID::generate_unique_id( 5 );
-		switch ( $type ) {
-			case 'code':
-				$group       = 'code';
-				$follow      = 'authority';
-				$extra_field = 'code';
-				$extra       = [ 0 ];
-				$not         = true;
-				break;
-			case 'security':
-				$group       = 'scheme';
-				$follow      = 'endpoint';
-				$extra_field = 'scheme';
-				$extra       = [ 'http', 'https' ];
-				$not         = false;
-				break;
-			case 'method':
-				$group  = 'verb';
-				$follow = 'domain';
-				break;
-
-		}
-		$data  = Schema::get_grouped_list( $group, [], $this->filter, ! $this->is_today, $extra_field, $extra, $not, 'ORDER BY sum_hit DESC' );
-		$total = 0;
-		$other = 0;
-		foreach ( $data as $key => $row ) {
-			$total = $total + $row['sum_hit'];
-			if ( $limit <= $key ) {
-				$other = $other + $row['sum_hit'];
-			}
-		}
-		$result = '';
-		$cpt    = 0;
-		$labels = [];
-		$series = [];
-		while ( $cpt < $limit && array_key_exists( $cpt, $data ) ) {
-			if ( 0 < $total ) {
-				$percent = round( 100 * $data[ $cpt ]['sum_hit'] / $total, 1 );
-			} else {
-				$percent = 100;
-			}
-			if ( 0.1 > $percent ) {
-				$percent = 0.1;
-			}
-			$meta = strtoupper( $data[ $cpt ][ $group ] );
-			if ( 'code' === $type ) {
-				$meta = $data[ $cpt ][ $group ] . ' ' . Http::$http_status_codes[ (int) $data[ $cpt ][ $group ] ];
-			}
-			$labels[] = strtoupper( $data[ $cpt ][ $group ] );
-			$series[] = [
-				'meta'  => $meta,
-				'value' => (float) $percent,
-			];
-			++$cpt;
-		}
-		if ( 0 < $other ) {
-			if ( 0 < $total ) {
-				$percent = round( 100 * $other / $total, 1 );
-			} else {
-				$percent = 100;
-			}
-			if ( 0.1 > $percent ) {
-				$percent = 0.1;
-			}
-			$labels[] = esc_html__( 'Other', 'opcache-manager' );
-			$series[] = [
-				'meta'  => esc_html__( 'Other', 'opcache-manager' ),
-				'value' => (float) $percent,
-			];
-		}
-		$result  = '<div class="opcm-pie-box">';
-		$result .= '<div class="opcm-pie-graph">';
-		$result .= '<div class="opcm-pie-graph-handler" id="opcm-pie-' . $group . '"></div>';
-		$result .= '</div>';
-		$result .= '<div class="opcm-pie-legend">';
-		foreach ( $labels as $key => $label ) {
-			$icon    = '<img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'square', $this->colors[ $key ], $this->colors[ $key ] ) . '" />';
-			$result .= '<div class="opcm-pie-legend-item">' . $icon . '&nbsp;&nbsp;' . $label . '</div>';
-		}
-		$result .= '';
-		$result .= '</div>';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var data' . $uuid . ' = ' . wp_json_encode(
-			[
-				'labels' => $labels,
-				'series' => $series,
-			]
-		) . ';';
-		$result .= ' var tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: true, appendToBody: true});';
-		$result .= ' var option' . $uuid . ' = {width: 120, height: 120, showLabel: false, donut: true, donutWidth: "40%", startAngle: 270, plugins: [tooltip' . $uuid . ']};';
-		$result .= ' new Chartist.Pie("#opcm-pie-' . $group . '", data' . $uuid . ', option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		return [ 'opcm-' . $type => $result ];
-	}
-
-	/**
-	 * Query statistics table.
-	 *
-	 * @param   string  $type    The type of top.
-	 * @param   integer $limit  The number to display.
-	 * @return array  The result of the query, ready to encode.
-	 * @since    1.0.0
-	 */
-	private function _D_query_top( $type, $limit ) {
-		switch ( $type ) {
-			case 'authorities':
-				$group  = 'authority';
-				$follow = 'authority';
-				break;
-			case 'endpoints':
-				$group  = 'endpoint';
-				$follow = 'endpoint';
-				break;
-			default:
-				$group  = 'id';
-				$follow = 'domain';
-				break;
-
-		}
-		$data  = Schema::get_grouped_list( $group, [], $this->filter, ! $this->is_today, '', [], false, 'ORDER BY sum_hit DESC' );
-		$total = 0;
-		$other = 0;
-		foreach ( $data as $key => $row ) {
-			$total = $total + $row['sum_hit'];
-			if ( $limit <= $key ) {
-				$other = $other + $row['sum_hit'];
-			}
-		}
-		$result = '';
-		$cpt    = 0;
-		while ( $cpt < $limit && array_key_exists( $cpt, $data ) ) {
-			if ( 0 < $total ) {
-				$percent = round( 100 * $data[ $cpt ]['sum_hit'] / $total, 1 );
-			} else {
-				$percent = 100;
-			}
-			$url = $this->get_url(
-				[],
-				[
-					'type'   => $follow,
-					'id'     => $data[ $cpt ][ $group ],
-					'domain' => $data[ $cpt ]['id'],
-				]
-			);
-			if ( 0.5 > $percent ) {
-				$percent = 0.5;
-			}
-			$result .= '<div class="opcm-top-line">';
-			$result .= '<div class="opcm-top-line-title">';
-			$result .= '<img style="width:16px;vertical-align:bottom;" src="' . Favicon::get_base64( $data[ $cpt ]['id'] ) . '" />&nbsp;&nbsp;<span class="opcm-top-line-title-text"><a href="' . esc_url( $url ) . '">' . $data[ $cpt ][ $group ] . '</a></span>';
-			$result .= '</div>';
-			$result .= '<div class="opcm-top-line-content">';
-			$result .= '<div class="opcm-bar-graph"><div class="opcm-bar-graph-value" style="width:' . $percent . '%"></div></div>';
-			$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $data[ $cpt ]['sum_hit'], 2, false, '&nbsp;' ) . '</div>';
-			$result .= '</div>';
-			$result .= '</div>';
-			++$cpt;
-		}
-		if ( 0 < $total ) {
-			$percent = round( 100 * $other / $total, 1 );
-		} else {
-			$percent = 100;
-		}
-		$result .= '<div class="opcm-top-line opcm-minor-data">';
-		$result .= '<div class="opcm-top-line-title">';
-		$result .= '<span class="opcm-top-line-title-text">' . esc_html__( 'Other', 'opcache-manager' ) . '</span>';
-		$result .= '</div>';
-		$result .= '<div class="opcm-top-line-content">';
-		$result .= '<div class="opcm-bar-graph"><div class="opcm-bar-graph-value" style="width:' . $percent . '%"></div></div>';
-		$result .= '<div class="opcm-bar-detail">' . Conversion::number_shorten( $other, 2, false, '&nbsp;' ) . '</div>';
-		$result .= '</div>';
-		$result .= '</div>';
-		return [ 'opcm-top-' . $type => $result ];
-	}
-
-	/**
-	 * Query statistics table.
-	 *
 	 * @return array  The result of the query, ready to encode.
 	 * @since    1.0.0
 	 */
@@ -816,7 +626,20 @@ class Analytics {
 		$json_memory = wp_json_encode(
 			[
 				'labels' => $labels,
-				'series' => $series['memory'],
+				'series' => [
+					[
+						'name' => esc_html__( 'Used Memory', 'traffic' ),
+						'data' => $series['memory'][0],
+					],
+					[
+						'name' => esc_html__( 'Free Memory', 'traffic' ),
+						'data' => $series['memory'][1],
+					],
+					[
+						'name' => esc_html__( 'Wasted Memory', 'traffic' ),
+						'data' => $series['memory'][2],
+					],
+				],
 			]
 		);
 		$json_memory = str_replace( '"null"', 'null', $json_memory );
@@ -829,7 +652,16 @@ class Analytics {
 		$json_key = wp_json_encode(
 			[
 				'labels' => $labels,
-				'series' => $series['key'],
+				'series' => [
+					[
+						'name' => esc_html__( 'Used Key Slots', 'traffic' ),
+						'data' => $series['key'][0],
+					],
+					[
+						'name' => esc_html__( 'Free Key Slots', 'traffic' ),
+						'data' => $series['key'][1],
+					],
+				],
 			]
 		);
 		$json_key = str_replace( '"null"', 'null', $json_key );
@@ -842,7 +674,16 @@ class Analytics {
 		$json_buf = wp_json_encode(
 			[
 				'labels' => $labels,
-				'series' => $series['buf'],
+				'series' => [
+					[
+						'name' => esc_html__( 'Used Buffer', 'traffic' ),
+						'data' => $series['buf'][0],
+					],
+					[
+						'name' => esc_html__( 'Free Buffer', 'traffic' ),
+						'data' => $series['buf'][1],
+					],
+				],
 			]
 		);
 		$json_buf = str_replace( '"null"', 'null', $json_buf );
@@ -1351,243 +1192,6 @@ class Analytics {
 			[
 				'query'   => 'events',
 				'queried' => 0,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the top domains box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_top_domain_box() {
-		$url     = $this->get_url( [ 'domain' ], [ 'type' => 'domains' ] );
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all domains.', 'opcache-manager' );
-		$result  = '<div class="opcm-40-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Top Domains', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-top-domains">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'top-domains',
-				'queried' => 5,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the top authority box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_top_authority_box() {
-		$url     = $this->get_url(
-			[],
-			[
-				'type'   => 'authorities',
-				'domain' => $this->domain,
-			]
-		);
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all subdomains.', 'opcache-manager' );
-		$result  = '<div class="opcm-40-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Top Subdomains', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-top-authorities">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'top-authorities',
-				'queried' => 5,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the top endpoint box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_top_endpoint_box() {
-		$url     = $this->get_url(
-			[],
-			[
-				'type'   => 'endpoints',
-				'domain' => $this->domain,
-			]
-		);
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all endpoints.', 'opcache-manager' );
-		$result  = '<div class="opcm-40-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Top Endpoints', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-top-endpoints">' . $this->get_graph_placeholder( 200 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'top-endpoints',
-				'queried' => 5,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the map box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_codes_box() {
-		switch ( $this->type ) {
-			case 'domain':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'authorities',
-						'domain' => $this->domain,
-						'extra'  => 'codes',
-					]
-				);
-				break;
-			case 'authority':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'endpoints',
-						'domain' => $this->domain,
-						'extra'  => 'codes',
-					]
-				);
-				break;
-			default:
-				$url = $this->get_url(
-					[ 'domain' ],
-					[
-						'type'  => 'domains',
-						'extra' => 'codes',
-					]
-				);
-		}
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all codes.', 'opcache-manager' );
-		$result  = '<div class="opcm-33-module opcm-33-left-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'HTTP codes', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-code">' . $this->get_graph_placeholder( 90 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'code',
-				'queried' => 4,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the map box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_security_box() {
-		switch ( $this->type ) {
-			case 'domain':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'authorities',
-						'domain' => $this->domain,
-						'extra'  => 'schemes',
-					]
-				);
-				break;
-			case 'authority':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'endpoints',
-						'domain' => $this->domain,
-						'extra'  => 'schemes',
-					]
-				);
-				break;
-			default:
-				$url = $this->get_url(
-					[ 'domain' ],
-					[
-						'type'  => 'domains',
-						'extra' => 'schemes',
-					]
-				);
-		}
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of protocols breakdown.', 'opcache-manager' );
-		$result  = '<div class="opcm-33-module opcm-33-center-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Protocols', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-security">' . $this->get_graph_placeholder( 90 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'security',
-				'queried' => 4,
-			]
-		);
-		return $result;
-	}
-
-	/**
-	 * Get the map box.
-	 *
-	 * @return string  The box ready to print.
-	 * @since    1.0.0
-	 */
-	public function _D_get_method_box() {
-		switch ( $this->type ) {
-			case 'domain':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'authorities',
-						'domain' => $this->domain,
-						'extra'  => 'methods',
-					]
-				);
-				break;
-			case 'authority':
-				$url = $this->get_url(
-					[],
-					[
-						'type'   => 'endpoints',
-						'domain' => $this->domain,
-						'extra'  => 'methods',
-					]
-				);
-				break;
-			default:
-				$url = $this->get_url(
-					[ 'domain' ],
-					[
-						'type'  => 'domains',
-						'extra' => 'methods',
-					]
-				);
-		}
-		$detail  = '<a href="' . esc_url( $url ) . '"><img style="width:12px;vertical-align:baseline;" src="' . Feather\Icons::get_base64( 'zoom-in', 'none', '#73879C' ) . '" /></a>';
-		$help    = esc_html__( 'View the details of all methods.', 'opcache-manager' );
-		$result  = '<div class="opcm-33-module opcm-33-right-module">';
-		$result .= '<div class="opcm-module-title-bar"><span class="opcm-module-title">' . esc_html__( 'Methods', 'opcache-manager' ) . '</span><span class="opcm-module-more left" data-position="left" data-tooltip="' . $help . '">' . $detail . '</span></div>';
-		$result .= '<div class="opcm-module-content" id="opcm-method">' . $this->get_graph_placeholder( 90 ) . '</div>';
-		$result .= '</div>';
-		$result .= $this->get_refresh_script(
-			[
-				'query'   => 'method',
-				'queried' => 4,
 			]
 		);
 		return $result;
