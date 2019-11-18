@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: OPcache Manager\n"
-"POT-Creation-Date: 2019-11-15 10:09+0100\n"
+"POT-Creation-Date: 2019-11-18 21:53+0100\n"
 "PO-Revision-Date: 2019-07-08 14:07+0200\n"
 "Last-Translator: Pierre Lannoy <pierre@lannoy.fr>\n"
 "Language-Team: Pierre Lannoy <pierre@lannoy.fr>\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #. translators: as in the sentence "OPcache Manager Settings" or "WordPress Settings"
 #: admin/class-opcache-manager-admin.php:85
-#: admin/partials/opcache-manager-admin-settings-main.php:28
+#: admin/partials/opcache-manager-admin-settings-main.php:36
 #, php-format
 msgid "%s Settings"
 msgstr ""
@@ -35,7 +35,7 @@ msgstr ""
 
 #: admin/class-opcache-manager-admin.php:98
 #: admin/class-opcache-manager-admin.php:99
-#: includes/features/class-analytics.php:1114
+#: includes/features/class-analytics.php:1115
 msgid "OPcache Analytics"
 msgstr ""
 
@@ -267,18 +267,18 @@ msgstr ""
 msgid "Changelog"
 msgstr ""
 
-#: admin/partials/opcache-manager-admin-settings-main.php:22
+#: admin/partials/opcache-manager-admin-settings-main.php:30
 #, php-format
 msgid ""
-"Note: analytics reports are available via the <a href=\"%s\">tools menu</"
-"a>."
+"Note: <a href=\"%s\">management tools</a> and <a href=\"%s\">analytics "
+"reports</a> are available via the <strong>tools menu</strong>."
 msgstr ""
 
-#: admin/partials/opcache-manager-admin-settings-main.php:44
+#: admin/partials/opcache-manager-admin-settings-main.php:52
 msgid "Options"
 msgstr ""
 
-#: admin/partials/opcache-manager-admin-settings-main.php:57
+#: admin/partials/opcache-manager-admin-settings-main.php:65
 msgid "About"
 msgstr ""
 
@@ -299,7 +299,7 @@ msgid "Number of files to display"
 msgstr ""
 
 #: admin/partials/opcache-manager-admin-tools-lines.php:29
-#: includes/features/class-analytics.php:1593
+#: includes/features/class-analytics.php:1367
 msgid "Apply"
 msgstr ""
 
@@ -307,310 +307,335 @@ msgstr ""
 msgid "Force Invalidate All"
 msgstr ""
 
-#: includes/features/class-analytics.php:257
-#: includes/features/class-analytics.php:259
-#: includes/features/class-analytics.php:361
-msgid "Other"
-msgstr ""
-
-#: includes/features/class-analytics.php:382
-#: includes/features/class-analytics.php:496
-#: includes/features/class-analytics.php:542
-#: includes/features/class-analytics.php:550
+#: includes/features/class-analytics.php:192
+#: includes/features/class-analytics.php:306
+#: includes/features/class-analytics.php:352
+#: includes/features/class-analytics.php:360
 msgid "Timeframe"
 msgstr ""
 
-#: includes/features/class-analytics.php:383
-#: includes/features/class-analytics.php:497
-#: includes/features/class-analytics.php:543
-#: includes/features/class-analytics.php:551
+#: includes/features/class-analytics.php:193
+#: includes/features/class-analytics.php:307
+#: includes/features/class-analytics.php:353
+#: includes/features/class-analytics.php:361
 msgid "Details"
 msgstr ""
 
-#: includes/features/class-analytics.php:395
+#: includes/features/class-analytics.php:205
 msgid "Reset due to free memory exhaustion."
 msgstr ""
 
-#: includes/features/class-analytics.php:399
+#: includes/features/class-analytics.php:209
 msgid "Reset due to excessive keys saturation."
 msgstr ""
 
-#: includes/features/class-analytics.php:403
+#: includes/features/class-analytics.php:213
 msgid "Programmatic or manual reset."
 msgstr ""
 
-#: includes/features/class-analytics.php:408
+#: includes/features/class-analytics.php:218
 msgid "Programmatic reset and warm-up."
 msgstr ""
 
-#: includes/features/class-analytics.php:413
+#: includes/features/class-analytics.php:223
 msgid "Manual warm-up."
 msgstr ""
 
-#: includes/features/class-analytics.php:419
+#: includes/features/class-analytics.php:229
 msgid "Cache is full."
 msgstr ""
 
-#: includes/features/class-analytics.php:428
+#: includes/features/class-analytics.php:238
 msgid "OPcache disabled."
 msgstr ""
 
-#: includes/features/class-analytics.php:435
+#: includes/features/class-analytics.php:245
 msgid "OPcache enabled."
 msgstr ""
 
-#: includes/features/class-analytics.php:456
+#: includes/features/class-analytics.php:266
 #, php-format
 msgid "Total memory size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:458
+#: includes/features/class-analytics.php:268
 #, php-format
 msgid "Total memory size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:464
+#: includes/features/class-analytics.php:274
 #, php-format
 msgid "Total buffer size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:466
+#: includes/features/class-analytics.php:276
 #, php-format
 msgid "Total buffer size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:472
+#: includes/features/class-analytics.php:282
 #, php-format
 msgid "Maximum keys slots increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:474
+#: includes/features/class-analytics.php:284
 #, php-format
 msgid "Maximum keys slots decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:492
+#: includes/features/class-analytics.php:302
 msgid "Settings changed."
 msgstr ""
 
-#: includes/features/class-analytics.php:510
+#: includes/features/class-analytics.php:320
 #, php-format
 msgid "Free memory size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:512
+#: includes/features/class-analytics.php:322
 #, php-format
 msgid "Free memory size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:516
+#: includes/features/class-analytics.php:326
 #, php-format
 msgid "Free buffer size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:518
+#: includes/features/class-analytics.php:328
 #, php-format
 msgid "Free buffer size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:522
+#: includes/features/class-analytics.php:332
 #, php-format
 msgid "Free keys slots increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:524
+#: includes/features/class-analytics.php:334
 #, php-format
 msgid "Free keys slots decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:534
+#: includes/features/class-analytics.php:344
 #, php-format
 msgid "Current wasted memory: %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:549
+#: includes/features/class-analytics.php:359
 msgid "No status events in the selected time range."
 msgstr ""
 
-#: includes/features/class-analytics.php:659
-#: includes/system/class-conversion.php:82
+#: includes/features/class-analytics.php:541
+msgid "Hit Ratio"
+msgstr ""
+
+#: includes/features/class-analytics.php:558
+msgid "Availability"
+msgstr ""
+
+#: includes/features/class-analytics.php:577
+msgid "Hit Count"
+msgstr ""
+
+#: includes/features/class-analytics.php:581
+msgid "Miss Count"
+msgstr ""
+
+#: includes/features/class-analytics.php:598
+msgid "Files Count"
+msgstr ""
+
+#: includes/features/class-analytics.php:615
+msgid "Strings Count"
+msgstr ""
+
+#: includes/features/class-analytics.php:631
+msgid "Used Memory"
+msgstr ""
+
+#: includes/features/class-analytics.php:635
+msgid "Free Memory"
+msgstr ""
+
+#: includes/features/class-analytics.php:639
+msgid "Wasted Memory"
+msgstr ""
+
+#: includes/features/class-analytics.php:657
+msgid "Used Key Slots"
+msgstr ""
+
+#: includes/features/class-analytics.php:661
+msgid "Free Key Slots"
+msgstr ""
+
+#: includes/features/class-analytics.php:679
+msgid "Used Buffer"
+msgstr ""
+
+#: includes/features/class-analytics.php:683
+msgid "Free Buffer"
+msgstr ""
+
+#: includes/features/class-analytics.php:863
+#: includes/features/class-analytics.php:892
+#: includes/system/class-conversion.php:84
 msgctxt "Abbreviation - Stands for \"megabytes\"."
 msgid "MB"
 msgstr ""
 
-#: includes/features/class-analytics.php:1045
+#: includes/features/class-analytics.php:921
+#: includes/system/class-conversion.php:46
+msgctxt "Abbreviation - Stands for \"thousand\"."
+msgid "K"
+msgstr ""
+
+#: includes/features/class-analytics.php:1046
 #, php-format
 msgid "%s hits"
 msgstr ""
 
-#: includes/features/class-analytics.php:1049
+#: includes/features/class-analytics.php:1050
 #, php-format
 msgid "total memory: %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1052
+#: includes/features/class-analytics.php:1053
 #, php-format
 msgid "buffer size: %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1055
+#: includes/features/class-analytics.php:1056
 #, php-format
 msgid "%s keys (avg.)"
 msgstr ""
 
-#: includes/features/class-analytics.php:1061
+#: includes/features/class-analytics.php:1062
 msgid "no availability"
 msgstr ""
 
-#: includes/features/class-analytics.php:1063
+#: includes/features/class-analytics.php:1064
 #, php-format
 msgid "available %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1148
-msgid "Memory distribution."
-msgstr ""
-
 #: includes/features/class-analytics.php:1149
-msgid "Data volume distribution."
+msgid "Hit ratio variation."
 msgstr ""
 
 #: includes/features/class-analytics.php:1150
-msgid "Uptime distribution."
+msgid "Hit and miss distribution."
+msgstr ""
+
+#: includes/features/class-analytics.php:1151
+msgid "Memory distribution."
+msgstr ""
+
+#: includes/features/class-analytics.php:1152
+msgid "Files variation."
+msgstr ""
+
+#: includes/features/class-analytics.php:1153
+msgid "Keys distribution."
+msgstr ""
+
+#: includes/features/class-analytics.php:1154
+msgid "Strings variation."
+msgstr ""
+
+#: includes/features/class-analytics.php:1155
+msgid "Buffer distribution."
 msgstr ""
 
 #: includes/features/class-analytics.php:1156
+msgid "Availability variation."
+msgstr ""
+
+#: includes/features/class-analytics.php:1167
 msgid "Metrics Variations"
 msgstr ""
 
-#: includes/features/class-analytics.php:1177
+#: includes/features/class-analytics.php:1188
 msgid "Status Events"
 msgstr ""
 
-#: includes/features/class-analytics.php:1198
-msgid "View the details of all domains."
-msgstr ""
-
-#: includes/features/class-analytics.php:1200
-msgid "Top Domains"
-msgstr ""
-
-#: includes/features/class-analytics.php:1227
-msgid "View the details of all subdomains."
-msgstr ""
-
-#: includes/features/class-analytics.php:1229
-msgid "Top Subdomains"
-msgstr ""
-
-#: includes/features/class-analytics.php:1256
-msgid "View the details of all endpoints."
-msgstr ""
-
-#: includes/features/class-analytics.php:1258
-msgid "Top Endpoints"
-msgstr ""
-
-#: includes/features/class-analytics.php:1308
-msgid "View the details of all codes."
-msgstr ""
-
-#: includes/features/class-analytics.php:1310
-msgid "HTTP codes"
-msgstr ""
-
-#: includes/features/class-analytics.php:1360
-msgid "View the details of protocols breakdown."
-msgstr ""
-
-#: includes/features/class-analytics.php:1362
-msgid "Protocols"
-msgstr ""
-
-#: includes/features/class-analytics.php:1412
-msgid "View the details of all methods."
-msgstr ""
-
-#: includes/features/class-analytics.php:1414
-msgid "Methods"
-msgstr ""
-
-#: includes/features/class-analytics.php:1437
+#: includes/features/class-analytics.php:1211
 msgctxt "Noun - Cache hit ratio."
 msgid "Hit Ratio"
 msgstr ""
 
-#: includes/features/class-analytics.php:1438
+#: includes/features/class-analytics.php:1212
 msgid "The ratio between hit and total calls."
 msgstr ""
 
-#: includes/features/class-analytics.php:1442
+#: includes/features/class-analytics.php:1216
 msgctxt "Noun - Memory free of allocation."
 msgid "Free Memory"
 msgstr ""
 
-#: includes/features/class-analytics.php:1443
+#: includes/features/class-analytics.php:1217
 msgid "Ratio of free available memory."
 msgstr ""
 
-#: includes/features/class-analytics.php:1447
+#: includes/features/class-analytics.php:1221
 msgctxt "Noun - Number of already cached files."
 msgid "Cached Files"
 msgstr ""
 
-#: includes/features/class-analytics.php:1448
+#: includes/features/class-analytics.php:1222
 msgid "Number of compiled and cached files."
 msgstr ""
 
-#: includes/features/class-analytics.php:1452
+#: includes/features/class-analytics.php:1226
 msgctxt ""
 "Noun - Ratio of the allocated keys to the total available keys slots."
 msgid "Keys Saturation"
 msgstr ""
 
-#: includes/features/class-analytics.php:1453
+#: includes/features/class-analytics.php:1227
 msgid "Ratio of the allocated keys to the total available keys slots."
 msgstr ""
 
-#: includes/features/class-analytics.php:1457
+#: includes/features/class-analytics.php:1231
 msgctxt "Noun - Ratio of the used buffer to the total buffer size."
 msgid "Buffer Saturation"
 msgstr ""
 
-#: includes/features/class-analytics.php:1458
+#: includes/features/class-analytics.php:1232
 msgid "Ratio of the used buffer to the total buffer size."
 msgstr ""
 
-#: includes/features/class-analytics.php:1462
+#: includes/features/class-analytics.php:1236
 msgctxt "Noun - Ratio of time when OPcache is not disabled."
 msgid "Availability"
 msgstr ""
 
-#: includes/features/class-analytics.php:1463
+#: includes/features/class-analytics.php:1237
 msgid "Time ratio with an operational OPcache."
 msgstr ""
 
-#: includes/features/class-analytics.php:1593
+#: includes/features/class-analytics.php:1367
 msgid "Custom Range"
 msgstr ""
 
-#: includes/features/class-analytics.php:1593
+#: includes/features/class-analytics.php:1367
 msgid "Cancel"
 msgstr ""
 
-#: includes/features/class-analytics.php:1595
+#: includes/features/class-analytics.php:1369
 msgid "Today"
 msgstr ""
 
-#: includes/features/class-analytics.php:1596
+#: includes/features/class-analytics.php:1370
 msgid "Yesterday"
 msgstr ""
 
-#: includes/features/class-analytics.php:1597
+#: includes/features/class-analytics.php:1371
 msgid "This Month"
 msgstr ""
 
-#: includes/features/class-analytics.php:1598
+#: includes/features/class-analytics.php:1372
 msgid "Last Month"
 msgstr ""
 
@@ -794,62 +819,57 @@ msgstr ""
 msgid "Sorry, unable to find or read changelog file."
 msgstr ""
 
-#: includes/system/class-conversion.php:45
-msgctxt "Abbreviation - Stands for \"thousand\"."
-msgid "K"
-msgstr ""
-
-#: includes/system/class-conversion.php:46
+#: includes/system/class-conversion.php:47
 msgctxt "Abbreviation - Stands for \"million\"."
 msgid "M"
 msgstr ""
 
-#: includes/system/class-conversion.php:47
+#: includes/system/class-conversion.php:48
 msgctxt "Abbreviation - Stands for \"billion\"."
 msgid "B"
 msgstr ""
 
-#: includes/system/class-conversion.php:48
+#: includes/system/class-conversion.php:49
 msgctxt "Abbreviation - Stands for \"trillion\"."
 msgid "T"
 msgstr ""
 
-#: includes/system/class-conversion.php:49
+#: includes/system/class-conversion.php:50
 msgctxt "Abbreviation - Stands for \"quadrillion\"."
 msgid "Qa"
 msgstr ""
 
-#: includes/system/class-conversion.php:50
+#: includes/system/class-conversion.php:51
 msgctxt "Abbreviation - Stands for \"quintillion\"."
 msgid "Qi"
 msgstr ""
 
-#: includes/system/class-conversion.php:80
+#: includes/system/class-conversion.php:82
 msgctxt "Abbreviation - Stands for \"byte\"."
 msgid "B"
 msgstr ""
 
-#: includes/system/class-conversion.php:81
+#: includes/system/class-conversion.php:83
 msgctxt "Abbreviation - Stands for \"kilobytes\"."
 msgid "KB"
 msgstr ""
 
-#: includes/system/class-conversion.php:83
+#: includes/system/class-conversion.php:85
 msgctxt "Abbreviation - Stands for \"gigabytes\"."
 msgid "GB"
 msgstr ""
 
-#: includes/system/class-conversion.php:84
+#: includes/system/class-conversion.php:86
 msgctxt "Abbreviation - Stands for \"terabytes\"."
 msgid "TB"
 msgstr ""
 
-#: includes/system/class-conversion.php:85
+#: includes/system/class-conversion.php:87
 msgctxt "Abbreviation - Stands for \"petabytes\"."
 msgid "PB"
 msgstr ""
 
-#: includes/system/class-conversion.php:86
+#: includes/system/class-conversion.php:88
 msgctxt "Abbreviation - Stands for \"exabytes\"."
 msgid "EB"
 msgstr ""
@@ -869,18 +889,18 @@ msgid "in %s"
 msgstr ""
 
 #: includes/system/class-date.php:120
-msgctxt "Abbreviation - Stands for \"second\"."
-msgid "sec."
+msgctxt "Unit abbreviation - Stands for \"second\"."
+msgid "sec"
 msgstr ""
 
 #: includes/system/class-date.php:121
-msgctxt "Abbreviation - Stands for \"minute\"."
-msgid "min."
+msgctxt "Unit abbreviation - Stands for \"minute\"."
+msgid "min"
 msgstr ""
 
 #: includes/system/class-date.php:122
-msgctxt "Abbreviation - Stands for \"hour\"."
-msgid "hr."
+msgctxt "Unit abbreviation - Stands for \"hour\"."
+msgid "hr"
 msgstr ""
 
 #: includes/system/class-date.php:126
