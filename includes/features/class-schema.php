@@ -13,9 +13,8 @@ namespace OPcacheManager\Plugin\Feature;
 
 use OPcacheManager\System\OPcache;
 
-use OPcacheManager\System\Blog;
-use OPcacheManager\System\Environment;
-use OPcacheManager\System\Http;
+use OPcacheManager\System\Option;
+use OPcacheManager\System\Database;
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Cache;
 
@@ -126,7 +125,23 @@ class Schema {
 	 * @since    1.0.0
 	 */
 	private function purge() {
-		//
+		$days = (int) Option::network_get( 'history' );
+		if ( ! is_numeric( $days ) || 21 > $days ) {
+			$days = 21;
+			Option::network_set( 'history', $days );
+		}
+		$database = new Database();
+		$count    = $database->purge( self::$statistics, 'timestamp', 24 * $days );
+		if ( 0 === $count ) {
+			Logger::debug( 'No old records to delete.' );
+		} elseif ( 1 === $count ) {
+			Logger::debug( '1 old record deleted.' );
+			Cache::delete_global( '/Data/OldestDate' );
+		} else {
+			Logger::debug( sprintf( '%1$s old records deleted.', $count ) );
+			Cache::delete_global( '/Data/OldestDate' );
+		}
+
 	}
 
 	/**

@@ -185,7 +185,7 @@ class Database {
 	 */
 	public function purge( $table_name, $field_name, $interval ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . $table_name;
+		$table_name = $wpdb->base_prefix . $table_name;
 		$sql        = 'DELETE FROM ' . $table_name . ' WHERE (' . $field_name . ' < NOW() - INTERVAL ' . $interval . ' HOUR);';
 		// phpcs:ignore
 		return $wpdb->query( $sql );
