@@ -11,7 +11,15 @@
 
 // phpcs:ignore
 $active_tab = ( isset( $_GET['tab'] ) ? $_GET['tab'] : 'misc' );
-$url        = esc_url(
+$url1       = esc_url(
+	add_query_arg(
+		[
+			'page' => 'opcm-tools',
+		],
+		admin_url( 'tools.php' )
+	)
+);
+$url2       = esc_url(
 	add_query_arg(
 		[
 			'page' => 'opcm-viewer',
@@ -19,7 +27,7 @@ $url        = esc_url(
 		admin_url( 'tools.php' )
 	)
 );
-$note       = sprintf(__('Note: analytics reports are available via the <a href="%s">tools menu</a>.', 'opcache-manager' ), $url );
+$note       = sprintf(__('Note: <a href="%s">management tools</a> and <a href="%s">analytics reports</a> are available via the <strong>tools menu</strong>.', 'opcache-manager' ), $url1, $url2 );
 
 ?>
 
