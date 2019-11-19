@@ -375,6 +375,7 @@ class Analytics {
 	private function query_chart() {
 		$uuid       = UUID::generate_unique_id( 5 );
 		$query      = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
+		$query=[];
 		$data       = [];
 		$series     = [];
 		$labels     = [];
@@ -383,548 +384,578 @@ class Analytics {
 		$maxstrings = 0;
 		$maxscripts = 0;
 		// Data normalization.
-		if ( 1 === $this->duration ) {
-			foreach ( $query as $timestamp => $row ) {
-				$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
-				$offset      = $this->timezone->getOffset( $datetime );
-				$ts          = $datetime->getTimestamp() + $offset;
-				$data[ $ts ] = $row;
-			}
-			$end       = new \DateTime( Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() ), $this->timezone );
-			$end       = $end->getTimestamp();
-			$datetime  = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
-			$offset    = $this->timezone->getOffset( $datetime );
-			$timestamp = $datetime->getTimestamp() + 300;
-			while ( $timestamp <= $end + $offset ) {
-				$datetime = new \DateTime( date( 'Y-m-d H:i:s', $timestamp ), new \DateTimeZone( 'UTC' ) );
-				$offset   = $this->timezone->getOffset( $datetime );
-				$ts       = $datetime->getTimestamp() + $offset;
-				$record   = [];
-				foreach ( $items as $item ) {
-					$record[ $item ] = 0;
+		if ( 0 !== count( $query ) ) {
+			if ( 1 === $this->duration ) {
+				foreach ( $query as $timestamp => $row ) {
+					$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+					$offset      = $this->timezone->getOffset( $datetime );
+					$ts          = $datetime->getTimestamp() + $offset;
+					$data[ $ts ] = $row;
 				}
-				$data[ $ts ] = $record;
-				$timestamp   = $timestamp + 300;
-			}
-		} else {
-			$buffer = [];
-			foreach ( $query as $timestamp => $row ) {
-				$datetime = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
-				$datetime->setTimezone( $this->timezone );
-				$buffer[ $datetime->format( 'Y-m-d' ) ][] = $row;
-			}
-			foreach ( $buffer as $timestamp => $rows ) {
-				$record = [];
-				foreach ( $items as $item ) {
-					$record[ $item ] = 0;
-				}
-				foreach ( $rows as $row ) {
+				$end       = new \DateTime( Date::get_mysql_utc_from_date( $this->end . ' 23:59:59', $this->timezone->getName() ), $this->timezone );
+				$end       = $end->getTimestamp();
+				$datetime  = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+				$offset    = $this->timezone->getOffset( $datetime );
+				$timestamp = $datetime->getTimestamp() + 300;
+				while ( $timestamp <= $end + $offset ) {
+					$datetime = new \DateTime( date( 'Y-m-d H:i:s', $timestamp ), new \DateTimeZone( 'UTC' ) );
+					$offset   = $this->timezone->getOffset( $datetime );
+					$ts       = $datetime->getTimestamp() + $offset;
+					$record   = [];
 					foreach ( $items as $item ) {
-						if ( 'status' === $item ) {
-							$record[ $item ] = ( 'disabled' === $row[ $item ] ? 0 : 100 );
-						} else {
-							$record[ $item ] = $record[ $item ] + $row[ $item ];
+						$record[ $item ] = 0;
+					}
+					$data[ $ts ] = $record;
+					$timestamp   = $timestamp + 300;
+				}
+			} else {
+				$buffer = [];
+				foreach ( $query as $timestamp => $row ) {
+					$datetime = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
+					$datetime->setTimezone( $this->timezone );
+					$buffer[ $datetime->format( 'Y-m-d' ) ][] = $row;
+				}
+				foreach ( $buffer as $timestamp => $rows ) {
+					$record = [];
+					foreach ( $items as $item ) {
+						$record[ $item ] = 0;
+					}
+					foreach ( $rows as $row ) {
+						foreach ( $items as $item ) {
+							if ( 'status' === $item ) {
+								$record[ $item ] = ( 'disabled' === $row[ $item ] ? 0 : 100 );
+							} else {
+								$record[ $item ] = $record[ $item ] + $row[ $item ];
+							}
 						}
 					}
-				}
-				$cpt = count( $rows );
-				if ( 0 < $cpt ) {
-					foreach ( $items as $item ) {
-						$record[ $item ] = (int) round( $record[ $item ] / $cpt, 0 );
+					$cpt = count( $rows );
+					if ( 0 < $cpt ) {
+						foreach ( $items as $item ) {
+							$record[ $item ] = (int) round( $record[ $item ] / $cpt, 0 );
+						}
 					}
+					$data[ strtotime( $timestamp . ' 12:00:00' ) ] = $record;
 				}
-				$data[ strtotime( $timestamp . ' 12:00:00' ) ] = $record;
 			}
-		}
-		// Series computation.
-		foreach ( $data as $timestamp => $datum ) {
-			$ts = 'new Date(' . (string) $timestamp . '000)';
-			// Hit ratio.
-			$val = 'null';
-			if ( 0 !== (int) $datum['hit'] + (int) $datum['miss'] ) {
-				$val = round( 100 * $datum['hit'] / ( $datum['hit'] + $datum['miss'] ), 3 );
-			}
-			$series['ratio'][] = [
-				'x' => $ts,
-				'y' => $val,
-			];
-			// Availablility.
-			$series['availability'][] = [
-				'x' => $ts,
-				'y' => ( 'disabled' === $datum['status'] ? 0 : 100 ),
-			];
-			// Time series.
-			foreach ( [ 'hit', 'miss', 'strings', 'scripts' ] as $item ) {
-				$val               = (int) $datum[ $item ];
-				$series[ $item ][] = [
+			// Series computation.
+			foreach ( $data as $timestamp => $datum ) {
+				$ts = 'new Date(' . (string) $timestamp . '000)';
+				// Hit ratio.
+				$val = 'null';
+				if ( 0 !== (int) $datum['hit'] + (int) $datum['miss'] ) {
+					$val = round( 100 * $datum['hit'] / ( $datum['hit'] + $datum['miss'] ), 3 );
+				}
+				$series['ratio'][] = [
 					'x' => $ts,
 					'y' => $val,
 				];
-				switch ( $item ) {
-					case 'hit':
-					case 'miss':
-						if ( $maxhit < $val ) {
-							$maxhit = $val;
-						}
-						break;
-					case 'strings':
-						if ( $maxstrings < $val ) {
-							$maxstrings = $val;
-						}
-						break;
-					case 'scripts':
-						if ( $maxscripts < $val ) {
-							$maxscripts = $val;
-						}
-						break;
-				}
-			}
-			// Time series (free vs.used).
-			foreach ( [ 'buf', 'key', 'mem' ] as $item ) {
-				if ( 'key' === $item ) {
-					$factor = 1024;
-				} else {
-					$factor = 1024 * 1024;
-				}
-				if ( 'mem' === $item ) {
-					$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
-					$series['memory'][1][] = round( ( $datum['mem_total'] - $datum['mem_used'] - $datum['mem_wasted'] ) / $factor, 2 );
-					$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
-				} else {
-					$series[ $item ][0][] = round( $datum[ $item . '_used' ] / $factor, 2 );
-					$series[ $item ][1][] = round( ( $datum[ $item . '_total' ] - $datum[ $item . '_used' ] ) / $factor, 2 );
-				}
-			}
-			// Labels.
-			if ( 1 < $this->duration ) {
-				$labels[] = 'moment(' . $timestamp . '000).format("ll")';
-			} else {
-				$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
-				if ( 300 > $control ) {
-					$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
-					if ( 1 === strlen( $hour ) ) {
-						$hour = '0' . $hour;
+				// Availablility.
+				$series['availability'][] = [
+					'x' => $ts,
+					'y' => ( 'disabled' === $datum['status'] ? 0 : 100 ),
+				];
+				// Time series.
+				foreach ( [ 'hit', 'miss', 'strings', 'scripts' ] as $item ) {
+					$val               = (int) $datum[ $item ];
+					$series[ $item ][] = [
+						'x' => $ts,
+						'y' => $val,
+					];
+					switch ( $item ) {
+						case 'hit':
+						case 'miss':
+							if ( $maxhit < $val ) {
+								$maxhit = $val;
+							}
+							break;
+						case 'strings':
+							if ( $maxstrings < $val ) {
+								$maxstrings = $val;
+							}
+							break;
+						case 'scripts':
+							if ( $maxscripts < $val ) {
+								$maxscripts = $val;
+							}
+							break;
 					}
-					$labels[] = $hour . ':00';
+				}
+				// Time series (free vs.used).
+				foreach ( [ 'buf', 'key', 'mem' ] as $item ) {
+					if ( 'key' === $item ) {
+						$factor = 1024;
+					} else {
+						$factor = 1024 * 1024;
+					}
+					if ( 'mem' === $item ) {
+						$series['memory'][0][] = round( $datum['mem_used'] / $factor, 2 );
+						$series['memory'][1][] = round( ( $datum['mem_total'] - $datum['mem_used'] - $datum['mem_wasted'] ) / $factor, 2 );
+						$series['memory'][2][] = round( $datum['mem_wasted'] / $factor, 2 );
+					} else {
+						$series[ $item ][0][] = round( $datum[ $item . '_used' ] / $factor, 2 );
+						$series[ $item ][1][] = round( ( $datum[ $item . '_total' ] - $datum[ $item . '_used' ] ) / $factor, 2 );
+					}
+				}
+				// Labels.
+				if ( 1 < $this->duration ) {
+					$labels[] = 'moment(' . $timestamp . '000).format("ll")';
 				} else {
-					$labels[] = 'null';
+					$control = ( $timestamp % 86400 ) % ( 3 * HOUR_IN_SECONDS );
+					if ( 300 > $control ) {
+						$hour = (string) (int) floor( ( $timestamp % 86400 ) / ( HOUR_IN_SECONDS ) );
+						if ( 1 === strlen( $hour ) ) {
+							$hour = '0' . $hour;
+						}
+						$labels[] = $hour . ':00';
+					} else {
+						$labels[] = 'null';
+					}
 				}
 			}
-		}
-		// Result encoding.
-		if ( 1 < $this->duration ) {
-			$shift = 86400;
-		} else {
-			$shift = 0;
-		}
-		$datetime = new \DateTime( $this->start . ' 00:00:00', $this->timezone );
-		$offset   = $this->timezone->getOffset( $datetime );
-		$datetime = $datetime->getTimestamp() + $offset;
-		$before   = [
-			'x' => 'new Date(' . (string) ( $datetime - $shift ) . '000)',
-			'y' => 'null',
-		];
-		$datetime = new \DateTime( $this->end . ' 23:59:59', $this->timezone );
-		$offset   = $this->timezone->getOffset( $datetime );
-		$datetime = $datetime->getTimestamp() + $offset;
-		$after    = [
-			'x' => 'new Date(' . (string) ( $datetime + $shift ) . '000)',
-			'y' => 'null',
-		];
-		// Hit ratio.
-		array_unshift( $series['ratio'], $before );
-		$series['ratio'][] = $after;
-		$json_ratio        = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Hit Ratio', 'opcache-manager' ),
-						'data' => $series['ratio'],
-					],
-				],
-			]
-		);
-		$json_ratio        = str_replace( '"x":"new', '"x":new', $json_ratio );
-		$json_ratio        = str_replace( ')","y"', '),"y"', $json_ratio );
-		$json_ratio        = str_replace( '"null"', 'null', $json_ratio );
-
-		// Availability.
-		array_unshift( $series['availability'], $before );
-		$series['availability'][] = $after;
-		$json_availability        = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Availability', 'opcache-manager' ),
-						'data' => $series['availability'],
-					],
-				],
-			]
-		);
-		$json_availability        = str_replace( '"x":"new', '"x":new', $json_availability );
-		$json_availability        = str_replace( ')","y"', '),"y"', $json_availability );
-		$json_availability        = str_replace( '"null"', 'null', $json_availability );
-		
-		// Hit & miss distribution.
-		array_unshift( $series['hit'], $before );
-		$series['hit'][] = $after;
-		array_unshift( $series['miss'], $before );
-		$series['miss'][] = $after;
-		$json_hit         = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Hit Count', 'opcache-manager' ),
-						'data' => $series['hit'],
-					],
-					[
-						'name' => esc_html__( 'Miss Count', 'opcache-manager' ),
-						'data' => $series['miss'],
-					],
-				],
-			]
-		);
-		$json_hit         = str_replace( '"x":"new', '"x":new', $json_hit );
-		$json_hit         = str_replace( ')","y"', '),"y"', $json_hit );
-		$json_hit         = str_replace( '"null"', 'null', $json_hit );
-
-		// Scripts variation.
-		array_unshift( $series['scripts'], $before );
-		$series['scripts'][] = $after;
-		$json_scripts        = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Files Count', 'opcache-manager' ),
-						'data' => $series['scripts'],
-					],
-				],
-			]
-		);
-		$json_scripts        = str_replace( '"x":"new', '"x":new', $json_scripts );
-		$json_scripts        = str_replace( ')","y"', '),"y"', $json_scripts );
-		$json_scripts        = str_replace( '"null"', 'null', $json_scripts );
-
-		// Strings variation.
-		array_unshift( $series['strings'], $before );
-		$series['strings'][] = $after;
-		$json_strings        = wp_json_encode(
-			[
-				'series' => [
-					[
-						'name' => esc_html__( 'Strings Count', 'opcache-manager' ),
-						'data' => $series['strings'],
-					],
-				],
-			]
-		);
-		$json_strings        = str_replace( '"x":"new', '"x":new', $json_strings );
-		$json_strings        = str_replace( ')","y"', '),"y"', $json_strings );
-		$json_strings        = str_replace( '"null"', 'null', $json_strings );
-
-		// Memory.
-		$json_memory = wp_json_encode(
-			[
-				'labels' => $labels,
-				'series' => [
-					[
-						'name' => esc_html__( 'Used Memory', 'opcache-manager' ),
-						'data' => $series['memory'][0],
-					],
-					[
-						'name' => esc_html__( 'Free Memory', 'opcache-manager' ),
-						'data' => $series['memory'][1],
-					],
-					[
-						'name' => esc_html__( 'Wasted Memory', 'opcache-manager' ),
-						'data' => $series['memory'][2],
-					],
-				],
-			]
-		);
-		$json_memory = str_replace( '"null"', 'null', $json_memory );
-		$json_memory = str_replace( '"labels":["moment', '"labels":[moment', $json_memory );
-		$json_memory = str_replace( '","moment', ',moment', $json_memory );
-		$json_memory = str_replace( '"],"series":', '],"series":', $json_memory );
-		$json_memory = str_replace( '\\"', '"', $json_memory );
-
-		// Key.
-		$json_key = wp_json_encode(
-			[
-				'labels' => $labels,
-				'series' => [
-					[
-						'name' => esc_html__( 'Used Key Slots', 'opcache-manager' ),
-						'data' => $series['key'][0],
-					],
-					[
-						'name' => esc_html__( 'Free Key Slots', 'opcache-manager' ),
-						'data' => $series['key'][1],
-					],
-				],
-			]
-		);
-		$json_key = str_replace( '"null"', 'null', $json_key );
-		$json_key = str_replace( '"labels":["moment', '"labels":[moment', $json_key );
-		$json_key = str_replace( '","moment', ',moment', $json_key );
-		$json_key = str_replace( '"],"series":', '],"series":', $json_key );
-		$json_key = str_replace( '\\"', '"', $json_key );
-
-		// Buf.
-		$json_buf = wp_json_encode(
-			[
-				'labels' => $labels,
-				'series' => [
-					[
-						'name' => esc_html__( 'Used Buffer', 'opcache-manager' ),
-						'data' => $series['buf'][0],
-					],
-					[
-						'name' => esc_html__( 'Free Buffer', 'opcache-manager' ),
-						'data' => $series['buf'][1],
-					],
-				],
-			]
-		);
-		$json_buf = str_replace( '"null"', 'null', $json_buf );
-		$json_buf = str_replace( '"labels":["moment', '"labels":[moment', $json_buf );
-		$json_buf = str_replace( '","moment', ',moment', $json_buf );
-		$json_buf = str_replace( '"],"series":', '],"series":', $json_buf );
-		$json_buf = str_replace( '\\"', '"', $json_buf );
-
-		// Rendering.
-		if ( 4 < $this->duration ) {
-			if ( 1 === $this->duration % 2 ) {
-				$divisor = 6;
+			// Result encoding.
+			if ( 1 < $this->duration ) {
+				$shift = 86400;
 			} else {
-				$divisor = 5;
+				$shift = 0;
 			}
+			$datetime = new \DateTime( $this->start . ' 00:00:00', $this->timezone );
+			$offset   = $this->timezone->getOffset( $datetime );
+			$datetime = $datetime->getTimestamp() + $offset;
+			$before   = [
+				'x' => 'new Date(' . (string) ( $datetime - $shift ) . '000)',
+				'y' => 'null',
+			];
+			$datetime = new \DateTime( $this->end . ' 23:59:59', $this->timezone );
+			$offset   = $this->timezone->getOffset( $datetime );
+			$datetime = $datetime->getTimestamp() + $offset;
+			$after    = [
+				'x' => 'new Date(' . (string) ( $datetime + $shift ) . '000)',
+				'y' => 'null',
+			];
+			// Hit ratio.
+			array_unshift( $series['ratio'], $before );
+			$series['ratio'][] = $after;
+			$json_ratio        = wp_json_encode(
+				[
+					'series' => [
+						[
+							'name' => esc_html__( 'Hit Ratio', 'opcache-manager' ),
+							'data' => $series['ratio'],
+						],
+					],
+				]
+			);
+			$json_ratio        = str_replace( '"x":"new', '"x":new', $json_ratio );
+			$json_ratio        = str_replace( ')","y"', '),"y"', $json_ratio );
+			$json_ratio        = str_replace( '"null"', 'null', $json_ratio );
+
+			// Availability.
+			array_unshift( $series['availability'], $before );
+			$series['availability'][] = $after;
+			$json_availability        = wp_json_encode(
+				[
+					'series' => [
+						[
+							'name' => esc_html__( 'Availability', 'opcache-manager' ),
+							'data' => $series['availability'],
+						],
+					],
+				]
+			);
+			$json_availability        = str_replace( '"x":"new', '"x":new', $json_availability );
+			$json_availability        = str_replace( ')","y"', '),"y"', $json_availability );
+			$json_availability        = str_replace( '"null"', 'null', $json_availability );
+
+			// Hit & miss distribution.
+			array_unshift( $series['hit'], $before );
+			$series['hit'][] = $after;
+			array_unshift( $series['miss'], $before );
+			$series['miss'][] = $after;
+			$json_hit         = wp_json_encode(
+				[
+					'series' => [
+						[
+							'name' => esc_html__( 'Hit Count', 'opcache-manager' ),
+							'data' => $series['hit'],
+						],
+						[
+							'name' => esc_html__( 'Miss Count', 'opcache-manager' ),
+							'data' => $series['miss'],
+						],
+					],
+				]
+			);
+			$json_hit         = str_replace( '"x":"new', '"x":new', $json_hit );
+			$json_hit         = str_replace( ')","y"', '),"y"', $json_hit );
+			$json_hit         = str_replace( '"null"', 'null', $json_hit );
+
+			// Scripts variation.
+			array_unshift( $series['scripts'], $before );
+			$series['scripts'][] = $after;
+			$json_scripts        = wp_json_encode(
+				[
+					'series' => [
+						[
+							'name' => esc_html__( 'Files Count', 'opcache-manager' ),
+							'data' => $series['scripts'],
+						],
+					],
+				]
+			);
+			$json_scripts        = str_replace( '"x":"new', '"x":new', $json_scripts );
+			$json_scripts        = str_replace( ')","y"', '),"y"', $json_scripts );
+			$json_scripts        = str_replace( '"null"', 'null', $json_scripts );
+
+			// Strings variation.
+			array_unshift( $series['strings'], $before );
+			$series['strings'][] = $after;
+			$json_strings        = wp_json_encode(
+				[
+					'series' => [
+						[
+							'name' => esc_html__( 'Strings Count', 'opcache-manager' ),
+							'data' => $series['strings'],
+						],
+					],
+				]
+			);
+			$json_strings        = str_replace( '"x":"new', '"x":new', $json_strings );
+			$json_strings        = str_replace( ')","y"', '),"y"', $json_strings );
+			$json_strings        = str_replace( '"null"', 'null', $json_strings );
+
+			// Memory.
+			$json_memory = wp_json_encode(
+				[
+					'labels' => $labels,
+					'series' => [
+						[
+							'name' => esc_html__( 'Used Memory', 'opcache-manager' ),
+							'data' => $series['memory'][0],
+						],
+						[
+							'name' => esc_html__( 'Free Memory', 'opcache-manager' ),
+							'data' => $series['memory'][1],
+						],
+						[
+							'name' => esc_html__( 'Wasted Memory', 'opcache-manager' ),
+							'data' => $series['memory'][2],
+						],
+					],
+				]
+			);
+			$json_memory = str_replace( '"null"', 'null', $json_memory );
+			$json_memory = str_replace( '"labels":["moment', '"labels":[moment', $json_memory );
+			$json_memory = str_replace( '","moment', ',moment', $json_memory );
+			$json_memory = str_replace( '"],"series":', '],"series":', $json_memory );
+			$json_memory = str_replace( '\\"', '"', $json_memory );
+
+			// Key.
+			$json_key = wp_json_encode(
+				[
+					'labels' => $labels,
+					'series' => [
+						[
+							'name' => esc_html__( 'Used Key Slots', 'opcache-manager' ),
+							'data' => $series['key'][0],
+						],
+						[
+							'name' => esc_html__( 'Free Key Slots', 'opcache-manager' ),
+							'data' => $series['key'][1],
+						],
+					],
+				]
+			);
+			$json_key = str_replace( '"null"', 'null', $json_key );
+			$json_key = str_replace( '"labels":["moment', '"labels":[moment', $json_key );
+			$json_key = str_replace( '","moment', ',moment', $json_key );
+			$json_key = str_replace( '"],"series":', '],"series":', $json_key );
+			$json_key = str_replace( '\\"', '"', $json_key );
+
+			// Buf.
+			$json_buf = wp_json_encode(
+				[
+					'labels' => $labels,
+					'series' => [
+						[
+							'name' => esc_html__( 'Used Buffer', 'opcache-manager' ),
+							'data' => $series['buf'][0],
+						],
+						[
+							'name' => esc_html__( 'Free Buffer', 'opcache-manager' ),
+							'data' => $series['buf'][1],
+						],
+					],
+				]
+			);
+			$json_buf = str_replace( '"null"', 'null', $json_buf );
+			$json_buf = str_replace( '"labels":["moment', '"labels":[moment', $json_buf );
+			$json_buf = str_replace( '","moment', ',moment', $json_buf );
+			$json_buf = str_replace( '"],"series":', '],"series":', $json_buf );
+			$json_buf = str_replace( '\\"', '"', $json_buf );
+
+			// Rendering.
+			if ( 4 < $this->duration ) {
+				if ( 1 === $this->duration % 2 ) {
+					$divisor = 6;
+				} else {
+					$divisor = 5;
+				}
+			} else {
+				$divisor = $this->duration + 1;
+			}
+			$result  = '<div class="opcm-multichart-handler">';
+			$result .= '<div class="opcm-multichart-item active" id="opcm-chart-ratio">';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var ratio_data' . $uuid . ' = ' . $json_ratio . ';';
+			$result .= ' var ratio_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var ratio_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  fullWidth: true,';
+			$result .= '  showArea: true,';
+			$result .= '  showLine: true,';
+			$result .= '  showPoint: false,';
+			$result .= '  plugins: [ratio_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("YYYY-MM-DD");}},';
+			} else {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+			}
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
+			$result .= ' };';
+			$result .= ' new Chartist.Line("#opcm-chart-ratio", ratio_data' . $uuid . ', ratio_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-uptime">';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var uptime_data' . $uuid . ' = ' . $json_availability . ';';
+			$result .= ' var uptime_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var uptime_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  fullWidth: true,';
+			$result .= '  showArea: true,';
+			$result .= '  showLine: true,';
+			$result .= '  showPoint: false,';
+			$result .= '  plugins: [uptime_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
+			} else {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+			}
+			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
+			$result .= ' };';
+			$result .= ' new Chartist.Line("#opcm-chart-uptime", uptime_data' . $uuid . ', uptime_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-hit">';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var hit_data' . $uuid . ' = ' . $json_hit . ';';
+			$result .= ' var hit_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var hit_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  fullWidth: true,';
+			$result .= '  showArea: true,';
+			$result .= '  showLine: true,';
+			$result .= '  showPoint: false,';
+			$result .= '  plugins: [hit_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
+			} else {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+			}
+			if ( $maxhit < 1000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+			} elseif ( $maxhit < 1000000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+			} else {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+			}
+			$result .= ' };';
+			$result .= ' new Chartist.Line("#opcm-chart-hit", hit_data' . $uuid . ', hit_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-string">';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var string_data' . $uuid . ' = ' . $json_strings . ';';
+			$result .= ' var string_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var string_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  fullWidth: true,';
+			$result .= '  showArea: true,';
+			$result .= '  showLine: true,';
+			$result .= '  showPoint: false,';
+			$result .= '  plugins: [string_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
+			} else {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+			}
+			if ( $maxstrings < 1000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+			} elseif ( $maxstrings < 1000000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+			} else {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+			}
+			$result .= ' };';
+			$result .= ' new Chartist.Line("#opcm-chart-string", string_data' . $uuid . ', string_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-file">';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var file_data' . $uuid . ' = ' . $json_scripts . ';';
+			$result .= ' var file_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var file_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  fullWidth: true,';
+			$result .= '  showArea: true,';
+			$result .= '  showLine: true,';
+			$result .= '  showPoint: false,';
+			$result .= '  plugins: [file_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
+			} else {
+				$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
+			}
+			if ( $maxscripts < 1000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
+			} elseif ( $maxscripts < 1000000 ) {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
+			} else {
+				$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
+			}
+			$result .= ' };';
+			$result .= ' new Chartist.Line("#opcm-chart-file", file_data' . $uuid . ', file_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-memory">';
+			$result .= '<style>';
+			if ( 1 < $this->duration ) {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+			} else {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+			}
+			$result .= '</style>';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var memory_data' . $uuid . ' = ' . $json_memory . ';';
+			$result .= ' var memory_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var memory_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  stackBars: true,';
+			$result .= '  stackMode: "accumulate",';
+			$result .= '  seriesBarDistance: 1,';
+			$result .= '  plugins: [memory_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+			} else {
+				$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+			}
+			$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
+			$result .= ' };';
+			$result .= ' new Chartist.Bar("#opcm-chart-memory", memory_data' . $uuid . ', memory_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-buffer">';
+			$result .= '<style>';
+			if ( 1 < $this->duration ) {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+			} else {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+			}
+			$result .= '</style>';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var buffer_data' . $uuid . ' = ' . $json_buf . ';';
+			$result .= ' var buffer_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var buffer_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  stackBars: true,';
+			$result .= '  stackMode: "accumulate",';
+			$result .= '  seriesBarDistance: 1,';
+			$result .= '  plugins: [buffer_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+			} else {
+				$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+			}
+			$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
+			$result .= ' };';
+			$result .= ' new Chartist.Bar("#opcm-chart-buffer", buffer_data' . $uuid . ', buffer_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-key">';
+			$result .= '<style>';
+			if ( 1 < $this->duration ) {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
+			} else {
+				$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
+			}
+			$result .= '</style>';
+			$result .= '</div>';
+			$result .= '<script>';
+			$result .= 'jQuery(function ($) {';
+			$result .= ' var key_data' . $uuid . ' = ' . $json_key . ';';
+			$result .= ' var key_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
+			$result .= ' var key_option' . $uuid . ' = {';
+			$result .= '  height: 300,';
+			$result .= '  stackBars: true,';
+			$result .= '  stackMode: "accumulate",';
+			$result .= '  seriesBarDistance: 1,';
+			$result .= '  plugins: [key_tooltip' . $uuid . '],';
+			if ( 1 < $this->duration ) {
+				$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
+			} else {
+				$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
+			}
+			$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'K', 'Abbreviation - Stands for "thousand".', 'opcache-manager' ) . '";}},';
+			$result .= ' };';
+			$result .= ' new Chartist.Bar("#opcm-chart-key", key_data' . $uuid . ', key_option' . $uuid . ');';
+			$result .= '});';
+			$result .= '</script>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
+			$result .= '</div>';
 		} else {
-			$divisor = $this->duration + 1;
+			$result  = '<div class="opcm-multichart-handler">';
+			$result .= '<div class="opcm-multichart-item active" id="opcm-chart-ratio">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-uptime">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-hit">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-string">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-file">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-memory">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-buffer">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-key">';
+			$result .= $this->get_graph_placeholder_nodata( 274 );
+			$result .= '</div>';
+			$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
+			$result .= '</div>';
 		}
-		$result  = '<div class="opcm-multichart-handler">';
-		$result .= '<div class="opcm-multichart-item active" id="opcm-chart-ratio">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var ratio_data' . $uuid . ' = ' . $json_ratio . ';';
-		$result .= ' var ratio_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var ratio_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [ratio_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("YYYY-MM-DD");}},';
-		} else {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
-		}
-		$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-ratio", ratio_data' . $uuid . ', ratio_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-uptime">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var uptime_data' . $uuid . ' = ' . $json_availability . ';';
-		$result .= ' var uptime_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var uptime_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [uptime_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
-		} else {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
-		}
-		$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString() + " %";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-uptime", uptime_data' . $uuid . ', uptime_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-hit">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var hit_data' . $uuid . ' = ' . $json_hit . ';';
-		$result .= ' var hit_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var hit_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [hit_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
-		} else {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
-		}
-		if ( $maxhit < 1000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
-		} elseif ( $maxhit < 1000000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
-		} else {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
-		}
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-hit", hit_data' . $uuid . ', hit_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-string">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var string_data' . $uuid . ' = ' . $json_strings . ';';
-		$result .= ' var string_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var string_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [string_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
-		} else {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
-		}
-		if ( $maxstrings < 1000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
-		} elseif ( $maxstrings < 1000000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
-		} else {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
-		}
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-string", string_data' . $uuid . ', string_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-file">';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var file_data' . $uuid . ' = ' . $json_scripts . ';';
-		$result .= ' var file_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var file_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  fullWidth: true,';
-		$result .= '  showArea: true,';
-		$result .= '  showLine: true,';
-		$result .= '  showPoint: false,';
-		$result .= '  plugins: [file_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:' . $divisor . ', labelInterpolationFnc: function (value) {return moment(value).format("ll");}},';
-		} else {
-			$result .= '  axisX: {labelOffset: {x: 3,y: 0},scaleMinSpace: 100, type: Chartist.FixedScaleAxis, divisor:8, labelInterpolationFnc: function (value) {return moment(value).format("HH:00");}},';
-		}
-		if ( $maxscripts < 1000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {return value.toString();}},';
-		} elseif ( $maxscripts < 1000000 ) {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000; return value.toString() + " K";}},';
-		} else {
-			$result .= '  axisY: {type: Chartist.AutoScaleAxis, labelInterpolationFnc: function (value) {value = value / 1000000; return value.toString() + " M";}},';
-		}
-		$result .= ' };';
-		$result .= ' new Chartist.Line("#opcm-chart-file", file_data' . $uuid . ', file_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-memory">';
-		$result .= '<style>';
-		if ( 1 < $this->duration ) {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
-		} else {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
-		}
-		$result .= '</style>';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var memory_data' . $uuid . ' = ' . $json_memory . ';';
-		$result .= ' var memory_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var memory_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  stackBars: true,';
-		$result .= '  stackMode: "accumulate",';
-		$result .= '  seriesBarDistance: 1,';
-		$result .= '  plugins: [memory_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
-		} else {
-			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
-		}
-		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Bar("#opcm-chart-memory", memory_data' . $uuid . ', memory_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-buffer">';
-		$result .= '<style>';
-		if ( 1 < $this->duration ) {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
-		} else {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
-		}
-		$result .= '</style>';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var buffer_data' . $uuid . ' = ' . $json_buf . ';';
-		$result .= ' var buffer_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var buffer_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  stackBars: true,';
-		$result .= '  stackMode: "accumulate",';
-		$result .= '  seriesBarDistance: 1,';
-		$result .= '  plugins: [buffer_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
-		} else {
-			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
-		}
-		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'MB', 'Abbreviation - Stands for "megabytes".', 'opcache-manager' ) . '";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Bar("#opcm-chart-buffer", buffer_data' . $uuid . ', buffer_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-key">';
-		$result .= '<style>';
-		if ( 1 < $this->duration ) {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 20px !important;stroke-opacity: 0.8 !important;}';
-		} else {
-			$result .= '.opcm-multichart-item .ct-bar {stroke-width: 3px !important;stroke-opacity: 0.8 !important;}';
-		}
-		$result .= '</style>';
-		$result .= '</div>';
-		$result .= '<script>';
-		$result .= 'jQuery(function ($) {';
-		$result .= ' var key_data' . $uuid . ' = ' . $json_key . ';';
-		$result .= ' var key_tooltip' . $uuid . ' = Chartist.plugins.tooltip({percentage: false, appendToBody: true});';
-		$result .= ' var key_option' . $uuid . ' = {';
-		$result .= '  height: 300,';
-		$result .= '  stackBars: true,';
-		$result .= '  stackMode: "accumulate",';
-		$result .= '  seriesBarDistance: 1,';
-		$result .= '  plugins: [key_tooltip' . $uuid . '],';
-		if ( 1 < $this->duration ) {
-			$result .= '  axisX: {showGrid: false, labelOffset: {x: 18,y: 0}},';
-		} else {
-			$result .= '  axisX: {showGrid: true, labelOffset: {x: 18,y: 0}},';
-		}
-		$result .= '  axisY: {showGrid: true, labelInterpolationFnc: function (value) {return value.toString() + " ' . esc_html_x( 'K', 'Abbreviation - Stands for "thousand".', 'opcache-manager' ) . '";}},';
-		$result .= ' };';
-		$result .= ' new Chartist.Bar("#opcm-chart-key", key_data' . $uuid . ', key_option' . $uuid . ');';
-		$result .= '});';
-		$result .= '</script>';
-		$result .= '<div class="opcm-multichart-item" id="opcm-chart-data">';
-		$result .= '</div>';
 		return [ 'opcm-main-chart' => $result ];
 	}
 
@@ -1261,6 +1292,17 @@ class Analytics {
 	 */
 	private function get_graph_placeholder( $height ) {
 		return '<p style="text-align:center;line-height:' . $height . 'px;"><img style="width:40px;vertical-align:middle;" src="' . OPCM_ADMIN_URL . 'medias/bars.svg" /></p>';
+	}
+
+	/**
+	 * Get a placeholder for graph with no data.
+	 *
+	 * @param   integer $height The height of the placeholder.
+	 * @return string  The placeholder, ready to print.
+	 * @since    1.0.0
+	 */
+	private function get_graph_placeholder_nodata( $height ) {
+		return '<p style="color:#73879C;text-align:center;line-height:' . $height . 'px;">' . esc_html__( 'No Data', 'opcache-manager' ) . '</p>';
 	}
 
 	/**
