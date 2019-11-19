@@ -215,12 +215,12 @@ class Analytics {
 			switch ( $row['status'] ) {
 				case 'reset_warmup':
 					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'clock', 'none', '#73879C' ) . '" />';
-					$name = esc_html__( 'Programmatic reset and warm-up.', 'opcache-manager' );
+					$name = esc_html__( 'Programmatic site invalidation and warm-up.', 'opcache-manager' );
 					$op   = $row['status'];
 					break;
 				case 'warmup':
 					$icon = '<img style="width:14px;vertical-align:text-bottom;" src="' . Feather\Icons::get_base64( 'mouse-pointer', 'none', '#73879C' ) . '" />';
-					$name = esc_html__( 'Manual warm-up.', 'opcache-manager' );
+					$name = esc_html__( 'Manual site warm-up.', 'opcache-manager' );
 					$op   = $row['status'];
 					break;
 				case 'cache_full':
@@ -574,11 +574,11 @@ class Analytics {
 			[
 				'series' => [
 					[
-						'name' => esc_html__( 'Hit Count', 'traffic' ),
+						'name' => esc_html__( 'Hit Count', 'opcache-manager' ),
 						'data' => $series['hit'],
 					],
 					[
-						'name' => esc_html__( 'Miss Count', 'traffic' ),
+						'name' => esc_html__( 'Miss Count', 'opcache-manager' ),
 						'data' => $series['miss'],
 					],
 				],
@@ -595,7 +595,7 @@ class Analytics {
 			[
 				'series' => [
 					[
-						'name' => esc_html__( 'Files Count', 'traffic' ),
+						'name' => esc_html__( 'Files Count', 'opcache-manager' ),
 						'data' => $series['scripts'],
 					],
 				],
@@ -612,7 +612,7 @@ class Analytics {
 			[
 				'series' => [
 					[
-						'name' => esc_html__( 'Strings Count', 'traffic' ),
+						'name' => esc_html__( 'Strings Count', 'opcache-manager' ),
 						'data' => $series['strings'],
 					],
 				],
@@ -628,15 +628,15 @@ class Analytics {
 				'labels' => $labels,
 				'series' => [
 					[
-						'name' => esc_html__( 'Used Memory', 'traffic' ),
+						'name' => esc_html__( 'Used Memory', 'opcache-manager' ),
 						'data' => $series['memory'][0],
 					],
 					[
-						'name' => esc_html__( 'Free Memory', 'traffic' ),
+						'name' => esc_html__( 'Free Memory', 'opcache-manager' ),
 						'data' => $series['memory'][1],
 					],
 					[
-						'name' => esc_html__( 'Wasted Memory', 'traffic' ),
+						'name' => esc_html__( 'Wasted Memory', 'opcache-manager' ),
 						'data' => $series['memory'][2],
 					],
 				],
@@ -654,11 +654,11 @@ class Analytics {
 				'labels' => $labels,
 				'series' => [
 					[
-						'name' => esc_html__( 'Used Key Slots', 'traffic' ),
+						'name' => esc_html__( 'Used Key Slots', 'opcache-manager' ),
 						'data' => $series['key'][0],
 					],
 					[
-						'name' => esc_html__( 'Free Key Slots', 'traffic' ),
+						'name' => esc_html__( 'Free Key Slots', 'opcache-manager' ),
 						'data' => $series['key'][1],
 					],
 				],
@@ -676,11 +676,11 @@ class Analytics {
 				'labels' => $labels,
 				'series' => [
 					[
-						'name' => esc_html__( 'Used Buffer', 'traffic' ),
+						'name' => esc_html__( 'Used Buffer', 'opcache-manager' ),
 						'data' => $series['buf'][0],
 					],
 					[
-						'name' => esc_html__( 'Free Buffer', 'traffic' ),
+						'name' => esc_html__( 'Free Buffer', 'opcache-manager' ),
 						'data' => $series['buf'][1],
 					],
 				],

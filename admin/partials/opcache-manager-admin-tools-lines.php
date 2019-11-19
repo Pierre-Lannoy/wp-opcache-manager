@@ -30,6 +30,6 @@ if ( Environment::is_wordpress_multisite() ) {
 </div>
 
 <div class="alignleft actions bulkactions">
-    <input style="margin-left:10px;" type="submit" name="doinvalidate-<?php echo $which; ?>"  id="doinvalidate-<?php echo $which; ?>" class="button-primary action" value="<?php esc_html_e('Force Invalidate All', 'opcache-manager');?>"  />
+    <input style="margin-left:10px;" type="submit" name="doinvalidate-<?php echo $which; ?>"  id="doinvalidate-<?php echo $which; ?>" class="button-primary action" value="<?php esc_html_e('Site Invalidation', 'opcache-manager');?>"  />
     <input style="margin-left:10px;" type="submit" name="dowarmup-<?php echo $which; ?>" id="dowarmup-<?php echo $which; ?>" class="button-primary action" value="<?php echo $warmup;?>"  />
 </div>

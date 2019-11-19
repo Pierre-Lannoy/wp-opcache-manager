@@ -662,7 +662,7 @@ class Scripts extends \WP_List_Table {
 				break;
 			case 'reset':
 				OPcache::reset( false );
-				$message = esc_html__( 'OPcache forced invalidation has been initiated. It may take a few seconds to complete.', 'opcache-manager' );
+				$message = esc_html__( 'Site invalidation has been initiated. It may take a few seconds to complete.', 'opcache-manager' );
 				$code    = 0;
 				break;
 			case 'invalidate':
