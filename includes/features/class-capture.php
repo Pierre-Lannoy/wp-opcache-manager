@@ -59,6 +59,19 @@ class Capture {
 		if ( function_exists( 'opcache_get_status' ) ) {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
+
+
+			if ( false === $old ) {
+				Logger::emergency( 'No OPcache transient');
+			} elseif ( ! array_key_exists( 'timestamp', $old ) ) {
+				Logger::emergency( 'No OPcache timestamp');
+			} elseif ( 270 > $time - $old['timestamp'] ) {
+				Logger::emergency( 'OPcache delta time to short');
+			} elseif ( 330 < $time - $old['timestamp'] ) {
+				Logger::emergency( 'OPcache delta time to long');
+			}
+
+
 			if ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 270 < $time - $old['timestamp'] ) && ( 330 > $time - $old['timestamp'] ) ) {
 				try {
 					$restart            = false;
