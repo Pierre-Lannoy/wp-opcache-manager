@@ -27,6 +27,14 @@ use OPcacheManager\Plugin\Feature\Schema;
 class Capture {
 
 	/**
+	 * Delta time.
+	 *
+	 * @since  1.0.0
+	 * @var    integer    $delta    The authorized delta time in seconds.
+	 */
+	private static $delta = 45;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -59,20 +67,16 @@ class Capture {
 		if ( function_exists( 'opcache_get_status' ) ) {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
-
-
 			if ( false === $old ) {
-				Logger::emergency( 'No OPcache transient');
+				Logger::debug( 'No OPcache transient.' );
 			} elseif ( ! array_key_exists( 'timestamp', $old ) ) {
-				Logger::emergency( 'No OPcache timestamp');
-			} elseif ( 270 > $time - $old['timestamp'] ) {
-				Logger::emergency( 'OPcache delta time to short');
-			} elseif ( 330 < $time - $old['timestamp'] ) {
-				Logger::emergency( 'OPcache delta time to long');
+				Logger::debug( 'No OPcache timestamp.' );
+			} elseif ( 300 - self::$delta > $time - $old['timestamp'] ) {
+				Logger::emergency( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+			} elseif ( 300 + self::$delta < $time - $old['timestamp'] ) {
+				Logger::emergency( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			}
-
-
-			if ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 270 < $time - $old['timestamp'] ) && ( 330 > $time - $old['timestamp'] ) ) {
+			if ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 300 - self::$delta < $time - $old['timestamp'] ) && ( 300 + self::$delta - $old['timestamp'] ) ) {
 				try {
 					$restart            = false;
 					$value              = [];
