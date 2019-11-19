@@ -12,12 +12,9 @@
 namespace OPcacheManager\Plugin\Feature;
 
 use OPcacheManager\Plugin\Feature\Schema;
-use OPcacheManager\System\Blog;
 use OPcacheManager\System\Cache;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Conversion;
-use OPcacheManager\System\Role;
-use OPcacheManager\System\Logger;
 use OPcacheManager\System\L10n;
 use OPcacheManager\System\OPcache;
 use OPcacheManager\System\Timezone;
@@ -375,7 +372,6 @@ class Analytics {
 	private function query_chart() {
 		$uuid       = UUID::generate_unique_id( 5 );
 		$query      = Schema::get_time_series( $this->filter, ! $this->is_today, '', [], false );
-		$query=[];
 		$data       = [];
 		$series     = [];
 		$labels     = [];
