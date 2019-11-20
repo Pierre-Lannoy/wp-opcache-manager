@@ -4,10 +4,6 @@
 [![wordpress](https://badgen.net/badge/wordpress/5.2+/green)](https://wordpress.org/plugins/opcache-manager/)
 [![license](https://badgen.net/github/license/Pierre-Lannoy/wp-opcache-manager/)](/license.txt)
 
->
-> ⚠️ This plugin is currently in the submission process to be included in the WordPress plugins directory. Some portion of its code may be redesigned/amended/deleted before official 1.0.0 release.
-> 
-
 __OPcache Manager__ is a full featured OPcache management and analytics reporting tool. It allows you to monitor and optimize OPcache operations on your WordPress site or network.
 
 See [WordPress directory page](https://wordpress.org/plugins/opcache-manager/). 
