@@ -536,7 +536,7 @@ class Analytics {
 				[
 					'series' => [
 						[
-							'name' => esc_html__( 'Hit Ratio', 'opcache-manager' ),
+							'name' => esc_html_x( 'Hit Ratio', 'Noun - Cache hit ratio.', 'opcache-manager' ),
 							'data' => $series['ratio'],
 						],
 					],

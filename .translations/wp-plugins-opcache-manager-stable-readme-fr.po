@@ -1,0 +1,200 @@
+# Translation of Plugins - OPcache Manager - Stable Readme (latest release) in French (France)
+# This file is distributed under the same license as the Plugins - OPcache Manager - Stable Readme (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: +0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: fr\n"
+"Project-Id-Version: Plugins - OPcache Manager - Stable Readme (latest release)\n"
+
+#. Short description.
+msgid "OPcache statistics and management right in the WordPress admin dashboard."
+msgstr ""
+
+#. Plugin name.
+msgid "OPcache Manager"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "You can report bugs and suggest ideas via the <a href=\"https://github.com/Pierre-Lannoy/wp-opcache-manager/issues\">GitHub issue tracker</a> of the plugin."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Support is provided via the official <a href=\"https://wordpress.org/support/plugin/opcache-manager/\">WordPress page</a>."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "You need to have a fully operational WordPress cron. If you've set an external cron (crontab, online cron, etc.), its frequency must be less than 5 minutes - 1 or 2 minutes is a recommended value."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Yes. It is designed to work on multisite too. Network Admins can configure the plugin, use management tools and have access to all analytics reports. Sites Admins have access to the analytics reports only."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "You need at least <strong>WordPress 5.2</strong> and <strong>PHP 7.2</strong>."
+msgstr ""
+
+#. Found in faq header.
+msgid "Where can I report a bug?"
+msgstr ""
+
+#. Found in faq header.
+msgid "Where can I get support?"
+msgstr ""
+
+#. Found in faq header.
+msgid "What are the requirements for scheduled invalidation/warm-up and statistics to work?"
+msgstr ""
+
+#. Found in faq header.
+msgid "Can this plugin work on multisite?"
+msgstr ""
+
+#. Found in faq header.
+msgid "What are the requirements for this plugin to work?"
+msgstr ""
+
+#. Found in installation list item.
+msgid "Enjoy!"
+msgstr ""
+
+#. Found in installation list item.
+msgid "Visit 'Settings &gt; OPcache Manager' in the left-hand menu of your WP Admin to adjust settings."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Activate OPcache Manager from your Plugins page."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Upload the <code>opcache-manager</code> directory to your <code>/wp-content/plugins/</code> directory, using your favorite method (ftp, sftp, scp, etc...)."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Download Traffic."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Activate OPcache Manager."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Click on the 'Install Now' button."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Search for 'OPcache Manager'."
+msgstr ""
+
+#. Found in installation list item.
+msgid "Visit 'Plugins &gt; Add New'."
+msgstr ""
+
+#. Found in installation header.
+msgid "Once Activated"
+msgstr ""
+
+#. Found in installation header.
+msgid "From WordPress.org"
+msgstr ""
+
+#. Found in installation header.
+msgid "From your WordPress dashboard"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "If you like this plugin or find it useful and want to thank me for the work done, please consider making a donation to <a href=\"https://www.laquadrature.net/en\">La Quadrature Du Net</a> or the <a href=\"https://www.eff.org/\">Electronic Frontier Foundation</a> which are advocacy groups defending the rights and freedoms of citizens on the Internet. By supporting them, you help the daily actions they perform to defend our fundamental freedoms!"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Anyway, I'll be glad to help you if you encounter issues when using this plugin. Just use the support section of this plugin page."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "This plugin is free and provided without warranty of any kind. Use it at your own risk, I'm not responsible for any improper use of this plugin, nor for any damage it might cause to your site. Always backup all your data before installing a new plugin."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache Manager</strong> is a free and open source plugin for WordPress. It integrates many other free and open source works (as-is or modified). Please, see 'about' tab in the plugin settings to see the details."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache Manager</strong> supports multisite report delegation (see FAQ)."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache Manager</strong> is also a full featured analytics reporting tool that analyzes all OPcache operations on your site. It can report:"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache Manager</strong> works on dedicated or shared servers. In shared environments, its use has no influence on other hosted sites than yours. Its main management features are:"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache Manager</strong> is a full featured OPcache management and analytics reporting tool. It allows you to monitor and optimize OPcache operations on your WordPress site or network."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "<strong>OPcache statistics and management right in the WordPress admin dashboard.</strong>"
+msgstr ""
+
+#. Found in description list item.
+msgid "OPcache related events."
+msgstr ""
+
+#. Found in description list item.
+msgid "metrics distributions;"
+msgstr ""
+
+#. Found in description list item.
+msgid "metrics variations;"
+msgstr ""
+
+#. Found in description list item.
+msgid "KPIs: hit ratio, free memory, cached files, keys saturation, buffer saturation and availability;"
+msgstr ""
+
+#. Found in description list item.
+msgid "optional scheduled site invalidation and/or warm-up."
+msgstr ""
+
+#. Found in description list item.
+msgid "manual site warm-up - to pre-compile all of you site files;"
+msgstr ""
+
+#. Found in description list item.
+msgid "manual site invalidation - a sort of 'smart' OPcache reset only for your site;"
+msgstr ""
+
+#. Found in description list item.
+msgid "individual script invalidation, forced invalidation and recompilation;"
+msgstr ""
+
+#. Found in description header.
+msgid "Donation"
+msgstr ""
+
+#. Found in description header.
+msgid "Support"
+msgstr ""
+
+#. Screenshot description.
+msgid "Management Tools"
+msgstr ""
+
+#. Screenshot description.
+msgid "Historical Statistics"
+msgstr ""
+
+#. Screenshot description.
+msgid "Daily Statistics"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid "Please, see <a href=\"https://github.com/Pierre-Lannoy/wp-opcache-manager/blob/master/CHANGELOG.md\">full changelog</a> on GitHub."
+msgstr ""
