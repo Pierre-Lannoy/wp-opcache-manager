@@ -32,7 +32,7 @@ class Capture {
 	 * @since  1.0.0
 	 * @var    integer    $delta    The authorized delta time in seconds.
 	 */
-	private static $delta = 45;
+	private static $delta = 59;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -72,9 +72,9 @@ class Capture {
 			} elseif ( ! array_key_exists( 'timestamp', $old ) ) {
 				Logger::debug( 'No OPcache timestamp.' );
 			} elseif ( 300 - self::$delta > $time - $old['timestamp'] ) {
-				Logger::emergency( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				Logger::debug( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			} elseif ( 300 + self::$delta < $time - $old['timestamp'] ) {
-				Logger::emergency( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				Logger::debug( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			}
 			if ( false !== $old && array_key_exists( 'timestamp', $old ) && ( 300 - self::$delta < $time - $old['timestamp'] ) && ( 300 + self::$delta - $old['timestamp'] ) ) {
 				try {
