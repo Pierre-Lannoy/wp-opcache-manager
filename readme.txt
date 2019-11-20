@@ -55,7 +55,7 @@ If you like this plugin or find it useful and want to thank me for the work done
 
 = From WordPress.org =
 
-1. Download Traffic.
+1. Download OPcache Manager.
 2. Upload the `opcache-manager` directory to your `/wp-content/plugins/` directory, using your favorite method (ftp, sftp, scp, etc...).
 3. Activate OPcache Manager from your Plugins page.
 
