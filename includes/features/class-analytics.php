@@ -143,34 +143,6 @@ class Analytics {
 				return $this->query_kpi( $queried );
 			case 'events':
 				return $this->query_events();
-			/*case 'top-domains':
-				return $this->query_top( 'domains', (int) $queried );
-			case 'top-authorities':
-				return $this->query_top( 'authorities', (int) $queried );
-			case 'top-endpoints':
-				return $this->query_top( 'endpoints', (int) $queried );
-			case 'sites':
-				return $this->query_list( 'sites' );
-			case 'domains':
-				return $this->query_list( 'domains' );
-			case 'authorities':
-				return $this->query_list( 'authorities' );
-			case 'endpoints':
-				return $this->query_list( 'endpoints' );
-			case 'codes':
-				return $this->query_list( 'codes' );
-			case 'schemes':
-				return $this->query_list( 'schemes' );
-			case 'methods':
-				return $this->query_list( 'methods' );
-			case 'countries':
-				return $this->query_list( 'countries' );
-			case 'code':
-				return $this->query_pie( 'code', (int) $queried );
-			case 'security':
-				return $this->query_pie( 'security', (int) $queried );
-			case 'method':
-				return $this->query_pie( 'method', (int) $queried );*/
 		}
 		return [];
 	}
@@ -536,7 +508,7 @@ class Analytics {
 				[
 					'series' => [
 						[
-							'name' => esc_html__( 'Hit Ratio', 'opcache-manager' ),
+							'name' => esc_html_x( 'Hit Ratio', 'Noun - Cache hit ratio.', 'opcache-manager' ),
 							'data' => $series['ratio'],
 						],
 					],
