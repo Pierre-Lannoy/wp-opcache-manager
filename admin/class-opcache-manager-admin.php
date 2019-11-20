@@ -407,7 +407,7 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_history' );
 		add_settings_field(
 			'opcm_plugin_features_reset_frequency',
-			esc_html__( 'Reset OPcache', 'opcache-manager' ),
+			esc_html__( 'Site invalidation', 'opcache-manager' ),
 			[ $form, 'echo_field_select' ],
 			'opcm_plugin_features_section',
 			'opcm_plugin_features_section',
@@ -415,7 +415,7 @@ class Opcache_Manager_Admin {
 				'list'        => $this->get_frequencies_array(),
 				'id'          => 'opcm_plugin_features_reset_frequency',
 				'value'       => Option::network_get( 'reset_frequency' ),
-				'description' => esc_html__( 'Frequency at which OPcache must be automatically reset.', 'opcache-manager' ),
+				'description' => esc_html__( 'Frequency at which files belonging to this site must be automatically reset.', 'opcache-manager' ),
 				'full_width'  => true,
 				'enabled'     => true,
 			]
@@ -423,10 +423,10 @@ class Opcache_Manager_Admin {
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_reset_frequency' );
 		if ( Environment::is_wordpress_multisite() ) {
 			$warmup      = esc_html__( 'Network warm-up', 'opcache-manager' );
-			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full network (all sites) after each automatic reset.', 'opcache-manager' );
+			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full network (all sites) after each automatic site invalidation.', 'opcache-manager' );
 		} else {
 			$warmup      = esc_html__( 'Site warm-up', 'opcache-manager' );
-			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic reset.', 'opcache-manager' );
+			$description = esc_html__( 'If checked, OPcache Manager will warm-up the full site after each automatic site invalidation.', 'opcache-manager' );
 		}
 		add_settings_field(
 			'opcm_plugin_features_warmup',
