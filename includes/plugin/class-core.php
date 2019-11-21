@@ -78,6 +78,7 @@ class Core {
 	 * @access private
 	 */
 	private function define_global_hooks() {
+		add_action( 'cron_schedules', [ 'OPcacheManager\Plugin\Feature\Capture', 'add_cron_05_minutes_interval' ]);
 		$bootstrap = new Initializer();
 		$assets    = new Assets();
 		$updater   = new Updater();
@@ -102,7 +103,6 @@ class Core {
 				wp_schedule_event( time(), Option::network_get( 'reset_frequency' ), OPCM_CRON_RESET_NAME );
 			}
 		}
-		$this->loader->add_filter( 'cron_schedules', 'OPcacheManager\Plugin\Feature\Capture', 'add_cron_05_minutes_interval' );
 		if ( Option::network_get( 'analytics' ) ) {
 			$this->loader->add_action( OPCM_CRON_STATS_NAME, 'OPcacheManager\Plugin\Feature\Capture', 'check' );
 		}
