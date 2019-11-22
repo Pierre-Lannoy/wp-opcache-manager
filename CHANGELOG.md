@@ -3,6 +3,13 @@ All notable changes to **OPcache Manager** is documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Changed
+- Better OPcache version detection (and reporting).
+### Fixed
+- The timescale for metrics variation graphs is wrong when day starts with missing data.
+- The buttons of the date range picker may have a wrong size.
+
 ## [1.0.1] - 2019-11-21
 ### Fixed
 - The cron for statistics compilation may be blocked on some configurations.

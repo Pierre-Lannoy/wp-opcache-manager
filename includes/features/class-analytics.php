@@ -19,6 +19,8 @@ use OPcacheManager\System\L10n;
 use OPcacheManager\System\OPcache;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\UUID;
+use OPcacheManager\System\Logger;
+use OPcacheManager\Plugin\Feature\Capture;
 use Feather;
 
 
@@ -354,6 +356,18 @@ class Analytics {
 		// Data normalization.
 		if ( 0 !== count( $query ) ) {
 			if ( 1 === $this->duration ) {
+				$start  = new \DateTime( Date::get_mysql_utc_from_date( $this->start . ' 00:00:00', $this->timezone->getName() ), new \DateTimeZone( 'UTC' ) );
+				$real   = new \DateTime( array_values( $query )[0]['timestamp'], new \DateTimeZone( 'UTC' ) );
+				$offset = $this->timezone->getOffset( $real );
+				$ts     = $start->getTimestamp();
+				$record = [];
+				foreach ( $items as $item ) {
+					$record[ $item ] = 0;
+				}
+				while ( 300 + Capture::$delta < $real->getTimestamp() - $ts ) {
+					$ts                   = $ts + 300;
+					$data[ $ts + $offset] = $record;
+				}
 				foreach ( $query as $timestamp => $row ) {
 					$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
 					$offset      = $this->timezone->getOffset( $datetime );
