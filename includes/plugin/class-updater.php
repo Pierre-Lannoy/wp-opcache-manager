@@ -46,7 +46,7 @@ class Updater {
 				$message  = sprintf( esc_html__( '%1$s has been correctly updated from version %2$s to version %3$s.', 'opcache-manager' ), OPCM_PRODUCT_NAME, $old, OPCM_VERSION );
 				Logger::notice( $message );
 				// phpcs:ignore
-				$message .= ' ' . sprintf( __( 'See <a href="%s">what\'s new</a>.', 'opcache-manager' ), admin_url( 'options-general.php?page=opcache-manager-settings&tab=about' ) );
+				$message .= ' ' . sprintf( __( 'See <a href="%s">what\'s new</a>.', 'opcache-manager' ), admin_url( 'options-general.php?page=opcm-settings&tab=about' ) );
 			}
 			Nag::add( 'update', 'info', $message );
 			Option::network_set( 'version', OPCM_VERSION );
