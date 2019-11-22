@@ -286,6 +286,9 @@
     font-size: 12px;
     font-weight: bold;
     padding: 4px 8px;
+    width: auto;
+    height: auto;
+    line-height: normal;
 }
 
 .daterangepicker.show-ranges.single.rtl .drp-calendar.left {
