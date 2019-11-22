@@ -73,7 +73,11 @@ class OPcache {
 					$result = $raw['version']['opcache_product_name'];
 				}
 				if ( array_key_exists( 'version', $raw['version'] ) ) {
-					$result .= ' ' . $raw['version']['version'];
+					$version = $raw['version']['version'];
+					if ( false !== strpos( $version, '-' ) ) {
+						$version = substr( $version, 0, strpos( $version, '-' ) );
+					}
+					$result .= ' ' . $version;
 				}
 			}
 		}
