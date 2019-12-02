@@ -210,7 +210,6 @@ class Opcache_Manager_Admin {
 			if ( array_key_exists( '_wpnonce', $_POST ) && wp_verify_nonce( $_POST['_wpnonce'], 'opcm-plugin-options' ) ) {
 				$old_frequency = Option::network_get( 'reset_frequency' );
 				Option::network_set( 'use_cdn', array_key_exists( 'opcm_plugin_options_usecdn', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_usecdn' ) : false );
-				Option::network_set( 'auto_update', array_key_exists( 'opcm_plugin_options_autoupdate', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_autoupdate' ) : false );
 				Option::network_set( 'display_nag', array_key_exists( 'opcm_plugin_options_nag', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_nag' ) : false );
 				Option::network_set( 'analytics', array_key_exists( 'opcm_plugin_features_analytics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_analytics' ) : false );
 				Option::network_set( 'history', array_key_exists( 'opcm_plugin_features_history', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_history', FILTER_SANITIZE_NUMBER_INT ) : Option::network_get( 'history' ) );
@@ -298,22 +297,6 @@ class Opcache_Manager_Admin {
 			]
 		);
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_usecdn' );
-		add_settings_field(
-			'opcm_plugin_options_autoupdate',
-			esc_html__( 'Plugin updates', 'opcache-manager' ),
-			[ $form, 'echo_field_checkbox' ],
-			'opcm_plugin_options_section',
-			'opcm_plugin_options_section',
-			[
-				'text'        => esc_html__( 'Automatic (recommended)', 'opcache-manager' ),
-				'id'          => 'opcm_plugin_options_autoupdate',
-				'checked'     => Option::network_get( 'auto_update' ),
-				'description' => esc_html__( 'If checked, OPcache Manager will update itself as soon as a new version is available.', 'opcache-manager' ),
-				'full_width'  => true,
-				'enabled'     => true,
-			]
-		);
-		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_autoupdate' );
 		add_settings_field(
 			'opcm_plugin_options_nag',
 			esc_html__( 'Admin notices', 'opcache-manager' ),

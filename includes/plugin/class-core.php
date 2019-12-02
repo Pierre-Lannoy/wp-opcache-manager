@@ -85,7 +85,6 @@ class Core {
 		$libraries = new Libraries();
 		$this->loader->add_action( 'init', $bootstrap, 'initialize' );
 		$this->loader->add_action( 'wp_head', $assets, 'prefetch' );
-		$this->loader->add_action( 'auto_update_plugin', $updater, 'auto_update_plugin', 10, 2 );
 		add_shortcode( 'opcm-changelog', [ $updater, 'sc_get_changelog' ] );
 		add_shortcode( 'opcm-libraries', [ $libraries, 'sc_get_list' ] );
 		add_shortcode( 'opcm-statistics', [ 'OPcacheManager\System\Statistics', 'sc_get_raw' ] );

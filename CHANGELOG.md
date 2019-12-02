@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 ### Changed
 - Better cache management for old date ranges.
+### Removed
+- As a result of the Plugin Team's request, the auto-update feature has been removed.
 
 ## [1.0.2] - 2019-11-22
 ### Changed
