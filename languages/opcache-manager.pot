@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: OPcache Manager\n"
-"POT-Creation-Date: 2019-11-18 21:53+0100\n"
+"POT-Creation-Date: 2019-12-03 00:33+0100\n"
 "PO-Revision-Date: 2019-07-08 14:07+0200\n"
 "Last-Translator: Pierre Lannoy <pierre@lannoy.fr>\n"
 "Language-Team: Pierre Lannoy <pierre@lannoy.fr>\n"
@@ -35,7 +35,7 @@ msgstr ""
 
 #: admin/class-opcache-manager-admin.php:98
 #: admin/class-opcache-manager-admin.php:99
-#: includes/features/class-analytics.php:1115
+#: includes/features/class-analytics.php:1128
 msgid "OPcache Analytics"
 msgstr ""
 
@@ -67,28 +67,28 @@ msgstr ""
 msgid "GitHub repository"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:225
+#: admin/class-opcache-manager-admin.php:224
 msgid "Plugin settings have been saved."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:230
+#: admin/class-opcache-manager-admin.php:229
 msgid "Plugin settings have not been saved. Please try again."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:247
+#: admin/class-opcache-manager-admin.php:246
 msgid "Plugin settings have been reset to defaults."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:252
+#: admin/class-opcache-manager-admin.php:251
 msgid "Plugin settings have not been reset to defaults. Please try again."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:269
+#: admin/class-opcache-manager-admin.php:268
 #, php-format
 msgid "Your site is currently using %s."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:272
+#: admin/class-opcache-manager-admin.php:271
 #, php-format
 msgid ""
 "Your site does not use any logging plugin. To log all events triggered in "
@@ -96,140 +96,128 @@ msgid ""
 "But it is not mandatory."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:276
+#: admin/class-opcache-manager-admin.php:275
 msgid "Logging"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:287
+#: admin/class-opcache-manager-admin.php:286
 msgid "Resources"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:292
+#: admin/class-opcache-manager-admin.php:291
 msgid "Use public CDN"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:295
+#: admin/class-opcache-manager-admin.php:294
 msgid ""
 "If checked, OPcache Manager will use a public CDN (jsDelivr) to serve "
 "scripts and stylesheets."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:303
-msgid "Plugin updates"
-msgstr ""
-
-#: admin/class-opcache-manager-admin.php:308
-msgid "Automatic (recommended)"
-msgstr ""
-
-#: admin/class-opcache-manager-admin.php:311
-msgid ""
-"If checked, OPcache Manager will update itself as soon as a new version is "
-"available."
-msgstr ""
-
-#: admin/class-opcache-manager-admin.php:319
+#: admin/class-opcache-manager-admin.php:302
 msgid "Admin notices"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:324
+#: admin/class-opcache-manager-admin.php:307
 msgid "Display"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:327
+#: admin/class-opcache-manager-admin.php:310
 msgid ""
 "Allows OPcache Manager to display admin notices throughout the admin "
 "dashboard."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:327
+#: admin/class-opcache-manager-admin.php:310
 msgid "Note: OPcache Manager respects DISABLE_NAG_NOTICES flag."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:343
+#: admin/class-opcache-manager-admin.php:326
 msgid "Never"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:344
+#: admin/class-opcache-manager-admin.php:327
 msgid "Once Hourly"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:345
+#: admin/class-opcache-manager-admin.php:328
 msgid "Twice Daily"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:346
+#: admin/class-opcache-manager-admin.php:329
 msgid "Once Daily"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:360
+#: admin/class-opcache-manager-admin.php:343
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/class-opcache-manager-admin.php:364
+#: admin/class-opcache-manager-admin.php:347
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/class-opcache-manager-admin.php:378
+#: admin/class-opcache-manager-admin.php:361
 msgid "Analytics"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:383
-#: admin/class-opcache-manager-admin.php:438
+#: admin/class-opcache-manager-admin.php:366
+#: admin/class-opcache-manager-admin.php:421
 msgid "Activated"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:386
+#: admin/class-opcache-manager-admin.php:369
 msgid ""
 "If checked, OPcache Manager will analyze OPcache operations and store "
 "statistics every five minutes."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:386
+#: admin/class-opcache-manager-admin.php:369
 msgid ""
 "Note: for this to work, your WordPress site must have an operational CRON."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:394
+#: admin/class-opcache-manager-admin.php:377
 msgid "Historical data"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:402
+#: admin/class-opcache-manager-admin.php:385
 msgid "Maximum age of data to keep for statistics."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:410
-msgid "Reset OPcache"
+#: admin/class-opcache-manager-admin.php:393
+msgid "Site invalidation"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:418
-msgid "Frequency at which OPcache must be automatically reset."
+#: admin/class-opcache-manager-admin.php:401
+msgid ""
+"Frequency at which files belonging to this site must be automatically "
+"reset."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:425
+#: admin/class-opcache-manager-admin.php:408
 msgid "Network warm-up"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:426
+#: admin/class-opcache-manager-admin.php:409
 msgid ""
 "If checked, OPcache Manager will warm-up the full network (all sites) "
-"after each automatic reset."
+"after each automatic site invalidation."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:428
+#: admin/class-opcache-manager-admin.php:411
 msgid "Site warm-up"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:429
+#: admin/class-opcache-manager-admin.php:412
 msgid ""
 "If checked, OPcache Manager will warm-up the full site after each "
-"automatic reset."
+"automatic site invalidation."
 msgstr ""
 
 #: admin/partials/opcache-manager-admin-settings-about.php:20
@@ -299,347 +287,348 @@ msgid "Number of files to display"
 msgstr ""
 
 #: admin/partials/opcache-manager-admin-tools-lines.php:29
-#: includes/features/class-analytics.php:1367
+#: includes/features/class-analytics.php:1391
 msgid "Apply"
 msgstr ""
 
 #: admin/partials/opcache-manager-admin-tools-lines.php:33
-msgid "Force Invalidate All"
+msgid "Site Invalidation"
 msgstr ""
 
-#: includes/features/class-analytics.php:192
-#: includes/features/class-analytics.php:306
-#: includes/features/class-analytics.php:352
-#: includes/features/class-analytics.php:360
+#: includes/features/class-analytics.php:163
+#: includes/features/class-analytics.php:277
+#: includes/features/class-analytics.php:323
+#: includes/features/class-analytics.php:331
 msgid "Timeframe"
 msgstr ""
 
-#: includes/features/class-analytics.php:193
-#: includes/features/class-analytics.php:307
-#: includes/features/class-analytics.php:353
-#: includes/features/class-analytics.php:361
+#: includes/features/class-analytics.php:164
+#: includes/features/class-analytics.php:278
+#: includes/features/class-analytics.php:324
+#: includes/features/class-analytics.php:332
 msgid "Details"
 msgstr ""
 
-#: includes/features/class-analytics.php:205
+#: includes/features/class-analytics.php:176
 msgid "Reset due to free memory exhaustion."
 msgstr ""
 
-#: includes/features/class-analytics.php:209
+#: includes/features/class-analytics.php:180
 msgid "Reset due to excessive keys saturation."
 msgstr ""
 
-#: includes/features/class-analytics.php:213
+#: includes/features/class-analytics.php:184
 msgid "Programmatic or manual reset."
 msgstr ""
 
-#: includes/features/class-analytics.php:218
-msgid "Programmatic reset and warm-up."
+#: includes/features/class-analytics.php:189
+msgid "Programmatic site invalidation and warm-up."
 msgstr ""
 
-#: includes/features/class-analytics.php:223
-msgid "Manual warm-up."
+#: includes/features/class-analytics.php:194
+msgid "Manual site warm-up."
 msgstr ""
 
-#: includes/features/class-analytics.php:229
+#: includes/features/class-analytics.php:200
 msgid "Cache is full."
 msgstr ""
 
-#: includes/features/class-analytics.php:238
+#: includes/features/class-analytics.php:209
 msgid "OPcache disabled."
 msgstr ""
 
-#: includes/features/class-analytics.php:245
+#: includes/features/class-analytics.php:216
 msgid "OPcache enabled."
 msgstr ""
 
-#: includes/features/class-analytics.php:266
+#: includes/features/class-analytics.php:237
 #, php-format
 msgid "Total memory size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:268
+#: includes/features/class-analytics.php:239
 #, php-format
 msgid "Total memory size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:274
+#: includes/features/class-analytics.php:245
 #, php-format
 msgid "Total buffer size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:276
+#: includes/features/class-analytics.php:247
 #, php-format
 msgid "Total buffer size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:282
+#: includes/features/class-analytics.php:253
 #, php-format
 msgid "Maximum keys slots increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:284
+#: includes/features/class-analytics.php:255
 #, php-format
 msgid "Maximum keys slots decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:302
+#: includes/features/class-analytics.php:273
 msgid "Settings changed."
 msgstr ""
 
-#: includes/features/class-analytics.php:320
+#: includes/features/class-analytics.php:291
 #, php-format
 msgid "Free memory size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:322
+#: includes/features/class-analytics.php:293
 #, php-format
 msgid "Free memory size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:326
+#: includes/features/class-analytics.php:297
 #, php-format
 msgid "Free buffer size increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:328
+#: includes/features/class-analytics.php:299
 #, php-format
 msgid "Free buffer size decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:332
+#: includes/features/class-analytics.php:303
 #, php-format
 msgid "Free keys slots increased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:334
+#: includes/features/class-analytics.php:305
 #, php-format
 msgid "Free keys slots decreased by %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:344
+#: includes/features/class-analytics.php:315
 #, php-format
 msgid "Current wasted memory: %s."
 msgstr ""
 
-#: includes/features/class-analytics.php:359
+#: includes/features/class-analytics.php:330
 msgid "No status events in the selected time range."
 msgstr ""
 
-#: includes/features/class-analytics.php:541
+#: includes/features/class-analytics.php:525
+#: includes/features/class-analytics.php:1224
+msgctxt "Noun - Cache hit ratio."
 msgid "Hit Ratio"
 msgstr ""
 
-#: includes/features/class-analytics.php:558
+#: includes/features/class-analytics.php:542
 msgid "Availability"
 msgstr ""
 
-#: includes/features/class-analytics.php:577
+#: includes/features/class-analytics.php:561
 msgid "Hit Count"
 msgstr ""
 
-#: includes/features/class-analytics.php:581
+#: includes/features/class-analytics.php:565
 msgid "Miss Count"
 msgstr ""
 
-#: includes/features/class-analytics.php:598
+#: includes/features/class-analytics.php:582
 msgid "Files Count"
 msgstr ""
 
-#: includes/features/class-analytics.php:615
+#: includes/features/class-analytics.php:599
 msgid "Strings Count"
 msgstr ""
 
-#: includes/features/class-analytics.php:631
+#: includes/features/class-analytics.php:615
 msgid "Used Memory"
 msgstr ""
 
-#: includes/features/class-analytics.php:635
+#: includes/features/class-analytics.php:619
 msgid "Free Memory"
 msgstr ""
 
-#: includes/features/class-analytics.php:639
+#: includes/features/class-analytics.php:623
 msgid "Wasted Memory"
 msgstr ""
 
-#: includes/features/class-analytics.php:657
+#: includes/features/class-analytics.php:641
 msgid "Used Key Slots"
 msgstr ""
 
-#: includes/features/class-analytics.php:661
+#: includes/features/class-analytics.php:645
 msgid "Free Key Slots"
 msgstr ""
 
-#: includes/features/class-analytics.php:679
+#: includes/features/class-analytics.php:663
 msgid "Used Buffer"
 msgstr ""
 
-#: includes/features/class-analytics.php:683
+#: includes/features/class-analytics.php:667
 msgid "Free Buffer"
 msgstr ""
 
-#: includes/features/class-analytics.php:863
-#: includes/features/class-analytics.php:892
+#: includes/features/class-analytics.php:847
+#: includes/features/class-analytics.php:876
 #: includes/system/class-conversion.php:84
 msgctxt "Abbreviation - Stands for \"megabytes\"."
 msgid "MB"
 msgstr ""
 
-#: includes/features/class-analytics.php:921
+#: includes/features/class-analytics.php:905
 #: includes/system/class-conversion.php:46
 msgctxt "Abbreviation - Stands for \"thousand\"."
 msgid "K"
 msgstr ""
 
-#: includes/features/class-analytics.php:1046
+#: includes/features/class-analytics.php:1059
 #, php-format
 msgid "%s hits"
 msgstr ""
 
-#: includes/features/class-analytics.php:1050
+#: includes/features/class-analytics.php:1063
 #, php-format
 msgid "total memory: %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1053
+#: includes/features/class-analytics.php:1066
 #, php-format
 msgid "buffer size: %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1056
+#: includes/features/class-analytics.php:1069
 #, php-format
 msgid "%s keys (avg.)"
 msgstr ""
 
-#: includes/features/class-analytics.php:1062
+#: includes/features/class-analytics.php:1075
 msgid "no availability"
 msgstr ""
 
-#: includes/features/class-analytics.php:1064
+#: includes/features/class-analytics.php:1077
 #, php-format
 msgid "available %s"
 msgstr ""
 
-#: includes/features/class-analytics.php:1149
+#: includes/features/class-analytics.php:1162
 msgid "Hit ratio variation."
 msgstr ""
 
-#: includes/features/class-analytics.php:1150
+#: includes/features/class-analytics.php:1163
 msgid "Hit and miss distribution."
 msgstr ""
 
-#: includes/features/class-analytics.php:1151
+#: includes/features/class-analytics.php:1164
 msgid "Memory distribution."
 msgstr ""
 
-#: includes/features/class-analytics.php:1152
+#: includes/features/class-analytics.php:1165
 msgid "Files variation."
 msgstr ""
 
-#: includes/features/class-analytics.php:1153
+#: includes/features/class-analytics.php:1166
 msgid "Keys distribution."
 msgstr ""
 
-#: includes/features/class-analytics.php:1154
+#: includes/features/class-analytics.php:1167
 msgid "Strings variation."
 msgstr ""
 
-#: includes/features/class-analytics.php:1155
+#: includes/features/class-analytics.php:1168
 msgid "Buffer distribution."
 msgstr ""
 
-#: includes/features/class-analytics.php:1156
+#: includes/features/class-analytics.php:1169
 msgid "Availability variation."
 msgstr ""
 
-#: includes/features/class-analytics.php:1167
+#: includes/features/class-analytics.php:1180
 msgid "Metrics Variations"
 msgstr ""
 
-#: includes/features/class-analytics.php:1188
+#: includes/features/class-analytics.php:1201
 msgid "Status Events"
 msgstr ""
 
-#: includes/features/class-analytics.php:1211
-msgctxt "Noun - Cache hit ratio."
-msgid "Hit Ratio"
-msgstr ""
-
-#: includes/features/class-analytics.php:1212
+#: includes/features/class-analytics.php:1225
 msgid "The ratio between hit and total calls."
 msgstr ""
 
-#: includes/features/class-analytics.php:1216
+#: includes/features/class-analytics.php:1229
 msgctxt "Noun - Memory free of allocation."
 msgid "Free Memory"
 msgstr ""
 
-#: includes/features/class-analytics.php:1217
+#: includes/features/class-analytics.php:1230
 msgid "Ratio of free available memory."
 msgstr ""
 
-#: includes/features/class-analytics.php:1221
+#: includes/features/class-analytics.php:1234
 msgctxt "Noun - Number of already cached files."
 msgid "Cached Files"
 msgstr ""
 
-#: includes/features/class-analytics.php:1222
+#: includes/features/class-analytics.php:1235
 msgid "Number of compiled and cached files."
 msgstr ""
 
-#: includes/features/class-analytics.php:1226
+#: includes/features/class-analytics.php:1239
 msgctxt ""
 "Noun - Ratio of the allocated keys to the total available keys slots."
 msgid "Keys Saturation"
 msgstr ""
 
-#: includes/features/class-analytics.php:1227
+#: includes/features/class-analytics.php:1240
 msgid "Ratio of the allocated keys to the total available keys slots."
 msgstr ""
 
-#: includes/features/class-analytics.php:1231
+#: includes/features/class-analytics.php:1244
 msgctxt "Noun - Ratio of the used buffer to the total buffer size."
 msgid "Buffer Saturation"
 msgstr ""
 
-#: includes/features/class-analytics.php:1232
+#: includes/features/class-analytics.php:1245
 msgid "Ratio of the used buffer to the total buffer size."
 msgstr ""
 
-#: includes/features/class-analytics.php:1236
+#: includes/features/class-analytics.php:1249
 msgctxt "Noun - Ratio of time when OPcache is not disabled."
 msgid "Availability"
 msgstr ""
 
-#: includes/features/class-analytics.php:1237
+#: includes/features/class-analytics.php:1250
 msgid "Time ratio with an operational OPcache."
 msgstr ""
 
-#: includes/features/class-analytics.php:1367
+#: includes/features/class-analytics.php:1287
+msgid "No Data"
+msgstr ""
+
+#: includes/features/class-analytics.php:1391
 msgid "Custom Range"
 msgstr ""
 
-#: includes/features/class-analytics.php:1367
+#: includes/features/class-analytics.php:1391
 msgid "Cancel"
 msgstr ""
 
-#: includes/features/class-analytics.php:1369
+#: includes/features/class-analytics.php:1393
 msgid "Today"
 msgstr ""
 
-#: includes/features/class-analytics.php:1370
+#: includes/features/class-analytics.php:1394
 msgid "Yesterday"
 msgstr ""
 
-#: includes/features/class-analytics.php:1371
+#: includes/features/class-analytics.php:1395
 msgid "This Month"
 msgstr ""
 
-#: includes/features/class-analytics.php:1372
+#: includes/features/class-analytics.php:1396
 msgid "Last Month"
 msgstr ""
 
-#: includes/features/class-capture.php:45
+#: includes/features/class-capture.php:53
 msgid "Every five minutes"
 msgstr ""
 
@@ -745,8 +734,8 @@ msgstr ""
 
 #: includes/features/class-scripts.php:665
 msgid ""
-"OPcache forced invalidation has been initiated. It may take a few seconds "
-"to complete."
+"Site invalidation has been initiated. It may take a few seconds to "
+"complete."
 msgstr ""
 
 #: includes/features/class-scripts.php:670
@@ -815,7 +804,7 @@ msgstr ""
 msgid "See <a href=\"%s\">what's new</a>."
 msgstr ""
 
-#: includes/plugin/class-updater.php:137
+#: includes/plugin/class-updater.php:94
 msgid "Sorry, unable to find or read changelog file."
 msgstr ""
 
