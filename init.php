@@ -12,7 +12,7 @@ define( 'OPCM_PRODUCT_URL', 'https://github.com/Pierre-Lannoy/wp-opcache-manager
 define( 'OPCM_PRODUCT_SHORTNAME', 'OPcache' );
 define( 'OPCM_PRODUCT_ABBREVIATION', 'opcm' );
 define( 'OPCM_SLUG', 'opcache-manager' );
-define( 'OPCM_VERSION', '1.0.2' );
+define( 'OPCM_VERSION', '1.0.3-dev0' );
 define( 'OPCM_CODENAME', '"-"' );
 
 define( 'OPCM_MINIMUM_WP_VERSION', '4.9' );
