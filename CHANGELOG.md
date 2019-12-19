@@ -3,7 +3,7 @@ All notable changes to **OPcache Manager** is documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased - will be 1.0.3]
+## [1.0.3] - 2019-12-19
 ### Changed
 - Better cache management for old date ranges.
 ### Fixed
