@@ -136,10 +136,10 @@ class Schema {
 			Logger::debug( 'No old records to delete.' );
 		} elseif ( 1 === $count ) {
 			Logger::debug( '1 old record deleted.' );
-			Cache::delete_global( '/Data/OldestDate' );
+			Cache::delete_global( 'data/oldestdate' );
 		} else {
 			Logger::debug( sprintf( '%1$s old records deleted.', $count ) );
-			Cache::delete_global( '/Data/OldestDate' );
+			Cache::delete_global( 'data/oldestdate' );
 		}
 
 	}
@@ -229,7 +229,7 @@ class Schema {
 	 * @since    1.0.0
 	 */
 	public static function get_oldest_date() {
-		$result = Cache::get_global( '/Data/OldestDate' );
+		$result = Cache::get_global( 'data/oldestdate' );
 		if ( $result ) {
 			return $result;
 		}
@@ -238,7 +238,7 @@ class Schema {
 		// phpcs:ignore
 		$result = $wpdb->get_results( $sql, ARRAY_A );
 		if ( is_array( $result ) && 0 < count( $result ) && array_key_exists( 'timestamp', $result[0] ) ) {
-			Cache::set_global( '/Data/OldestDate', $result[0]['timestamp'], 'infinite' );
+			Cache::set_global( 'data/oldestdate', $result[0]['timestamp'], 'infinite' );
 			return $result[0]['timestamp'];
 		}
 		return '';
