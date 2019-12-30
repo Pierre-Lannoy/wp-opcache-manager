@@ -11,6 +11,8 @@
 
 namespace OPcacheManager\System;
 
+use OPcacheManager\System\Environment;
+
 /**
  * Define the options functionality.
  *
@@ -27,9 +29,36 @@ class Option {
 	 *
 	 * @since  1.0.0
 	 * @access private
-	 * @var    array    $defaults    The $defaults list.
+	 * @var    array    $defaults    The defaults list.
 	 */
 	private static $defaults = [];
+
+	/**
+	 * The list of network-wide options.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 * @var    array    $network    The network-wide list.
+	 */
+	private static $network = [];
+
+	/**
+	 * The list of site options.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 * @var    array    $site    The site list.
+	 */
+	private static $site = [];
+
+	/**
+	 * The list of private options.
+	 *
+	 * @since  1.0.0
+	 * @access private
+	 * @var    array    $private    The private options list.
+	 */
+	private static $private = [];
 
 	/**
 	 * Set the defaults options.
@@ -47,7 +76,39 @@ class Option {
 		self::$defaults['history']          = 21;
 		self::$defaults['analytics']        = true;
 		self::$defaults['warmup']           = false;
+		self::$network                      = [ 'version', 'use_cdn', 'script_in_footer', 'display_nag', 'reset_frequency', 'analytics', 'history', 'warmup' ];
 	}
+	/**
+	 * Get the options infos for Site Health "info" tab.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function debug_info() {
+		$result = [];
+		$si     = '[Site Option] ';
+		$nt     = $si;
+		if ( Environment::is_wordpress_multisite() ) {
+			$nt = '[Network Option] ';
+		}
+		foreach ( self::$network as $opt ) {
+			$val            = self::network_get( $opt );
+			$result[ $opt ] = [
+				'label'   => $nt . $opt,
+				'value'   => is_bool( $val ) ? $val ? 1 : 0 : $val,
+				'private' => in_array( $opt, self::$private, true ),
+			];
+		}
+		foreach ( self::$site as $opt ) {
+			$val            = self::site_get( $opt );
+			$result[ $opt ] = [
+				'label'   => $si . $opt,
+				'value'   => is_bool( $val ) ? $val ? 1 : 0 : $val,
+				'private' => in_array( $opt, self::$private, true ),
+			];
+		}
+		return $result;
+	}
+
 
 	/**
 	 * Get an option value for a site.
