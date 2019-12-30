@@ -438,4 +438,55 @@ class Cache {
 		}
 	}
 
+	/**
+	 * Get the options infos for Site Health "info" tab.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function debug_info() {
+		if ( wp_using_ext_object_cache() ) {
+			$result['product'] = [
+				'label' => 'Product',
+				'value' => 'External manager',
+			];
+		} elseif ( self::$apcu_available ) {
+			$result['product'] = [
+				'label' => 'Product',
+				'value' => 'APCu',
+			];
+			foreach ( [ 'enabled', 'shm_segments', 'shm_size', 'entries_hint', 'ttl', 'gc_ttl', 'mmap_file_mask', 'slam_defense', 'enable_cli', 'use_request_time', 'serializer', 'coredump_unmap', 'preload_path' ] as $key ) {
+				$result[ 'directive_' . $key ] = [
+					'label' => '[Directive] ' . $key,
+					'value' => ini_get( 'apc.' . $key ),
+				];
+			}
+			if ( function_exists( 'apcu_sma_info' ) && function_exists( 'apcu_cache_info' ) ) {
+				$raw = apcu_sma_info();
+				foreach ( $raw as $key => $status ) {
+					if ( ! is_array( $status ) ) {
+						$result[ 'status_' . $key ] = [
+							'label' => '[Status] ' . $key,
+							'value' => $status,
+						];
+					}
+				}
+				$raw = apcu_cache_info();
+				foreach ( $raw as $key => $status ) {
+					if ( ! is_array( $status ) ) {
+						$result[ 'status_' . $key ] = [
+							'label' => '[Status] ' . $key,
+							'value' => $status,
+						];
+					}
+				}
+			}
+		} else {
+			$result['product'] = [
+				'label' => 'Product',
+				'value' => 'Database transients',
+			];
+		}
+		return $result;
+	}
+
 }
