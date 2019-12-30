@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 - Full compatibility (for internal cache) with Redis and Memcached.
 - Using APCu rather than database transients if APCu is available.
+- New Site Health "status" sections about OPcache and object cache. 
+- New Site Health "status" section about i18n extension for non `en_US` sites.
+- New Site Health "info" sections about OPcache and object cache. 
+- New Site Health "info" section about the plugin itself. 
 
 ## [1.0.3] - 2019-12-19
 ### Changed
