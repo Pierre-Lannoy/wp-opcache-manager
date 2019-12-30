@@ -59,6 +59,54 @@ class OPcache {
 	}
 
 	/**
+	 * Get the options infos for Site Health "info" tab.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function debug_info() {
+		$result['product'] = [
+			'label' => 'Product',
+			'value' => self::name(),
+		];
+		if ( function_exists( 'opcache_get_configuration' ) && function_exists( 'opcache_get_status' ) ) {
+			$raw = opcache_get_configuration();
+			if ( array_key_exists( 'directives', $raw ) ) {
+				foreach ( $raw['directives'] as $key => $directive ) {
+					$result[ $key ] = [
+						'label' => '[Directive] ' . str_replace( 'opcache.', '', $key ),
+						'value' => $directive,
+					];
+				}
+			}
+			$raw = opcache_get_status();
+			foreach ( $raw as $key => $status ) {
+				if ( 'scripts' === $key ) {
+					continue;
+				}
+				if ( is_array( $status ) ) {
+					foreach ( $status as $skey => $sstatus ) {
+						$result[ $skey ] = [
+							'label' => '[Status] ' . $skey,
+							'value' => $sstatus,
+						];
+					}
+				} else {
+					$result[ $key ] = [
+						'label' => '[Status] ' . $key,
+						'value' => $status,
+					];
+				}
+			}
+		} else {
+			$result['product'] = [
+				'label' => 'Status',
+				'value' => 'Disabled',
+			];
+		}
+		return $result;
+	}
+
+	/**
 	 * Get name and version.
 	 *
 	 * @return string The name and version of the product.
