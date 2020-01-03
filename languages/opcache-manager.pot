@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: OPcache Manager\n"
-"POT-Creation-Date: 2019-12-03 00:33+0100\n"
+"POT-Creation-Date: 2020-01-03 08:40+0100\n"
 "PO-Revision-Date: 2019-07-08 14:07+0200\n"
 "Last-Translator: Pierre Lannoy <pierre@lannoy.fr>\n"
 "Language-Team: Pierre Lannoy <pierre@lannoy.fr>\n"
@@ -924,6 +924,114 @@ msgstr ""
 
 #: includes/system/class-environment.php:183
 msgid "Debug disabled"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:122
+msgid "Object cache"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:130
+msgid "OPcache settings and status"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:147
+msgid "Plugin diagnostic information"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:164
+msgid "Object Cache Test"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:182
+msgid "You should use object caching"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:185
+#: includes/system/class-sitehealth.php:197
+#: includes/system/class-sitehealth.php:209
+#: includes/system/class-sitehealth.php:251
+#: includes/system/class-sitehealth.php:263
+msgid "Performance"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:188
+msgid "Your site uses database transient."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:188
+#: includes/system/class-sitehealth.php:200
+msgid ""
+"You should consider using a dedicated object caching mechanism, like "
+"Memcached or Redis, to improve your site's speed."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:194
+msgid "You should improve object caching"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:200
+msgid ""
+"Your site uses APCu, but only a few plugins know how to take advantage of "
+"it."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:206
+msgid "Your site uses object caching"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:212
+msgid "Your site uses a dedicated object caching mechanism. That's great."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:231
+msgid "OPcache Test"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:248
+msgid "Your site uses OPcache"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:254
+msgid "Your site uses OPcache to improve PHP performance. That's great."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:260
+msgid "You should use OPcache"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:266
+msgid ""
+"You should consider using OPcache. It would improve PHP performance of "
+"your site."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:285
+msgid "I18n Extension Test"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:302
+msgid "Your site uses Intl extension"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:305
+#: includes/system/class-sitehealth.php:317
+msgid "Internationalization"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:308
+msgid ""
+"Your site uses PHP Intl extension to improve localization features. That's "
+"great."
+msgstr ""
+
+#: includes/system/class-sitehealth.php:314
+msgid "You should use Intl extension"
+msgstr ""
+
+#: includes/system/class-sitehealth.php:320
+msgid ""
+"You should consider using PHP Intl extension. It would improve "
+"localization features on your site."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
