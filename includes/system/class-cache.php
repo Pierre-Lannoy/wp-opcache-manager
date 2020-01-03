@@ -103,6 +103,17 @@ class Cache {
 		}
 		self::$apcu_available = function_exists( 'apcu_delete' ) && function_exists( 'apcu_fetch' ) && function_exists( 'apcu_store' );
 		add_action( 'shutdown', [ 'OPcacheManager\System\Cache', 'log_debug' ], 10, 0 );
+		add_filter( 'perfopsone_icache_introspection', [ 'OPcacheManager\System\Cache', 'introspection' ] );
+	}
+
+	/**
+	 * Get the introspection endpoint.
+	 *
+	 * @since 1.0.0
+	 */
+	public static function introspection( $endpoints ) {
+		$endpoints[ OPCM_SLUG ] = [ 'name' => OPCM_PRODUCT_NAME, 'version' => OPCM_VERSION, 'endpoint' => [ 'OPcacheManager\System\Cache', 'get_analytics' ] ];
+		return $endpoints;
 	}
 
 	/**
