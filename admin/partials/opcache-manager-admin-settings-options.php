@@ -30,3 +30,5 @@
 	<?php wp_nonce_field( 'opcm-plugin-options' ); ?>
 	<p><?php echo get_submit_button( esc_html__( 'Reset to Defaults', 'opcache-manager' ), 'secondary', 'reset-to-defaults', false ); ?>&nbsp;&nbsp;&nbsp;<?php echo get_submit_button( null, 'primary', 'submit', false ); ?></p>
 </form>
+
+<?php print_r(apcu_cache_info()); ?>
