@@ -68,13 +68,13 @@ class Capture {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
 			if ( ! isset( $old ) ) {
-				Logger::emergency( 'No OPcache transient.' );
+				Logger::debug( 'No OPcache transient.' );
 			} elseif ( ! array_key_exists( 'timestamp', $old ) ) {
-				Logger::emergency( 'No OPcache timestamp.' );
+				Logger::debug( 'No OPcache timestamp.' );
 			} elseif ( 300 - self::$delta > $time - $old['timestamp'] ) {
-				Logger::emergency( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				Logger::debug( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			} elseif ( 300 + self::$delta < $time - $old['timestamp'] ) {
-				Logger::emergency( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				Logger::debug( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			}
 			if ( isset( $old ) && array_key_exists( 'timestamp', $old ) && ( 300 + self::$delta > $time - $old['timestamp'] ) ) {
 				try {
