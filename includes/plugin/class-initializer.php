@@ -35,7 +35,9 @@ class Initializer {
 	 * @since 1.0.0
 	 */
 	public function initialize() {
-
+		\OPcacheManager\System\Logger::init();
+		\OPcacheManager\System\Cache::init();
+		\OPcacheManager\System\Sitehealth::init();
 	}
 
 }
