@@ -38,6 +38,7 @@ class Initializer {
 		\OPcacheManager\System\Logger::init();
 		\OPcacheManager\System\Cache::init();
 		\OPcacheManager\System\Sitehealth::init();
+		\OPcacheManager\System\APCu::init();
 	}
 
 }

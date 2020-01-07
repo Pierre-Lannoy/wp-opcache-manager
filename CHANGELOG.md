@@ -3,7 +3,9 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased - will be 1.1.1]
+## [Unreleased - will be 1.2.0]
+### Added
+- Full compatibility with [APCu Manager](https://wordpress.org/plugins/apcu-manager/).
 ### Fixed
 - A race condition can lead to "holes" in daily graphs.
 
