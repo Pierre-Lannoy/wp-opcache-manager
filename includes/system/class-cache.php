@@ -111,8 +111,8 @@ class Cache {
 			wp_cache_add_global_groups( self::$pool_name );
 		}
 		self::$apcu_available = function_exists( 'apcu_delete' ) && function_exists( 'apcu_fetch' ) && function_exists( 'apcu_store' );
-		add_action( 'shutdown', [ 'OPcacheManager\System\Cache', 'log_debug' ], 10, 0 );
-		add_filter( 'perfopsone_icache_introspection', [ 'OPcacheManager\System\Cache', 'introspection' ] );
+		add_action( 'shutdown', [ 'Traffic\System\Cache', 'log_debug' ], 10, 0 );
+		add_filter( 'perfopsone_icache_introspection', [ 'Traffic\System\Cache', 'introspection' ] );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Cache {
 	 * @since 1.0.0
 	 */
 	public static function introspection( $endpoints ) {
-		$endpoints[ OPCM_SLUG ] = [ 'name' => OPCM_PRODUCT_NAME, 'version' => OPCM_VERSION, 'endpoint' => [ 'OPcacheManager\System\Cache', 'get_analytics' ] ];
+		$endpoints[ TRAFFIC_SLUG ] = [ 'name' => TRAFFIC_PRODUCT_NAME, 'version' => TRAFFIC_VERSION, 'endpoint' => [ 'Traffic\System\Cache', 'get_analytics' ] ];
 		return $endpoints;
 	}
 
@@ -218,6 +218,24 @@ class Cache {
 	}
 
 	/**
+	 * Get the value of a shared cache item.
+	 *
+	 * If the item does not exist, does not have a value, or has expired,
+	 * then the return value will be false.
+	 *
+	 * @param  string $item_name Item name. Expected to not be SQL-escaped.
+	 * @return mixed Value of item.
+	 * @since  1.0.0
+	 */
+	public static function get_shared( $item_name ) {
+		$save            = self::$pool_name;
+		self::$pool_name = 'perfopsone';
+		$result = self::get_for_full_name( self::full_item_name( $item_name ) );
+		self::$pool_name = $save;
+		return $result;
+	}
+
+	/**
 	 * Get the value of a global cache item.
 	 *
 	 * If the item does not exist, does not have a value, or has expired,
@@ -284,6 +302,27 @@ class Cache {
 		} else {
 			$result = false;
 		}
+		return $result;
+	}
+
+	/**
+	 * Set the value of a shared cache item.
+	 *
+	 * You do not need to serialize values. If the value needs to be serialized, then
+	 * it will be serialized before it is set.
+	 *
+	 * @param  string $item_name Item name. Expected to not be SQL-escaped.
+	 * @param  mixed  $value     Item value. Must be serializable if non-scalar.
+	 *                           Expected to not be SQL-escaped.
+	 * @param  string $ttl       Optional. The previously defined ttl @see self::init().
+	 * @return bool False if value was not set and true if value was set.
+	 * @since  1.0.0
+	 */
+	public static function set_shared( $item_name, $value, $ttl = 'default' ) {
+		$save            = self::$pool_name;
+		self::$pool_name = 'perfopsone';
+		$result = self::set_for_full_name( self::full_item_name( $item_name ), $value, $ttl );
+		self::$pool_name = $save;
 		return $result;
 	}
 
@@ -365,6 +404,23 @@ class Cache {
 				++$result;
 			}
 		}
+		return $result;
+	}
+
+	/**
+	 * Delete the value of a shared cache item.
+	 *
+	 * This function accepts generic car "*" for transients.
+	 *
+	 * @param  string $item_name Item name. Expected to not be SQL-escaped.
+	 * @return integer Number of deleted items.
+	 * @since  1.0.0
+	 */
+	public static function delete_shared( $item_name ) {
+		$save            = self::$pool_name;
+		self::$pool_name = 'perfopsone';
+		$result = self::delete_for_ful_name( self::full_item_name( $item_name ) );
+		self::$pool_name = $save;
 		return $result;
 	}
 
