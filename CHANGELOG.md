@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - In lists, it's now possible to navigate by direct page input.
 ### Fixed
 - A race condition can lead to "holes" in daily graphs.
+- With some plugins, box tooltips may be misplaced (css collision).
 - In lists, some navigation buttons are wrongly active.
 
 ## [1.1.0] - 2020-01-03

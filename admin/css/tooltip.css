@@ -105,6 +105,7 @@ span[data-tooltip][data-position="left"]:before {
     right: 100%;
     margin-right: 10px;
     min-width: 100px;
+    left: unset;
 }
 
 span[data-tooltip][data-position="left"]:after {
@@ -115,6 +116,7 @@ span[data-tooltip][data-position="left"]:after {
     margin-top: -6px;
     margin-right: 4px;
     box-shadow: none;
+    left: unset;
 }
 
 span[data-tooltip][data-position="right"]:before {
