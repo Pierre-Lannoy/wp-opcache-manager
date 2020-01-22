@@ -111,8 +111,8 @@ class Cache {
 			wp_cache_add_global_groups( self::$pool_name );
 		}
 		self::$apcu_available = function_exists( 'apcu_delete' ) && function_exists( 'apcu_fetch' ) && function_exists( 'apcu_store' );
-		add_action( 'shutdown', [ 'Traffic\System\Cache', 'log_debug' ], 10, 0 );
-		add_filter( 'perfopsone_icache_introspection', [ 'Traffic\System\Cache', 'introspection' ] );
+		add_action( 'shutdown', [ 'OPcacheManager\System\Cache', 'log_debug' ], 10, 0 );
+		add_filter( 'perfopsone_icache_introspection', [ 'OPcacheManager\System\Cache', 'introspection' ] );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Cache {
 	 * @since 1.0.0
 	 */
 	public static function introspection( $endpoints ) {
-		$endpoints[ TRAFFIC_SLUG ] = [ 'name' => TRAFFIC_PRODUCT_NAME, 'version' => TRAFFIC_VERSION, 'endpoint' => [ 'Traffic\System\Cache', 'get_analytics' ] ];
+		$endpoints[ OPCM_SLUG ] = [ 'name' => OPCM_PRODUCT_NAME, 'version' => OPCM_VERSION, 'endpoint' => [ 'OPcacheManager\System\Cache', 'get_analytics' ] ];
 		return $endpoints;
 	}
 
