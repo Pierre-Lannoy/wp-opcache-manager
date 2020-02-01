@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Full compatibility with [APCu Manager](https://wordpress.org/plugins/apcu-manager/).
 ### Changed
 - In lists, it's now possible to navigate by direct page input.
+- Analysis delta time has been increased to avoid holes in stats when cron is not fully reliable.
 ### Fixed
 - A race condition can lead to "holes" in daily graphs.
 - With some plugins, box tooltips may be misplaced (css collision).

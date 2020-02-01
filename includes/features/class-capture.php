@@ -32,7 +32,7 @@ class Capture {
 	 * @since  1.0.0
 	 * @var    integer    $delta    The authorized delta time in seconds.
 	 */
-	public static $delta = 59;
+	public static $delta = 90;
 
 	/**
 	 * Initialize the class and set its properties.
