@@ -365,8 +365,8 @@ class Analytics {
 					$record[ $item ] = 0;
 				}
 				while ( 300 + Capture::$delta < $real->getTimestamp() - $ts ) {
-					$ts                   = $ts + 300;
-					$data[ $ts + $offset] = $record;
+					$ts                    = $ts + 300;
+					$data[ $ts + $offset ] = $record;
 				}
 				foreach ( $query as $timestamp => $row ) {
 					$datetime    = new \DateTime( $timestamp, new \DateTimeZone( 'UTC' ) );
@@ -960,8 +960,8 @@ class Analytics {
 			$current     = 0.0;
 			$previous    = 0.0;
 			if ( 'uptime' === $queried ) {
-				$disabled_data  = Schema::get_std_kpi( $this->filter, ! $this->is_today, 'status', ['disabled'] );
-				$disabled_pdata = Schema::get_std_kpi( $this->previous, true,  'status', ['disabled'] );
+				$disabled_data  = Schema::get_std_kpi( $this->filter, ! $this->is_today, 'status', [ 'disabled' ] );
+				$disabled_pdata = Schema::get_std_kpi( $this->previous, true, 'status', [ 'disabled' ] );
 				if ( is_array( $data ) && array_key_exists( 'records', $data ) && is_array( $disabled_data ) && array_key_exists( 'records', $disabled_data ) ) {
 					if ( empty( $data['records'] ) ) {
 						$data['records'] = 0;
