@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - A race condition can lead to "holes" in daily graphs.
 - With some plugins, box tooltips may be misplaced (css collision).
 - In lists, some navigation buttons are wrongly active.
+### Removed
+- Compatibility with WordPress versions prior to 5.2.
 
 ## [1.1.0] - 2020-01-03
 ### Added

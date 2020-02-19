@@ -15,9 +15,6 @@ define( 'OPCM_SLUG', 'opcache-manager' );
 define( 'OPCM_VERSION', '1.2.0-dev0' );
 define( 'OPCM_CODENAME', '"-"' );
 
-define( 'OPCM_MINIMUM_WP_VERSION', '4.9' );
-define( 'OPCM_MINIMUM_PHP_VERSION', '7.2' );
-
 define( 'OPCM_CDN_AVAILABLE', true );
 
 define( 'OPCM_CRON_RESET_NAME', 'opcm_opcache_reset' );
