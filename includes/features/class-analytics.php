@@ -1355,7 +1355,7 @@ class Analytics {
 		foreach ( $replace as $key => $arg ) {
 			$params[ $key ] = $arg;
 		}
-		$url = admin_url( 'tools.php?page=opcm-viewer' );
+		$url = admin_url( 'admin.php?page=opcm-viewer' );
 		foreach ( $params as $key => $arg ) {
 			if ( '' !== $arg ) {
 				$url .= '&' . $key . '=' . $arg;

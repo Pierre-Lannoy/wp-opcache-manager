@@ -20,6 +20,7 @@ use OPcacheManager\System\Form;
 use OPcacheManager\System\Blog;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
+use PerfOpsOne\AdminMenus;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -75,33 +76,75 @@ class Opcache_Manager_Admin {
 	}
 
 	/**
+	 * Init PerfOps admin menus.
+	 *
+	 * @param array $perfops    The already declared menus.
+	 * @return array    The completed menus array.
+	 * @since 1.0.0
+	 */
+	public function init_perfops_admin_menus( $perfops ) {
+		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
+			$perfops['tools'][]    = [
+				'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
+				/* translators: as in the sentence "View, invalidate and recompile OPcached files used by your network." or "View, invalidate and recompile OPcached files used by your website." */
+				'description'   => sprintf( esc_html__( 'View, invalidate and recompile OPcached files used by your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
+				'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
+				'slug'          => 'opcm-tools',
+				'page_title'    => esc_html__( 'OPcache Management', 'opcache-manager' ),
+				'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
+				'capability'    => 'manage_options',
+				'callback'      => [ $this, 'get_tools_page' ],
+				'position'      => 50,
+				'plugin'        => OPCM_SLUG,
+				'activated'     => true,
+				'remedy'        => '',
+			];
+			$perfops['settings'][] = [
+				'name'          => OPCM_PRODUCT_NAME,
+				'description'   => '',
+				'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
+				'slug'          => 'opcm-settings',
+				/* translators: as in the sentence "OPcache Manager Settings" or "WordPress Settings" */
+				'page_title'    => sprintf( esc_html__( '%s Settings', 'opcache-manager' ), OPCM_PRODUCT_NAME ),
+				'menu_title'    => OPCM_PRODUCT_NAME,
+				'capability'    => 'manage_options',
+				'callback'      => [ $this, 'get_settings_page' ],
+				'position'      => 50,
+				'plugin'        => OPCM_SLUG,
+				'version'       => OPCM_VERSION,
+				'activated'     => true,
+				'remedy'        => '',
+				'statistics'    => [ '\OPcacheManager\System\Statistics', 'sc_get_raw' ],
+			];
+		}
+		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() || Role::LOCAL_ADMIN === Role::admin_type() ) {
+			$perfops['analytics'][] = [
+				'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
+				/* translators: as in the sentence "View OPcache key performance indicators and activity metrics for your network." or "View OPcache key performance indicators and activity metrics for your website." */
+				'description'   => sprintf( esc_html__( 'View OPcache key performance indicators and activity metrics for your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
+				'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
+				'slug'          => 'opcm-viewer',
+				'page_title'    => esc_html__( 'OPcache Analytics', 'opcache-manager' ),
+				'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
+				'capability'    => 'manage_options',
+				'callback'      => [ $this, 'get_viewer_page' ],
+				'position'      => 50,
+				'plugin'        => OPCM_SLUG,
+				'activated'     => Option::network_get( 'analytics' ),
+				'remedy'        => esc_url( admin_url( 'admin.php?page=opcm-settings' ) ),
+			];
+		}
+		return $perfops;
+	}
+
+	/**
 	 * Set the items in the settings menu.
 	 *
 	 * @since 1.0.0
 	 */
 	public function init_admin_menus() {
-		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
-			/* translators: as in the sentence "OPcache Manager Settings" or "WordPress Settings" */
-			$settings = add_submenu_page( 'options-general.php', sprintf( esc_html__( '%s Settings', 'opcache-manager' ), OPCM_PRODUCT_NAME ), OPCM_PRODUCT_NAME, 'manage_options', 'opcm-settings', [ $this, 'get_settings_page' ] );
-			$name     = add_submenu_page(
-				'tools.php',
-				esc_html__( 'OPcache Tools', 'opcache-manager' ),
-				esc_html__( 'OPcache Tools', 'opcache-manager' ),
-				'manage_options',
-				'opcm-tools',
-				[ $this, 'get_tools_page' ]
-			);
-		}
-		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() || Role::LOCAL_ADMIN === Role::admin_type() ) {
-			$name = add_submenu_page(
-				'tools.php',
-				esc_html__( 'OPcache Analytics', 'opcache-manager' ),
-				esc_html__( 'OPcache Analytics', 'opcache-manager' ),
-				'manage_options',
-				'opcm-viewer',
-				[ $this, 'get_viewer_page' ]
-			);
-		}
+		add_filter( 'init_perfops_admin_menus', [ $this, 'init_perfops_admin_menus' ] );
+		AdminMenus::initialize();
 	}
 
 	/**
@@ -127,9 +170,9 @@ class Opcache_Manager_Admin {
 	 * @since 1.0.0
 	 */
 	public function add_actions_links( $actions, $plugin_file, $plugin_data, $context ) {
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=opcm-settings' ) ), esc_html__( 'Settings', 'opcache-manager' ) );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'tools.php?page=opcm-tools' ) ), esc_html__( 'Tools', 'opcache-manager' ) );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'tools.php?page=opcm-viewer' ) ), esc_html__( 'Statistics', 'opcache-manager' ) );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-settings' ) ), esc_html__( 'Settings', 'opcache-manager' ) );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-tools' ) ), esc_html__( 'Tools', 'opcache-manager' ) );
+		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-viewer' ) ), esc_html__( 'Statistics', 'opcache-manager' ) );
 		return $actions;
 	}
 
