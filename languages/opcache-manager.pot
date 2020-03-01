@@ -3,14 +3,14 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: OPcache Manager\n"
-"POT-Creation-Date: 2020-01-03 08:40+0100\n"
+"POT-Creation-Date: 2020-03-01 17:10+0100\n"
 "PO-Revision-Date: 2019-07-08 14:07+0200\n"
 "Last-Translator: Pierre Lannoy <pierre@lannoy.fr>\n"
 "Language-Team: Pierre Lannoy <pierre@lannoy.fr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-Flags-xgettext: --add-comments=translators:\n"
 "X-Poedit-WPHeader: opcache-manager.php\n"
@@ -21,74 +21,103 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
+#: admin/class-opcache-manager-admin.php:88
+#: admin/class-opcache-manager-admin.php:94
+#: admin/class-opcache-manager-admin.php:122
+#: admin/class-opcache-manager-admin.php:128
+msgid "OPcache"
+msgstr ""
+
+#. translators: as in the sentence "View, invalidate and recompile OPcached files used by your network." or "View, invalidate and recompile OPcached files used by your website."
+#: admin/class-opcache-manager-admin.php:90
+#, php-format
+msgid "View, invalidate and recompile OPcached files used by your %s."
+msgstr ""
+
+#: admin/class-opcache-manager-admin.php:90
+#: admin/class-opcache-manager-admin.php:124
+msgid "network"
+msgstr ""
+
+#: admin/class-opcache-manager-admin.php:90
+#: admin/class-opcache-manager-admin.php:124
+msgid "website"
+msgstr ""
+
+#: admin/class-opcache-manager-admin.php:93
+msgid "OPcache Management"
+msgstr ""
+
 #. translators: as in the sentence "OPcache Manager Settings" or "WordPress Settings"
-#: admin/class-opcache-manager-admin.php:85
+#: admin/class-opcache-manager-admin.php:108
 #: admin/partials/opcache-manager-admin-settings-main.php:36
+#: perfopsone/class-adminmenus.php:70
 #, php-format
 msgid "%s Settings"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:88
-#: admin/class-opcache-manager-admin.php:89
-msgid "OPcache Tools"
+#. translators: as in the sentence "View OPcache key performance indicators and activity metrics for your network." or "View OPcache key performance indicators and activity metrics for your website."
+#: admin/class-opcache-manager-admin.php:124
+#, php-format
+msgid ""
+"View OPcache key performance indicators and activity metrics for your %s."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:98
-#: admin/class-opcache-manager-admin.php:99
+#: admin/class-opcache-manager-admin.php:127
 #: includes/features/class-analytics.php:1128
 msgid "OPcache Analytics"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:113
+#: admin/class-opcache-manager-admin.php:156
 msgid "Plugin Features"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:114
+#: admin/class-opcache-manager-admin.php:157
 msgid "Plugin options"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:130
+#: admin/class-opcache-manager-admin.php:173
 msgid "Settings"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:131
+#: admin/class-opcache-manager-admin.php:174
 msgid "Tools"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:132
+#: admin/class-opcache-manager-admin.php:175
 msgid "Statistics"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:146
+#: admin/class-opcache-manager-admin.php:189
 msgid "Support"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:147
+#: admin/class-opcache-manager-admin.php:190
 msgid "GitHub repository"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:224
+#: admin/class-opcache-manager-admin.php:267
 msgid "Plugin settings have been saved."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:229
+#: admin/class-opcache-manager-admin.php:272
 msgid "Plugin settings have not been saved. Please try again."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:246
+#: admin/class-opcache-manager-admin.php:289
 msgid "Plugin settings have been reset to defaults."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:251
+#: admin/class-opcache-manager-admin.php:294
 msgid "Plugin settings have not been reset to defaults. Please try again."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:268
+#: admin/class-opcache-manager-admin.php:311
 #, php-format
 msgid "Your site is currently using %s."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:271
+#: admin/class-opcache-manager-admin.php:314
 #, php-format
 msgid ""
 "Your site does not use any logging plugin. To log all events triggered in "
@@ -96,125 +125,125 @@ msgid ""
 "But it is not mandatory."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:275
+#: admin/class-opcache-manager-admin.php:318
 msgid "Logging"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:286
+#: admin/class-opcache-manager-admin.php:329
 msgid "Resources"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:291
+#: admin/class-opcache-manager-admin.php:334
 msgid "Use public CDN"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:294
+#: admin/class-opcache-manager-admin.php:337
 msgid ""
 "If checked, OPcache Manager will use a public CDN (jsDelivr) to serve "
 "scripts and stylesheets."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:302
+#: admin/class-opcache-manager-admin.php:345
 msgid "Admin notices"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:307
+#: admin/class-opcache-manager-admin.php:350
 msgid "Display"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:310
+#: admin/class-opcache-manager-admin.php:353
 msgid ""
 "Allows OPcache Manager to display admin notices throughout the admin "
 "dashboard."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:310
+#: admin/class-opcache-manager-admin.php:353
 msgid "Note: OPcache Manager respects DISABLE_NAG_NOTICES flag."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:326
+#: admin/class-opcache-manager-admin.php:369
 msgid "Never"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:327
+#: admin/class-opcache-manager-admin.php:370
 msgid "Once Hourly"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:328
+#: admin/class-opcache-manager-admin.php:371
 msgid "Twice Daily"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:329
+#: admin/class-opcache-manager-admin.php:372
 msgid "Once Daily"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:343
+#: admin/class-opcache-manager-admin.php:386
 #, php-format
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/class-opcache-manager-admin.php:347
+#: admin/class-opcache-manager-admin.php:390
 #, php-format
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: admin/class-opcache-manager-admin.php:361
+#: admin/class-opcache-manager-admin.php:404
 msgid "Analytics"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:366
-#: admin/class-opcache-manager-admin.php:421
+#: admin/class-opcache-manager-admin.php:409
+#: admin/class-opcache-manager-admin.php:464
 msgid "Activated"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:369
+#: admin/class-opcache-manager-admin.php:412
 msgid ""
 "If checked, OPcache Manager will analyze OPcache operations and store "
 "statistics every five minutes."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:369
+#: admin/class-opcache-manager-admin.php:412
 msgid ""
 "Note: for this to work, your WordPress site must have an operational CRON."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:377
+#: admin/class-opcache-manager-admin.php:420
 msgid "Historical data"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:385
+#: admin/class-opcache-manager-admin.php:428
 msgid "Maximum age of data to keep for statistics."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:393
+#: admin/class-opcache-manager-admin.php:436
 msgid "Site invalidation"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:401
+#: admin/class-opcache-manager-admin.php:444
 msgid ""
 "Frequency at which files belonging to this site must be automatically "
 "reset."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:408
+#: admin/class-opcache-manager-admin.php:451
 msgid "Network warm-up"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:409
+#: admin/class-opcache-manager-admin.php:452
 msgid ""
 "If checked, OPcache Manager will warm-up the full network (all sites) "
 "after each automatic site invalidation."
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:411
+#: admin/class-opcache-manager-admin.php:454
 msgid "Site warm-up"
 msgstr ""
 
-#: admin/class-opcache-manager-admin.php:412
+#: admin/class-opcache-manager-admin.php:455
 msgid ""
 "If checked, OPcache Manager will warm-up the full site after each "
 "automatic site invalidation."
@@ -722,33 +751,33 @@ msgid ""
 "A full reset is currently in progress. Displayed values may be inaccurate."
 msgstr ""
 
-#: includes/features/class-scripts.php:656
+#: includes/features/class-scripts.php:655
 #, php-format
 msgid "Network warm-up has been initiated. %d relevant files."
 msgstr ""
 
-#: includes/features/class-scripts.php:659
+#: includes/features/class-scripts.php:658
 #, php-format
 msgid "Site warm-up has been initiated. %d relevant files."
 msgstr ""
 
-#: includes/features/class-scripts.php:665
+#: includes/features/class-scripts.php:664
 msgid ""
 "Site invalidation has been initiated. It may take a few seconds to "
 "complete."
 msgstr ""
 
-#: includes/features/class-scripts.php:670
+#: includes/features/class-scripts.php:669
 #, php-format
 msgid "Invalidation done: %d file(s)."
 msgstr ""
 
-#: includes/features/class-scripts.php:675
+#: includes/features/class-scripts.php:674
 #, php-format
 msgid "Forced invalidation done: %d file(s)."
 msgstr ""
 
-#: includes/features/class-scripts.php:680
+#: includes/features/class-scripts.php:679
 #, php-format
 msgid "Recompilation done: %d file(s)."
 msgstr ""
@@ -910,19 +939,19 @@ msgid_plural "hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/system/class-environment.php:172
+#: includes/system/class-environment.php:161
 msgid "log"
 msgstr ""
 
-#: includes/system/class-environment.php:177
+#: includes/system/class-environment.php:166
 msgid "display"
 msgstr ""
 
-#: includes/system/class-environment.php:183
+#: includes/system/class-environment.php:172
 msgid "Debug enabled"
 msgstr ""
 
-#: includes/system/class-environment.php:183
+#: includes/system/class-environment.php:172
 msgid "Debug disabled"
 msgstr ""
 
@@ -1032,6 +1061,104 @@ msgstr ""
 msgid ""
 "You should consider using PHP Intl extension. It would improve "
 "localization features on your site."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:54 perfopsone/class-adminmenus.php:55
+msgid "Dashboard"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:54
+#, php-format
+msgid "%s Analytics"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:58 perfopsone/class-adminmenus.php:59
+msgid "Available Tools"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:58
+#, php-format
+msgid "%s Tools"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:62 perfopsone/class-adminmenus.php:63
+msgid "Available Reports"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:62
+#, php-format
+msgid "%s Insights"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:66 perfopsone/class-adminmenus.php:67
+msgid "Available Catalogues"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:66
+#, php-format
+msgid "%s Records"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:70 perfopsone/class-adminmenus.php:71
+msgid "Control Center"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:108
+msgid ""
+"This analytics feature is currently disabled. Click here to activate it."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:203
+#, php-format
+msgid "Need to be updated to %s."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:209 perfopsone/class-adminmenus.php:216
+msgid "OK"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:211 perfopsone/class-adminmenus.php:218
+msgid "need update"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:228
+#, php-format
+msgid "%s+ installs."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:233
+#, php-format
+msgid "%s downloads."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:238
+#, php-format
+msgid "%s reviews."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:241
+msgid "No review yet."
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:366
+msgid "settings"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:367
+msgid "about"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:368
+msgid "support"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:369
+msgid "contribution"
+msgstr ""
+
+#: perfopsone/class-adminmenus.php:378
+#, php-format
+msgid "Requires at least PHP %1$s%2$s and WordPress %3$s%4$s."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
