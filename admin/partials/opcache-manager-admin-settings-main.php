@@ -27,7 +27,6 @@ $url2       = esc_url(
 		admin_url( 'admin.php' )
 	)
 );
-$note       = sprintf(__('Note: <a href="%s">management tools</a> and <a href="%s">analytics reports</a> are available via the <strong>tools menu</strong>.', 'opcache-manager' ), $url1, $url2 );
 
 ?>
 
@@ -71,7 +70,4 @@ $note       = sprintf(__('Note: <a href="%s">management tools</a> and <a href="%
 	<?php if ( 'about' === $active_tab ) { ?>
 		<?php include __DIR__ . '/opcache-manager-admin-settings-about.php'; ?>
 	<?php } ?>
-
-    <p>&nbsp;</p>
-    <em><?php echo $note;?></em>
 </div>
