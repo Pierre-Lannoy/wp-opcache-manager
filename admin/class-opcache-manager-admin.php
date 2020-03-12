@@ -335,7 +335,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_options_usecdn',
 				'checked'     => Option::network_get( 'use_cdn' ),
 				'description' => esc_html__( 'If checked, OPcache Manager will use a public CDN (jsDelivr) to serve scripts and stylesheets.', 'opcache-manager' ),
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
@@ -351,7 +351,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_options_nag',
 				'checked'     => Option::network_get( 'display_nag' ),
 				'description' => esc_html__( 'Allows OPcache Manager to display admin notices throughout the admin dashboard.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: OPcache Manager respects DISABLE_NAG_NOTICES flag.', 'opcache-manager' ),
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
@@ -410,7 +410,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_features_analytics',
 				'checked'     => Option::network_get( 'analytics' ),
 				'description' => esc_html__( 'If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: for this to work, your WordPress site must have an operational CRON.', 'opcache-manager' ),
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
@@ -426,7 +426,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_features_history',
 				'value'       => Option::network_get( 'history' ),
 				'description' => esc_html__( 'Maximum age of data to keep for statistics.', 'opcache-manager' ),
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
@@ -442,7 +442,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_features_reset_frequency',
 				'value'       => Option::network_get( 'reset_frequency' ),
 				'description' => esc_html__( 'Frequency at which files belonging to this site must be automatically reset.', 'opcache-manager' ),
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
@@ -465,7 +465,7 @@ class Opcache_Manager_Admin {
 				'id'          => 'opcm_plugin_features_warmup',
 				'checked'     => Option::network_get( 'warmup' ),
 				'description' => $description,
-				'full_width'  => true,
+				'full_width'  => false,
 				'enabled'     => true,
 			]
 		);
