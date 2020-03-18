@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - The settings page have now the standard WordPress style.
 - Better styling in "PerfOps Settings" page.
+- The tool page is now called "OPcache Management".
 ### Removed
 - Unneeded tool links in settings page.
 
