@@ -67,6 +67,7 @@ function opcm_uninstall() {
  * @since 1.0.0
  */
 function opcm_run() {
+	\OPcacheManager\System\Logger::init();
 	$plugin = new OPcacheManager\Plugin\Core();
 	$plugin->run();
 }
