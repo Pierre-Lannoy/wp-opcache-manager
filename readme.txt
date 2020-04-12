@@ -4,7 +4,7 @@ Tags: analytics, cache, monitor, OPcache, Zend
 Requires at least: 5.2
 Requires PHP: 7.2
 Tested up to: 5.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -39,6 +39,14 @@ OPcache statistics and management right in the WordPress admin dashboard.
 This plugin is free and provided without warranty of any kind. Use it at your own risk, I'm not responsible for any improper use of this plugin, nor for any damage it might cause to your site. Always backup all your data before installing a new plugin.
 
 Anyway, I'll be glad to help you if you encounter issues when using this plugin. Just use the support section of this plugin page.
+
+= Privacy =
+
+This plugin, as any piece of software, is neither compliant nor non-compliant with privacy laws and regulations. It is your responsibility to use it with respect for the personal data of your users and applicable laws.
+
+This plugin doesn't set any cookie in the user's browser.
+
+This plugin doesn't handle personally identifiable information (PII).
 
 = Donation =
 
