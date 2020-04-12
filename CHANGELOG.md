@@ -3,6 +3,8 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased - will be 1.3.1]
+
 ## [1.3.0] - 2020-04-12
 ### Added
 - Compatibility with [DecaLog](https://wordpress.org/plugins/decalog/) early loading feature.
