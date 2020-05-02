@@ -35,6 +35,7 @@ class Environment {
 	 */
 	public static function init() {
 		$plugin_path         = str_replace( OPCM_SLUG . '/includes/system/', OPCM_SLUG . '/', plugin_dir_path( __FILE__ ) );
+		$plugin_path         = str_replace( OPCM_SLUG . '\includes\system/', OPCM_SLUG . '/', $plugin_path );
 		$plugin_url          = str_replace( OPCM_SLUG . '/includes/system/', OPCM_SLUG . '/', plugin_dir_url( __FILE__ ) );
 		$plugin_relative_url = str_replace( get_site_url() . '/', '', $plugin_url );
 		define( 'OPCM_PLUGIN_DIR', $plugin_path );

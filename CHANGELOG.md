@@ -4,6 +4,8 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased - will be 1.3.1]
+### Fixed
+- There's an error while activating the plugin when the server is Microsoft IIS with Windows 10.
 
 ## [1.3.0] - 2020-04-12
 ### Added
