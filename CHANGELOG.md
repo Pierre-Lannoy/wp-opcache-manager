@@ -3,7 +3,10 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased - will be 1.3.1]
+## [1.3.1] - 2020-05-05
+### Changed
+- The charts take now care of DST in user's browser.
+- The daily distribution charts have now a better timeline.
 ### Fixed
 - There's an error while activating the plugin when the server is Microsoft IIS with Windows 10.
 - With Microsoft Edge, some layouts may be ugly.
