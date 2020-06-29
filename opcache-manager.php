@@ -10,7 +10,7 @@
  * Plugin Name:       OPcache Manager
  * Plugin URI:        https://github.com/Pierre-Lannoy/wp-opcache-manager
  * Description:       OPcache statistics and management right in the WordPress admin dashboard.
- * Version:           1.3.1
+ * Version:           1.3.2
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Pierre Lannoy
