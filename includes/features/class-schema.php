@@ -266,7 +266,7 @@ class Schema {
 		}
 		$where_extra = '';
 		if ( 0 < count( $extras ) && '' !== $extra_field ) {
-			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( $extras, "', '" ) . "' )";
+			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( "', '", $extras ) . "' )";
 		}
 		global $wpdb;
 		$sql = 'SELECT count(*) as records, sum(hit) as sum_hit, avg(hit) as avg_hit, avg(miss) as avg_miss, avg(mem_total) as avg_mem_total, avg(mem_used) as avg_mem_used, avg(mem_wasted) as avg_mem_wasted, avg(key_total) as avg_key_total, avg(key_used) as avg_key_used, avg(buf_total) as avg_buf_total, avg(buf_used) as avg_buf_used, avg(strings) as avg_strings, min(strings) as min_strings, max(strings) as max_strings, avg(scripts) as avg_scripts, min(scripts) as min_scripts, max(scripts) as max_scripts FROM ' . $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra;
@@ -326,7 +326,7 @@ class Schema {
 		}
 		$where_extra = '';
 		if ( 0 < count( $extras ) && '' !== $extra_field ) {
-			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( $extras, "', '" ) . "' )";
+			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( "', '", $extras ) . "' )";
 		}
 		global $wpdb;
 		$sql = 'SELECT * FROM ' . $wpdb->base_prefix . self::$statistics . ' WHERE (' . implode( ' AND ', $filter ) . ') ' . $where_extra . ' ' . $order . ( $limit > 0 ? 'LIMIT ' . $limit : '' ) . ';';
@@ -367,7 +367,7 @@ class Schema {
 		}
 		$where_extra = '';
 		if ( 0 < count( $extras ) && '' !== $extra_field ) {
-			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( $extras, "', '" ) . "' )";
+			$where_extra = ' AND ' . $extra_field . ( $not ? ' NOT' : '' ) . " IN ( '" . implode( "', '", $extras ) . "' )";
 		}
 		$cnt = [];
 		foreach ( $count as $c ) {
