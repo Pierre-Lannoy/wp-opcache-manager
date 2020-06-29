@@ -3,6 +3,8 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased - will be 1.3.3]
+
 ## [1.3.2] - 2020-06-29
 ### Changed
 - Full compatibility with PHP 7.4.
