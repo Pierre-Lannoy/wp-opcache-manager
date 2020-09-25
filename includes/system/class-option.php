@@ -68,7 +68,7 @@ class Option {
 	public static function init() {
 		self::$defaults['use_cdn']          = false;
 		self::$defaults['script_in_footer'] = false;
-		self::$defaults['display_nag']      = true;
+		self::$defaults['display_nag']      = false;
 		self::$defaults['nags']             = [];
 		self::$defaults['version']          = '0.0.0';
 		self::$defaults['reset_frequency']  = 'never';
