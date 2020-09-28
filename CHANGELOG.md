@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased - will be 1.4.0]
 
 ### Added
+- New Site Health "info" section about shared memory.
 - Compatibility with WordPress 5.5.
 
 ### Changed
