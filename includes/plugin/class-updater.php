@@ -9,7 +9,6 @@
 
 namespace OPcacheManager\Plugin;
 
-use Parsedown;
 use OPcacheManager\System\Nag;
 use OPcacheManager\System\Option;
 use Exception;
