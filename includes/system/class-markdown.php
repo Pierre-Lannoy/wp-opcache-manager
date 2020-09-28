@@ -45,7 +45,7 @@ class Markdown {
 		$mode        = $_attributes['mode'];
 		$error       = esc_html__( 'Sorry, unable to find or read the specified file.', 'opcache-manager' );
 		$result      = esc_html( $error );
-		$changelog   = DECALOG_PLUGIN_DIR . $file;
+		$changelog   = OPCM_PLUGIN_DIR . $file;
 		if ( file_exists( $changelog ) ) {
 			try {
 				// phpcs:ignore
