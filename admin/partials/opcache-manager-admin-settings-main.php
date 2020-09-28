@@ -62,6 +62,21 @@ $url2       = esc_url(
 		);
 		?>
 		" class="nav-tab <?php echo 'about' === $active_tab ? 'nav-tab-active' : ''; ?>" style="float:right;"><?php esc_html_e( 'About', 'opcache-manager' ); ?></a>
+		<?php if ( class_exists( 'OPCacheManager\Plugin\Feature\Wpcli' ) ) { ?>
+            <a href="
+            <?php
+			echo esc_url(
+				add_query_arg(
+					array(
+						'page' => 'opcm-settings',
+						'tab'  => 'wpcli',
+					),
+					admin_url( 'admin.php' )
+				)
+			);
+			?>
+            " class="nav-tab <?php echo 'wpcli' === $active_tab ? 'nav-tab-active' : ''; ?>" style="float:right;">WP-CLI</a>
+		<?php } ?>
 	</h2>
     
 	<?php if ( 'misc' === $active_tab ) { ?>
@@ -69,5 +84,9 @@ $url2       = esc_url(
 	<?php } ?>
 	<?php if ( 'about' === $active_tab ) { ?>
 		<?php include __DIR__ . '/opcache-manager-admin-settings-about.php'; ?>
+	<?php } ?>
+	<?php if ( 'wpcli' === $active_tab ) { ?>
+		<?php wp_enqueue_style( OPCM_ASSETS_ID ); ?>
+		<?php echo do_shortcode( '[opcm-wpcli]' ); ?>
 	<?php } ?>
 </div>
