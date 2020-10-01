@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - The positions of PerfOps menus are pushed lower to avoid collision with other plugins (thanks to [Loïc Antignac](https://github.com/webaxones)).
 - Improved layout for language indicator.
 - Admin notices are now set to "don't display" by default.
+- Improved IP detection  (thanks to [Ludovic Riaudel](https://github.com/lriaudel)).
 - Improved changelog readability.
 - The integrated markdown parser is now [Markdown](https://github.com/cebe/markdown) from Carsten Brandt.
 
