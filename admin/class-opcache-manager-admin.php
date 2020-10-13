@@ -172,7 +172,9 @@ class Opcache_Manager_Admin {
 	public function add_actions_links( $actions, $plugin_file, $plugin_data, $context ) {
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-settings' ) ), esc_html__( 'Settings', 'opcache-manager' ) );
 		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-tools' ) ), esc_html__( 'Tools', 'opcache-manager' ) );
-		$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-viewer' ) ), esc_html__( 'Statistics', 'opcache-manager' ) );
+		if ( Option::network_get( 'analytics' ) ) {
+			$actions[] = sprintf( '<a href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=opcm-viewer' ) ), esc_html__( 'Statistics', 'opcache-manager' ) );
+		}
 		return $actions;
 	}
 
