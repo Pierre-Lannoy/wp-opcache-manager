@@ -3,11 +3,12 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased - will be 1.4.0]
+## [Unreleased - will be 2.0.0]
 
 ### Added
 - New Site Health "info" section about shared memory.
 - Compatibility with WordPress 5.5.
+- Support for data feeds - reserved for future use.
 
 ### Changed
 - The positions of PerfOps menus are pushed lower to avoid collision with other plugins (thanks to [Loïc Antignac](https://github.com/webaxones)).

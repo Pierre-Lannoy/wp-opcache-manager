@@ -1018,12 +1018,12 @@ class Analytics {
 						'dimension'   => 'none',
 						'ratio'       => null,
 						'variation'   => [
-							'raw'      => round( $data['kpi-index-object'] / 100, 6 ),
-							'percent'  => round( $data['kpi-index-object'], 2 ),
-							'permille' => round( $data['kpi-index-object'] * 10, 2 ),
+							'raw'      => round( $data['kpi-index-script'] / 100, 6 ),
+							'percent'  => round( $data['kpi-index-script'], 2 ),
+							'permille' => round( $data['kpi-index-script'] * 10, 2 ),
 						],
 						'value'       => [
-							'raw'   => $data['kpi-main-object'],
+							'raw'   => $data['kpi-main-script'],
 							'human' => $val['value'] . $val['abbreviation'],
 						],
 					];
@@ -1052,24 +1052,24 @@ class Analytics {
 					];
 					break;
 				case 'buffer':
-					$val                     = Conversion::number_shorten( $data['kpi-bottom-fragmentation'], 0, true );
+					$val                      = Conversion::data_shorten( $data['kpi-bottom-buffer'], 0, true );
 					$result['data']['buffer'] = [
-						'name'        => esc_html_x( 'Small blocks', 'Noun - Small blocks.', 'opcache-manager' ),
-						'short'       => esc_html_x( 'Blk.', 'Noun - Short (max 4 char) - Small blocks.', 'opcache-manager' ),
-						'description' => esc_html__( 'Used memory small blocks (size < 5M).', 'opcache-manager' ),
-						'dimension'   => 'none',
+						'name'        => esc_html_x( 'Buffer', 'Noun - Buffer.', 'opcache-manager' ),
+						'short'       => esc_html_x( 'Buf.', 'Noun - Short (max 4 char) - Buffer.', 'opcache-manager' ),
+						'description' => esc_html__( 'Buffer size.', 'opcache-manager' ),
+						'dimension'   => 'memory',
 						'ratio'       => [
-							'raw'      => round( $data['kpi-main-fragmentation'] / 100, 6 ),
-							'percent'  => round( $data['kpi-main-fragmentation'], 2 ),
-							'permille' => round( $data['kpi-main-fragmentation'] * 10, 2 ),
+							'raw'      => round( $data['kpi-main-buffer'] / 100, 6 ),
+							'percent'  => round( $data['kpi-main-buffer'], 2 ),
+							'permille' => round( $data['kpi-main-buffer'] * 10, 2 ),
 						],
 						'variation'   => [
-							'raw'      => round( $data['kpi-index-fragmentation'] / 100, 6 ),
-							'percent'  => round( $data['kpi-index-fragmentation'], 2 ),
-							'permille' => round( $data['kpi-index-fragmentation'] * 10, 2 ),
+							'raw'      => round( $data['kpi-index-buffer'] / 100, 6 ),
+							'percent'  => round( $data['kpi-index-buffer'], 2 ),
+							'permille' => round( $data['kpi-index-buffer'] * 10, 2 ),
 						],
 						'value'       => [
-							'raw'   => $data['kpi-bottom-fragmentation'],
+							'raw'   => $data['kpi-bottom-buffer'],
 							'human' => $val['value'] . $val['abbreviation'],
 						],
 					];
