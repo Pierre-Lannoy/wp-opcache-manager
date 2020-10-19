@@ -964,7 +964,7 @@ class Analytics {
 			$data = $kpi->query_kpi( $query, false );
 			switch ( $query ) {
 				case 'ratio':
-					$val                   = Conversion::number_shorten( $data['kpi-bottom-ratio'], 0, true );
+					$val                   = Conversion::number_shorten( $data['kpi-bottom-ratio'], 1, true );
 					$result['data']['hit'] = [
 						'name'        => esc_html_x( 'Hits', 'Noun - Cache hit.', 'opcache-manager' ),
 						'short'       => esc_html_x( 'Hits', 'Noun - Short (max 4 char) - Cache hit.', 'opcache-manager' ),
@@ -989,14 +989,14 @@ class Analytics {
 				case 'memory':
 					$val                      = Conversion::data_shorten( $data['kpi-bottom-memory'], 0, true );
 					$result['data']['memory'] = [
-						'name'        => esc_html_x( 'Free memory', 'Noun - Memory free of allocation.', 'opcache-manager' ),
-						'short'       => esc_html_x( 'Mem.', 'Noun - Short (max 4 char) - Memory free of allocation.', 'opcache-manager' ),
-						'description' => esc_html__( 'Free memory available for OPcache.', 'opcache-manager' ),
+						'name'        => esc_html_x( 'Total memory', 'Noun - Total memory available for allocation.', 'opcache-manager' ),
+						'short'       => esc_html_x( 'Mem.', 'Noun - Short (max 4 char) - Total memory available for allocation.', 'opcache-manager' ),
+						'description' => esc_html__( 'Total memory available for OPcache.', 'opcache-manager' ),
 						'dimension'   => 'memory',
 						'ratio'       => [
-							'raw'      => round( $data['kpi-main-memory'] / 100, 6 ),
-							'percent'  => round( $data['kpi-main-memory'], 2 ),
-							'permille' => round( $data['kpi-main-memory'] * 10, 2 ),
+							'raw'      => round( 1.0 - $data['kpi-main-memory'] / 100, 6 ),
+							'percent'  => round( 100.0 - $data['kpi-main-memory'], 2 ),
+							'permille' => round( 1000.0 - $data['kpi-main-memory'] * 10, 2 ),
 						],
 						'variation'   => [
 							'raw'      => round( $data['kpi-index-memory'] / 100, 6 ),
@@ -1010,7 +1010,7 @@ class Analytics {
 					];
 					break;
 				case 'script':
-					$val                      = Conversion::number_shorten( $data['kpi-main-object'], 0, true );
+					$val                      = Conversion::number_shorten( $data['kpi-main-script'], 1, true );
 					$result['data']['script'] = [
 						'name'        => esc_html_x( 'Scripts', 'Noun - Cached scripts.', 'opcache-manager' ),
 						'short'       => esc_html_x( 'Scr.', 'Noun - Short (max 4 char) - Cached scripts.', 'opcache-manager' ),
@@ -1018,9 +1018,9 @@ class Analytics {
 						'dimension'   => 'none',
 						'ratio'       => null,
 						'variation'   => [
-							'raw'      => round( $data['kpi-index-script'] / 100, 6 ),
-							'percent'  => round( $data['kpi-index-script'], 2 ),
-							'permille' => round( $data['kpi-index-script'] * 10, 2 ),
+							'raw'      => - round( $data['kpi-index-script'] / 100, 6 ),
+							'percent'  => - round( $data['kpi-index-script'], 2 ),
+							'permille' => - round( $data['kpi-index-script'] * 10, 2 ),
 						],
 						'value'       => [
 							'raw'   => $data['kpi-main-script'],

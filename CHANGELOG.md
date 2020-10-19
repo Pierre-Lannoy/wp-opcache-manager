@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased - will be 2.0.0]
 
 ### Added
+- [WP-CLI] New command to toggle on/off main settings: see `wp help opcache settings` for details.
+- [WP-CLI] New command to display OPcache Manager status: see `wp help opcache status` for details.
+- [WP-CLI] New command to display OPcache analytics: see `wp help opcache analytics` for details.
 - New Site Health "info" section about shared memory.
 - Compatibility with WordPress 5.5.
 - Support for data feeds - reserved for future use.

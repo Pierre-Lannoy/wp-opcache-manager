@@ -367,6 +367,16 @@ class Opcache_Manager_Admin {
 	 * @since  3.2.0
 	 */
 	protected function get_frequencies_array() {
+		return self::get_frequencies();
+	}
+
+	/**
+	 * Get the available frequencies.
+	 *
+	 * @return array An array containing the history modes.
+	 * @since  3.2.0
+	 */
+	public static function get_frequencies() {
 		$result   = [];
 		$result[] = [ 'never', esc_html__( 'Never', 'opcache-manager' ) ];
 		$result[] = [ 'hourly', esc_html__( 'Once Hourly', 'opcache-manager' ) ];
