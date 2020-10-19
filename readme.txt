@@ -32,6 +32,13 @@ OPcache statistics and management right in the WordPress admin dashboard.
 
 **OPcache Manager** supports multisite report delegation (see FAQ).
 
+**OPcache Manager** supports a set of WP-CLI commands to:
+                 
+* toggle on/off main settings - see `wp help opcache settings` for details;
+* obtain operational statistics - see `wp help opcache analytics` for details.
+
+For a full help on WP-CLI commands in OPcache Manager, please [read this guide](https://github.com/Pierre-Lannoy/wp-opcache-manager/blob/master/WP-CLI.md).
+
 **OPcache Manager** is a free and open source plugin for WordPress. It integrates many other free and open source works (as-is or modified). Please, see 'about' tab in the plugin settings to see the details.
 
 = Support =
