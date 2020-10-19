@@ -21,6 +21,8 @@ spl_autoload_register(
 			}
 			if ( strpos( $class, 'OPcacheManager\Plugin\Feature\\' ) === 0 ) {
 				$filepath = OPCM_INCLUDES_DIR . 'features/';
+			} elseif ( strpos( $class, 'OPcacheManager\Plugin\Integration\\' ) === 0 ) {
+				$filepath = OPCM_INCLUDES_DIR . 'integrations/';
 			} elseif ( strpos( $class, 'OPcacheManager\Plugin\\' ) === 0 ) {
 				$filepath = OPCM_INCLUDES_DIR . 'plugin/';
 			}
