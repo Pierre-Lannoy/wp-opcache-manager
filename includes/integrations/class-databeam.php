@@ -36,7 +36,7 @@ class Databeam {
 	}
 
 	/**
-	 * Register APCu kpis endpoints for DataBeam.
+	 * Register OPcache kpis endpoints for DataBeam.
 	 *
 	 * @param   array   $integrations   The already registered integrations.
 	 * @return  array   The new integrations.

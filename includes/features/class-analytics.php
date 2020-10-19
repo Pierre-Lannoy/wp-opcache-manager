@@ -954,9 +954,9 @@ class Analytics {
 	 */
 	public static function get_status_kpi_collection( $args = [] ) {
 		$result['meta'] = [
-			'plugin' => OPCM_PRODUCT_NAME . ' ' . OPCM_VERSION,
-			'apcu'   => OPcache::name(),
-			'period' => date( 'Y-m-d' ),
+			'plugin'  => OPCM_PRODUCT_NAME . ' ' . OPCM_VERSION,
+			'opcache' => OPcache::name(),
+			'period'  => date( 'Y-m-d' ),
 		];
 		$result['data'] = [];
 		$kpi            = new static( date( 'Y-m-d' ), date( 'Y-m-d' ), false );

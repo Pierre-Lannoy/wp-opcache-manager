@@ -277,7 +277,7 @@ class Wpcli {
 	}
 
 	/**
-	 * Get APCu analytics for today.
+	 * Get OPcache analytics for today.
 	 *
 	 * ## OPTIONS
 	 *
