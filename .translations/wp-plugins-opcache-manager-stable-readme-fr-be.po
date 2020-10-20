@@ -1,4 +1,4 @@
-# Translation of Plugins - OPcache Manager - Stable Readme (latest release) in French (France)
+# Translation of Plugins - OPcache Manager - Stable Readme (latest release) in French (Belgium)
 # This file is distributed under the same license as the Plugins - OPcache Manager - Stable Readme (latest release) package.
 msgid ""
 msgstr ""
@@ -8,7 +8,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Poedit 2.4.1\n"
-"Language: fr\n"
+"Language: fr_BE\n"
 "Project-Id-Version: Plugins - OPcache Manager - Stable Readme (latest release)\n"
 "POT-Creation-Date: \n"
 "Last-Translator: \n"
