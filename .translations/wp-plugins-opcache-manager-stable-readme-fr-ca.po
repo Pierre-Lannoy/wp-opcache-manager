@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - OPcache Manager - Stable Readme (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-20 08:27+0200\n"
+"PO-Revision-Date: 2020-10-20 08:32+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -88,7 +88,7 @@ msgstr "Où puis-je obtenir de l’aide ?"
 
 #. Found in faq header.
 msgid "What are the requirements for scheduled invalidation/warm-up and statistics to work?"
-msgstr "Quelles sont les exigences relatives au fonctionnement de l'invalidation et préchauffage programmés et des statistiques ?"
+msgstr "Quelles sont les exigences relatives au fonctionnement de l’invalidation et préchauffage programmés et des statistiques ?"
 
 #. Found in faq header.
 msgid "Can this plugin work on multisite?"
