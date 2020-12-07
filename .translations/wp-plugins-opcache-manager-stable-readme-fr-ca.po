@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - OPcache Manager - Stable Readme (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-20 08:32+0200\n"
+"PO-Revision-Date: 2020-12-07 17:07+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -44,11 +44,11 @@ msgstr "Cette extension ne traite pas de données à caractère personnel (DCP).
 
 #. Found in description paragraph.
 msgid "This plugin doesn't set any cookie in the user's browser."
-msgstr "Cette extension ne dépose pas de témoin dans le navigateur de l’utilisateur."
+msgstr "Cette extension ne dépose pas de témoin dans le fureteur de l’utilisatrice ou de l’utilisateur."
 
 #. Found in description paragraph.
 msgid "This plugin, as any piece of software, is neither compliant nor non-compliant with privacy laws and regulations. It is your responsibility to use it with respect for the personal data of your users and applicable laws."
-msgstr "Cette extension, comme tout autre logiciel, n’est ni conforme ni non conforme aux lois et règlements sur la protection de la vie privée. Il est de votre responsabilité de l’utiliser dans le respect des données personnelles de vos utilisateurs et des lois applicables."
+msgstr "Cette extension, comme tout autre logiciel, n’est ni conforme ni non conforme aux lois et règlements sur la protection de la vie privée. Il est de votre responsabilité de l’utiliser dans le respect des données personnelles de vos utilisatrices et utilisateurs ainsi que des lois applicables."
 
 #. Found in description header.
 msgid "Privacy"
@@ -72,7 +72,7 @@ msgstr "Vous devez avoir un cron WordPress parfaitement opérationnel. Si vous a
 
 #. Found in faq paragraph.
 msgid "Yes. It is designed to work on multisite too. Network Admins can configure the plugin, use management tools and have access to all analytics reports. Sites Admins have access to the analytics reports only."
-msgstr "Oui. Cette extension est conçue pour fonctionner sur un multisite aussi. Les administrateurs du réseau peuvent configurer l’extension et avoir accès à tous les rapports d’analyse. Les administrateurs de sites ont juste accès aux rapports d’analyse."
+msgstr "Oui. Cette extension est conçue pour fonctionner sur un multisite aussi. Les administratrices et administrateurs du réseau peuvent configurer l’extension et avoir accès à tous les rapports d’analyse. Les administratrices et administrateurs de sites ont juste accès aux rapports d’analyse."
 
 #. Found in faq paragraph.
 msgid "You need at least <strong>WordPress 5.2</strong> and <strong>PHP 7.2</strong>."
