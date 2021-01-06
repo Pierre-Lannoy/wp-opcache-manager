@@ -33,6 +33,7 @@ $url2       = esc_url(
 <div class="wrap">
 
 	<h2><?php echo esc_html( sprintf( esc_html__( '%s Settings', 'opcache-manager' ), OPCM_PRODUCT_NAME ) ); ?></h2>
+	<?php echo $maybe_warning; ?>
 	<?php settings_errors(); ?>
 
 	<h2 class="nav-tab-wrapper">

@@ -5,16 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+- New warning box in plugin settings page when OPcache is disabled or OPcache API usage is restricted.
+
 ### Changed
 - Consistent reset for settings.
 - Improved translation loading.
+- Controls in settings page are now disabled when OPcache is disabled or OPcache API usage is restricted.
 
 ### Fixed
 - In Site Health section, Opcache status may be wrong (or generates PHP warnings) if OPcache API usage is restricted.
 
 ### Removed
 - Analytics data collection when OPcache API usage is restricted.
-- Tools and Analytics menus when OPcache API usage is restricted or OPcache is disabled.
+- Tools and Analytics menus when OPcache is disabled or OPcache API usage is restricted.
 
 ## [2.1.0] - 2020-11-23
 

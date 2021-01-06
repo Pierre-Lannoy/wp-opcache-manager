@@ -219,6 +219,28 @@ class Opcache_Manager_Admin {
 	}
 
 	/**
+	 * Construct a warning string, if needed.
+	 *
+	 * @return  string  The string to display.
+	 * @since    1.0.0
+	 */
+	public function warning() {
+		$message = '';
+		if ( function_exists( 'opcache_get_status' ) ) {
+			if ( OPcache::is_restricted() ) {
+				$message = esc_html__( 'OPcache API usage is restricted on this site. Main plugin features are disabled.', 'opcache-manager' );
+			}
+		} else {
+			$message = esc_html__( 'OPcache is not enabled on this site. Main plugin features are disabled.', 'opcache-manager' );
+		}
+		if ( '' !== $message ) {
+			// phpcs:ignore
+			return '<div id="opcm-warning" class="notice notice-warning"><p><strong>' . $message . '</strong></p></div>';
+		}
+		return '';
+	}
+
+	/**
 	 * Get the content of the settings page.
 	 *
 	 * @since 1.0.0
@@ -247,6 +269,7 @@ class Opcache_Manager_Admin {
 					break;
 			}
 		}
+		$maybe_warning = $this->warning();
 		include OPCM_ADMIN_DIR . 'partials/opcache-manager-admin-settings-main.php';
 	}
 
@@ -343,7 +366,7 @@ class Opcache_Manager_Admin {
 				'checked'     => Option::network_get( 'use_cdn' ),
 				'description' => esc_html__( 'If checked, OPcache Manager will use a public CDN (jsDelivr) to serve scripts and stylesheets.', 'opcache-manager' ),
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_usecdn' );
@@ -359,7 +382,7 @@ class Opcache_Manager_Admin {
 				'checked'     => Option::network_get( 'display_nag' ),
 				'description' => esc_html__( 'Allows OPcache Manager to display admin notices throughout the admin dashboard.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: OPcache Manager respects DISABLE_NAG_NOTICES flag.', 'opcache-manager' ),
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_nag' );
@@ -428,7 +451,7 @@ class Opcache_Manager_Admin {
 				'checked'     => Option::network_get( 'analytics' ),
 				'description' => esc_html__( 'If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes.', 'opcache-manager' ) . '<br/>' . esc_html__( 'Note: for this to work, your WordPress site must have an operational CRON.', 'opcache-manager' ),
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_analytics' );
@@ -444,7 +467,7 @@ class Opcache_Manager_Admin {
 				'value'       => Option::network_get( 'history' ),
 				'description' => esc_html__( 'Maximum age of data to keep for statistics.', 'opcache-manager' ),
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_history' );
@@ -460,7 +483,7 @@ class Opcache_Manager_Admin {
 				'value'       => Option::network_get( 'reset_frequency' ),
 				'description' => esc_html__( 'Frequency at which files belonging to this site must be automatically reset.', 'opcache-manager' ),
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_reset_frequency' );
@@ -483,7 +506,7 @@ class Opcache_Manager_Admin {
 				'checked'     => Option::network_get( 'warmup' ),
 				'description' => $description,
 				'full_width'  => false,
-				'enabled'     => true,
+				'enabled'     => function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted(),
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_warmup' );
