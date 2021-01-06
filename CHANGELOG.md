@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 - Analytics data collection when OPcache API usage is restricted.
+- Tools and Analytics menus when OPcache API usage is restricted or OPcache is disabled.
 
 ## [2.1.0] - 2020-11-23
 

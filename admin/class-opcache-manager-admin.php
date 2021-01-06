@@ -20,6 +20,7 @@ use OPcacheManager\System\Form;
 use OPcacheManager\System\Blog;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
+use OPcacheManager\System\OPcache;
 use PerfOpsOne\AdminMenus;
 
 /**
@@ -84,21 +85,23 @@ class Opcache_Manager_Admin {
 	 */
 	public function init_perfops_admin_menus( $perfops ) {
 		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
-			$perfops['tools'][]    = [
-				'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
-				/* translators: as in the sentence "View, invalidate and recompile OPcached files used by your network." or "View, invalidate and recompile OPcached files used by your website." */
-				'description'   => sprintf( esc_html__( 'View, invalidate and recompile OPcached files used by your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
-				'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
-				'slug'          => 'opcm-tools',
-				'page_title'    => esc_html__( 'OPcache Management', 'opcache-manager' ),
-				'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
-				'capability'    => 'manage_options',
-				'callback'      => [ $this, 'get_tools_page' ],
-				'position'      => 50,
-				'plugin'        => OPCM_SLUG,
-				'activated'     => true,
-				'remedy'        => '',
-			];
+			if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
+				$perfops['tools'][] = [
+					'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
+					/* translators: as in the sentence "View, invalidate and recompile OPcached files used by your network." or "View, invalidate and recompile OPcached files used by your website." */
+					'description'   => sprintf( esc_html__( 'View, invalidate and recompile OPcached files used by your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
+					'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
+					'slug'          => 'opcm-tools',
+					'page_title'    => esc_html__( 'OPcache Management', 'opcache-manager' ),
+					'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
+					'capability'    => 'manage_options',
+					'callback'      => [ $this, 'get_tools_page' ],
+					'position'      => 50,
+					'plugin'        => OPCM_SLUG,
+					'activated'     => true,
+					'remedy'        => '',
+				];
+			}
 			$perfops['settings'][] = [
 				'name'          => OPCM_PRODUCT_NAME,
 				'description'   => '',
@@ -118,21 +121,23 @@ class Opcache_Manager_Admin {
 			];
 		}
 		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() || Role::LOCAL_ADMIN === Role::admin_type() ) {
-			$perfops['analytics'][] = [
-				'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
-				/* translators: as in the sentence "View OPcache key performance indicators and activity metrics for your network." or "View OPcache key performance indicators and activity metrics for your website." */
-				'description'   => sprintf( esc_html__( 'View OPcache key performance indicators and activity metrics for your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
-				'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
-				'slug'          => 'opcm-viewer',
-				'page_title'    => esc_html__( 'OPcache Analytics', 'opcache-manager' ),
-				'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
-				'capability'    => 'manage_options',
-				'callback'      => [ $this, 'get_viewer_page' ],
-				'position'      => 50,
-				'plugin'        => OPCM_SLUG,
-				'activated'     => Option::network_get( 'analytics' ),
-				'remedy'        => esc_url( admin_url( 'admin.php?page=opcm-settings' ) ),
-			];
+			if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
+				$perfops['analytics'][] = [
+					'name'          => esc_html__( 'OPcache', 'opcache-manager' ),
+					/* translators: as in the sentence "View OPcache key performance indicators and activity metrics for your network." or "View OPcache key performance indicators and activity metrics for your website." */
+					'description'   => sprintf( esc_html__( 'View OPcache key performance indicators and activity metrics for your %s.', 'opcache-manager' ), Environment::is_wordpress_multisite() ? esc_html__( 'network', 'opcache-manager' ) : esc_html__( 'website', 'opcache-manager' ) ),
+					'icon_callback' => [ \OPcacheManager\Plugin\Core::class, 'get_base64_logo' ],
+					'slug'          => 'opcm-viewer',
+					'page_title'    => esc_html__( 'OPcache Analytics', 'opcache-manager' ),
+					'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
+					'capability'    => 'manage_options',
+					'callback'      => [ $this, 'get_viewer_page' ],
+					'position'      => 50,
+					'plugin'        => OPCM_SLUG,
+					'activated'     => Option::network_get( 'analytics' ),
+					'remedy'        => esc_url( admin_url( 'admin.php?page=opcm-settings' ) ),
+				];
+			}
 		}
 		return $perfops;
 	}
