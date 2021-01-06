@@ -13,6 +13,7 @@ namespace OPcacheManager\Plugin\Feature;
 
 use OPcacheManager\System\Cache;
 use OPcacheManager\System\Logger;
+use OPcacheManager\System\OPcache;
 use OPcacheManager\Plugin\Feature\Schema;
 
 /**
@@ -64,7 +65,7 @@ class Capture {
 		$schema = new Schema();
 		$record = $schema->init_record();
 		$time   = time();
-		if ( function_exists( 'opcache_get_status' ) ) {
+		if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
 			if ( ! isset( $old ) ) {
