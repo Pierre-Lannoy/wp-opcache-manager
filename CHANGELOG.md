@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Consistent reset for settings.
 - Improved translation loading.
+- [WP_CLI] `opcache` command have now a definition and all synopsis are up to date.
 - Controls in settings page are now disabled when OPcache is disabled or OPcache API usage is restricted.
 
 ### Fixed
