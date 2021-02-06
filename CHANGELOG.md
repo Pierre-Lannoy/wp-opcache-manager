@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 ### Added
+- Compatibility with WordPress 5.7.
+
+### Added
 - New warning box in plugin settings page when OPcache is disabled or OPcache API usage is restricted.
 
 ### Changed
