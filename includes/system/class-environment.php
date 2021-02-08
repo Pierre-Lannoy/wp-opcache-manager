@@ -114,7 +114,7 @@ class Environment {
 	 * @return string The environment type.
 	 * @since    1.0.0
 	 */
-	public function stage() {
+	public static function stage() {
 		if ( function_exists( 'wp_get_environment_type' ) ) {
 			return wp_get_environment_type();
 		}
