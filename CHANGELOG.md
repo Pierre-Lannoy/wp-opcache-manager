@@ -3,12 +3,10 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.2.0] - 2021-02-24
 
 ### Added
 - Compatibility with WordPress 5.7.
-
-### Added
 - New warning box in plugin settings page when OPcache is disabled or OPcache API usage is restricted.
 
 ### Changed
