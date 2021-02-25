@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - OPcache Manager - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2020-10-20 08:23+0200\n"
+"PO-Revision-Date: 2021-02-25 16:21+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,6 +13,14 @@ msgstr ""
 "POT-Creation-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+
+#: admin/class-opcache-manager-admin.php:234
+msgid "OPcache is not enabled on this site. Main plugin features are disabled."
+msgstr "OPcache n’est pas activé sur ce site. Les principales fonctionnalités de l’extension sont désactivées."
+
+#: admin/class-opcache-manager-admin.php:231
+msgid "OPcache API usage is restricted on this site. Main plugin features are disabled."
+msgstr "L’utilisation de l’API OPcache est limitée sur ce site. Les principales fonctionnalités de l’extension sont désactivées."
 
 #: perfopsone/class-adminmenus.php:74
 msgid "%s Consoles"
@@ -149,12 +157,12 @@ msgstr "Scc."
 #. translators: as in the sentence "View OPcache key performance indicators and
 #. activity metrics for your network." or "View OPcache key performance
 #. indicators and activity metrics for your website."
-#: admin/class-opcache-manager-admin.php:124
+#: admin/class-opcache-manager-admin.php:128
 msgid "View OPcache key performance indicators and activity metrics for your %s."
 msgstr "Consultez les indicateurs clés de performance OPcache et les métriques d’activité pour votre %s."
 
+#: admin/class-opcache-manager-admin.php:95
 #: admin/partials/opcache-manager-admin-tools.php:23
-#: admin/class-opcache-manager-admin.php:93
 msgid "OPcache Management"
 msgstr "Gestion OPcache"
 
@@ -164,8 +172,8 @@ msgstr "Gestion OPcache"
 #. translators: as in the sentence "View OPcache key performance indicators and
 #. activity metrics for your network." or "View OPcache key performance
 #. indicators and activity metrics for your website."
-#: admin/class-opcache-manager-admin.php:90
-#: admin/class-opcache-manager-admin.php:124
+#: admin/class-opcache-manager-admin.php:92
+#: admin/class-opcache-manager-admin.php:128
 msgid "website"
 msgstr "site web"
 
@@ -175,22 +183,22 @@ msgstr "site web"
 #. translators: as in the sentence "View OPcache key performance indicators and
 #. activity metrics for your network." or "View OPcache key performance
 #. indicators and activity metrics for your website."
-#: admin/class-opcache-manager-admin.php:90
-#: admin/class-opcache-manager-admin.php:124
+#: admin/class-opcache-manager-admin.php:92
+#: admin/class-opcache-manager-admin.php:128
 msgid "network"
 msgstr "réseau"
 
 #. translators: as in the sentence "View, invalidate and recompile OPcached
 #. files used by your network." or "View, invalidate and recompile OPcached
 #. files used by your website."
-#: admin/class-opcache-manager-admin.php:90
+#: admin/class-opcache-manager-admin.php:92
 msgid "View, invalidate and recompile OPcached files used by your %s."
 msgstr "Visualiser, invalider et recompiler les fichiers OPcache utilisés par votre %s."
 
-#: admin/class-opcache-manager-admin.php:88
-#: admin/class-opcache-manager-admin.php:94
-#: admin/class-opcache-manager-admin.php:122
-#: admin/class-opcache-manager-admin.php:128
+#: admin/class-opcache-manager-admin.php:90
+#: admin/class-opcache-manager-admin.php:96
+#: admin/class-opcache-manager-admin.php:126
+#: admin/class-opcache-manager-admin.php:132
 msgid "OPcache"
 msgstr "OPcache"
 
@@ -382,19 +390,19 @@ msgstr "Réglages et état OPcache"
 msgid "Object cache"
 msgstr "Cache d’objets"
 
-#: includes/system/class-environment.php:173
+#: includes/system/class-environment.php:186
 msgid "Debug disabled"
 msgstr "Débogage désactivé"
 
-#: includes/system/class-environment.php:173
+#: includes/system/class-environment.php:186
 msgid "Debug enabled"
 msgstr "Débogage activé"
 
-#: includes/system/class-environment.php:167
+#: includes/system/class-environment.php:180
 msgid "display"
 msgstr "affichage"
 
-#: includes/system/class-environment.php:162
+#: includes/system/class-environment.php:175
 msgid "log"
 msgstr "journal"
 
@@ -545,7 +553,7 @@ msgstr "%1$s a été correctement mis à jour de la version %2$s à la version %
 msgid "%1$s has been correctly installed."
 msgstr "%1$s a été correctement installé."
 
-#: includes/features/class-capture.php:53
+#: includes/features/class-capture.php:54
 msgid "Every five minutes"
 msgstr "Toutes les cinq minutes"
 
@@ -696,15 +704,15 @@ msgstr "mémoire totale : %s"
 msgid "%s hits"
 msgstr "%s succès"
 
-#: includes/features/class-analytics.php:909
 #: includes/system/class-conversion.php:46
+#: includes/features/class-analytics.php:909
 msgctxt "Abbreviation - Stands for \"thousand\"."
 msgid "K"
 msgstr "K"
 
+#: includes/system/class-conversion.php:84
 #: includes/features/class-analytics.php:851
 #: includes/features/class-analytics.php:880
-#: includes/system/class-conversion.php:84
 msgctxt "Abbreviation - Stands for \"megabytes\"."
 msgid "MB"
 msgstr "Mo"
@@ -865,7 +873,7 @@ msgstr "Fenêtre temporelle"
 
 #: includes/features/class-scripts.php:679
 msgid "Recompilation done: %d file(s)."
-msgstr "Recompilation effectuée : fichier %d( s)."
+msgstr "Recompilation effectuée : %d(s) fichier."
 
 #: includes/features/class-scripts.php:674
 msgid "Forced invalidation done: %d file(s)."
@@ -976,8 +984,8 @@ msgstr "Fichier"
 msgid "Site Invalidation"
 msgstr "Invalidation du site"
 
-#: includes/features/class-analytics.php:1600
 #: admin/partials/opcache-manager-admin-tools-lines.php:29
+#: includes/features/class-analytics.php:1600
 msgid "Apply"
 msgstr "Appliquer"
 
@@ -993,15 +1001,15 @@ msgstr "Préchauffage du site"
 msgid "Network Warm-Up"
 msgstr "Préchauffage du réseau"
 
-#: admin/partials/opcache-manager-admin-settings-main.php:64
+#: admin/partials/opcache-manager-admin-settings-main.php:65
 msgid "About"
 msgstr "À propos"
 
-#: admin/partials/opcache-manager-admin-settings-main.php:51
+#: admin/partials/opcache-manager-admin-settings-main.php:52
 msgid "Options"
 msgstr "Options"
 
-#: admin/partials/opcache-manager-admin-settings-options.php:31
+#: admin/partials/opcache-manager-admin-settings-options.php:38
 msgid "Reset to Defaults"
 msgstr "Valeurs par Défaut"
 
@@ -1029,177 +1037,177 @@ msgstr "Cette version de %s est une « release candidate ». Bien que prête p
 msgid "This version of %s is not production-ready. It is a development preview. Use it at your own risk!"
 msgstr "Cette version de %s n’est pas destinée à être mise en production. Il s’agit d’une « development preview ». Utilisez-la à vos risques et périls !"
 
-#: admin/class-opcache-manager-admin.php:467
+#: admin/class-opcache-manager-admin.php:495
 msgid "If checked, OPcache Manager will warm-up the full site after each automatic site invalidation."
 msgstr "Si coché, OPcache Manager va effectuer un préchauffage du site complet après chaque invalidation automatique."
 
-#: admin/class-opcache-manager-admin.php:466
+#: admin/class-opcache-manager-admin.php:494
 msgid "Site warm-up"
 msgstr "Préchauffage du site"
 
-#: admin/class-opcache-manager-admin.php:464
+#: admin/class-opcache-manager-admin.php:492
 msgid "If checked, OPcache Manager will warm-up the full network (all sites) after each automatic site invalidation."
 msgstr "Si coché, OPcache Manager va effectuer un préchauffage de ton les sites du réseau après chaque invalidation automatique."
 
-#: admin/class-opcache-manager-admin.php:463
+#: admin/class-opcache-manager-admin.php:491
 msgid "Network warm-up"
 msgstr "Préchauffage du réseau"
 
-#: admin/class-opcache-manager-admin.php:456
+#: admin/class-opcache-manager-admin.php:484
 msgid "Frequency at which files belonging to this site must be automatically reset."
 msgstr "Fréquence à laquelle les fichiers appartenant à ce site doivent être automatiquement réinitialisés."
 
-#: admin/class-opcache-manager-admin.php:448
+#: admin/class-opcache-manager-admin.php:476
 msgid "Site invalidation"
 msgstr "Invalidation du site"
 
-#: admin/class-opcache-manager-admin.php:440
+#: admin/class-opcache-manager-admin.php:468
 msgid "Maximum age of data to keep for statistics."
 msgstr "Àge maximum des données à conserver pour les statistiques."
 
-#: admin/class-opcache-manager-admin.php:432
+#: admin/class-opcache-manager-admin.php:460
 msgid "Historical data"
 msgstr "Données d’historiques"
 
-#: admin/class-opcache-manager-admin.php:424
+#: admin/class-opcache-manager-admin.php:452
 msgid "Note: for this to work, your WordPress site must have an operational CRON."
 msgstr "Notez que pour que cela fonctionne, votre site WordPress doit avoir un CRON opérationnel."
 
-#: admin/class-opcache-manager-admin.php:424
+#: admin/class-opcache-manager-admin.php:452
 msgid "If checked, OPcache Manager will analyze OPcache operations and store statistics every five minutes."
 msgstr "Si coché, OPcache Manager analysera le fonctionnement d’OPcache et stockera les statistiques toutes les cinq minutes."
 
-#: admin/class-opcache-manager-admin.php:421
-#: admin/class-opcache-manager-admin.php:476
+#: admin/class-opcache-manager-admin.php:449
+#: admin/class-opcache-manager-admin.php:504
 msgid "Activated"
 msgstr "Activé"
 
-#: admin/class-opcache-manager-admin.php:416
+#: admin/class-opcache-manager-admin.php:444
 msgid "Analytics"
 msgstr "Analyse de données"
 
-#: admin/class-opcache-manager-admin.php:402
+#: admin/class-opcache-manager-admin.php:430
 msgid "%d month"
 msgid_plural "%d months"
 msgstr[0] "%d mois"
 msgstr[1] "%d mois"
 
-#: admin/class-opcache-manager-admin.php:398
+#: admin/class-opcache-manager-admin.php:426
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d semaine"
 msgstr[1] "%d semaines"
 
-#: admin/class-opcache-manager-admin.php:384
+#: admin/class-opcache-manager-admin.php:412
 msgid "Once Daily"
 msgstr "Une fois par jour"
 
-#: admin/class-opcache-manager-admin.php:383
+#: admin/class-opcache-manager-admin.php:411
 msgid "Twice Daily"
 msgstr "Deux fois par jour"
 
-#: admin/class-opcache-manager-admin.php:382
+#: admin/class-opcache-manager-admin.php:410
 msgid "Once Hourly"
 msgstr "Une fois par heure"
 
-#: admin/class-opcache-manager-admin.php:381
+#: admin/class-opcache-manager-admin.php:409
 msgid "Never"
 msgstr "Jamais"
 
-#: admin/class-opcache-manager-admin.php:355
+#: admin/class-opcache-manager-admin.php:383
 msgid "Note: OPcache Manager respects DISABLE_NAG_NOTICES flag."
 msgstr "Note : OPcache Manager respecte l’indicateur DISABLE_NAG_NOTICES."
 
-#: admin/class-opcache-manager-admin.php:355
+#: admin/class-opcache-manager-admin.php:383
 msgid "Allows OPcache Manager to display admin notices throughout the admin dashboard."
 msgstr "Autoriser OPcache Manager à afficher les avis d’administration dans le Tableau de bord."
 
-#: admin/class-opcache-manager-admin.php:352
+#: admin/class-opcache-manager-admin.php:380
 msgid "Display"
 msgstr "Affichage"
 
-#: admin/class-opcache-manager-admin.php:347
+#: admin/class-opcache-manager-admin.php:375
 msgid "Admin notices"
 msgstr "Avis d’administration"
 
-#: admin/class-opcache-manager-admin.php:339
+#: admin/class-opcache-manager-admin.php:367
 msgid "If checked, OPcache Manager will use a public CDN (jsDelivr) to serve scripts and stylesheets."
 msgstr "Si coché, OPcache Manager utilisera un CDN public (jsDelivr) pour la distribution des scripts et des feuilles de style."
 
-#: admin/class-opcache-manager-admin.php:336
+#: admin/class-opcache-manager-admin.php:364
 msgid "Use public CDN"
 msgstr "Utiliser un CDN public"
 
-#: admin/class-opcache-manager-admin.php:331
+#: admin/class-opcache-manager-admin.php:359
 msgid "Resources"
 msgstr "Ressources"
 
-#: admin/class-opcache-manager-admin.php:320
+#: admin/class-opcache-manager-admin.php:348
 msgid "Logging"
 msgstr "Journalisation"
 
-#: admin/class-opcache-manager-admin.php:316
+#: admin/class-opcache-manager-admin.php:344
 msgid "Your site does not use any logging plugin. To log all events triggered in OPcache Manager, I recommend you to install the excellent (and free) %s. But it is not mandatory."
 msgstr "Votre site n’utilise aucune extension de journalisation. Pour enregistrer tous les évènements déclenchés par OPcache Manager, je vous recommande d’installer l’excellent (et gratuit) %s. Mais ce n’est pas obligatoire."
 
-#: admin/class-opcache-manager-admin.php:313
+#: admin/class-opcache-manager-admin.php:341
 msgid "Your site is currently using %s."
 msgstr "Votre site utilise actuellement %s."
 
-#: admin/class-opcache-manager-admin.php:296
+#: admin/class-opcache-manager-admin.php:324
 msgid "Plugin settings have not been reset to defaults. Please try again."
 msgstr "Les réglages n’ont pas été réinitialisés à leurs valeurs par défaut. Veuillez réessayer."
 
-#: admin/class-opcache-manager-admin.php:291
+#: admin/class-opcache-manager-admin.php:319
 msgid "Plugin settings have been reset to defaults."
 msgstr "Le réglages ont été réinitialisées aux valeurs par défaut."
 
-#: admin/class-opcache-manager-admin.php:274
+#: admin/class-opcache-manager-admin.php:302
 msgid "Plugin settings have not been saved. Please try again."
 msgstr "Les réglages n’ont pas été mis à jour. Veuillez réessayer."
 
-#: admin/class-opcache-manager-admin.php:269
+#: admin/class-opcache-manager-admin.php:297
 msgid "Plugin settings have been saved."
 msgstr "Les réglages ont été mis à jour."
 
-#: admin/class-opcache-manager-admin.php:192
+#: admin/class-opcache-manager-admin.php:197
 msgid "GitHub repository"
 msgstr "Dépôt GitHub"
 
-#: admin/class-opcache-manager-admin.php:191
+#: admin/class-opcache-manager-admin.php:196
 msgid "Support"
 msgstr "Assistance"
 
-#: admin/class-opcache-manager-admin.php:176
+#: admin/class-opcache-manager-admin.php:181
 msgid "Statistics"
 msgstr "Statistiques"
 
-#: admin/class-opcache-manager-admin.php:174
+#: admin/class-opcache-manager-admin.php:179
 msgid "Tools"
 msgstr "Outils"
 
-#: admin/class-opcache-manager-admin.php:173
+#: admin/class-opcache-manager-admin.php:178
 msgid "Settings"
 msgstr "Réglages"
 
-#: admin/class-opcache-manager-admin.php:157
+#: admin/class-opcache-manager-admin.php:162
 msgid "Plugin options"
 msgstr "Options de l’extension"
 
-#: admin/class-opcache-manager-admin.php:156
+#: admin/class-opcache-manager-admin.php:161
 msgid "Plugin Features"
 msgstr "Fonctionnalités"
 
+#: admin/class-opcache-manager-admin.php:131
 #: includes/features/class-analytics.php:1337
-#: admin/class-opcache-manager-admin.php:127
 msgid "OPcache Analytics"
 msgstr "Analyse OPcache"
 
 #. translators: as in the sentence "OPcache Manager Settings" or "WordPress
 #. Settings"
-#: perfopsone/class-adminmenus.php:70
+#: admin/class-opcache-manager-admin.php:111
 #: admin/partials/opcache-manager-admin-settings-main.php:35
-#: admin/class-opcache-manager-admin.php:108
+#: perfopsone/class-adminmenus.php:70
 msgid "%s Settings"
 msgstr "Réglages %s"
 
