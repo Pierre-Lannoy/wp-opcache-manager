@@ -298,4 +298,21 @@ class OPcache {
 		return $result;
 	}
 
+	/**
+	 * Checks if short-scheduled invalidation/warmup is needed.
+	 *
+	 * @since   3.0.0
+	 */
+	public static function check() {
+		$invalidate = Option::network_get( 'flash_invalidate' );
+		Option::network_set( 'flash_invalidate', false );
+		$warmup = Option::network_get( 'flash_warmup' );
+		Option::network_set( 'flash_warmup', false );
+		if ( $warmup ) {
+			self::warmup( false, true );
+		} elseif ( $invalidate ) {
+			self::reset( false );
+		}
+	}
+
 }

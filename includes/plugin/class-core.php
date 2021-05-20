@@ -56,7 +56,6 @@ class Core {
 		$this->define_public_hooks();
 	}
 
-
 	/**
 	 * Register all of the hooks related to the features of the plugin.
 	 *
@@ -64,7 +63,7 @@ class Core {
 	 * @access private
 	 */
 	private function define_global_hooks() {
-		add_action( 'cron_schedules', [ 'OPcacheManager\Plugin\Feature\Capture', 'add_cron_05_minutes_interval' ]);
+		add_action( 'cron_schedules', [ 'OPcacheManager\Plugin\Feature\Capture', 'add_cron_05_minutes_interval' ] );
 		$bootstrap = new Initializer();
 		$assets    = new Assets();
 		$updater   = new Updater();
@@ -77,6 +76,10 @@ class Core {
 		add_shortcode( 'opcm-changelog', [ $updater, 'sc_get_changelog' ] );
 		add_shortcode( 'opcm-libraries', [ $libraries, 'sc_get_list' ] );
 		add_shortcode( 'opcm-statistics', [ 'OPcacheManager\System\Statistics', 'sc_get_raw' ] );
+		if ( ! wp_next_scheduled( OPCM_CRON_WATCHDOG_NAME ) ) {
+			wp_schedule_event( time(), 'five_minutes', OPCM_CRON_WATCHDOG_NAME );
+		}
+		$this->loader->add_action( OPCM_CRON_WATCHDOG_NAME, 'OPcacheManager\System\OPcache', 'check' );
 		$event = wp_get_scheduled_event( OPCM_CRON_RESET_NAME );
 		if ( false !== $event ) {
 			if ( Option::network_get( 'reset_frequency' ) !== $event->schedule ) {

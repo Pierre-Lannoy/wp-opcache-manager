@@ -39,6 +39,7 @@ class Wpcli {
 		1   => 'unrecognized setting.',
 		2   => 'unrecognized action.',
 		3   => 'analytics are disabled.',
+		4   => 'invalidation or warmup already scheduled.',
 		255 => 'unknown error.',
 	];
 
@@ -56,7 +57,7 @@ class Wpcli {
 			if ( '' === $field ) {
 				$result .= $key;
 			} else {
-				$result .= $id[$field];
+				$result .= $id[ $field ];
 			}
 			if ( $id !== $last ) {
 				$result .= ' ';
@@ -191,7 +192,6 @@ class Wpcli {
 			\WP_CLI::line( sprintf( '%s is activated for command-line.', $name ) );
 		}
 
-
 		if ( 'reset' === Option::network_get( 'reset_frequency' ) ) {
 			\WP_CLI::line( 'Site invalidation: disabled.' );
 		} else {
@@ -212,7 +212,7 @@ class Wpcli {
 			\WP_CLI::line( 'Analytics: disabled.' );
 		}
 		if ( defined( 'DECALOG_VERSION' ) ) {
-			\WP_CLI::line( 'Logging support: yes (DecaLog v' . DECALOG_VERSION . ').');
+			\WP_CLI::line( 'Logging support: yes (DecaLog v' . DECALOG_VERSION . ').' );
 		} else {
 			\WP_CLI::line( 'Logging support: no.' );
 		}
@@ -378,7 +378,10 @@ class Wpcli {
 		$action = isset( $args[0] ) ? $args[0] : 'list';
 		$codes  = [];
 		foreach ( $this->exit_codes as $key => $msg ) {
-			$codes[ $key ] = [ 'code' => $key, 'meaning' => ucfirst( $msg ) ];
+			$codes[ $key ] = [
+				'code'    => $key,
+				'meaning' => ucfirst( $msg ),
+			];
 		}
 		switch ( $action ) {
 			case 'list':
@@ -392,6 +395,68 @@ class Wpcli {
 	}
 
 	/**
+	 * Schedules an immediate invalidation.
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message, if any.
+	 *
+	 * [--stdout]
+	 * : Use clean STDOUT output to use results in scripts. Unnecessary when piping commands because piping is detected by OPcache Manager.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * Invalidate all site/network files:
+	 * + wp opcache invalidate
+	 *
+	 *
+	 *   === For other examples and recipes, visit https://github.com/Pierre-Lannoy/wp-traffic/blob/master/WP-CLI.md ===
+	 *
+	 */
+	public function invalidate( $args, $assoc_args ) {
+		$stdout     = \WP_CLI\Utils\get_flag_value( $assoc_args, 'stdout', false );
+		$invalidate = Option::network_get( 'flash_invalidate' );
+		$warmup     = Option::network_get( 'flash_warmup' );
+		if ( $invalidate || $warmup ) {
+			$this->error( 4, $stdout );
+		} else {
+			\WP_CLI::confirm( 'Are you sure you want to schedule a full invalidation?', $assoc_args );
+			Option::network_set( 'flash_invalidate', true );
+			$this->success( 'invalidation scheduled to start in less than 5 minutes.', '', $stdout );
+		}
+	}
+
+	/**
+	 * Schedules an immediate invalidation followed by a warmup.
+	 *
+	 * [--yes]
+	 * : Answer yes to the confirmation message, if any.
+	 *
+	 * [--stdout]
+	 * : Use clean STDOUT output to use results in scripts. Unnecessary when piping commands because piping is detected by OPcache Manager.
+	 *
+	 * ## EXAMPLES
+	 *
+	 * Invalidate and warmup all site/network files:
+	 * + wp opcache warmup
+	 *
+	 *
+	 *   === For other examples and recipes, visit https://github.com/Pierre-Lannoy/wp-traffic/blob/master/WP-CLI.md ===
+	 *
+	 */
+	public function warmup( $args, $assoc_args ) {
+		$stdout     = \WP_CLI\Utils\get_flag_value( $assoc_args, 'stdout', false );
+		$invalidate = Option::network_get( 'flash_invalidate' );
+		$warmup     = Option::network_get( 'flash_warmup' );
+		if ( $invalidate || $warmup ) {
+			$this->error( 4, $stdout );
+		} else {
+			\WP_CLI::confirm( 'Are you sure you want to schedule a full invalidation followed by a warmup?', $assoc_args );
+			Option::network_set( 'flash_warmup', true );
+			$this->success( 'invalidation and warmup scheduled to start in less than 5 minutes.', '', $stdout );
+		}
+	}
+
+	/**
 	 * Get the WP-CLI help file.
 	 *
 	 * @param   array $attributes  'style' => 'markdown', 'html'.
@@ -401,7 +466,7 @@ class Wpcli {
 	 */
 	public function sc_get_helpfile( $attributes ) {
 		$md = new Markdown();
-		return $md->get_shortcode(  'WP-CLI.md', $attributes  );
+		return $md->get_shortcode( 'WP-CLI.md', $attributes );
 	}
 
 }

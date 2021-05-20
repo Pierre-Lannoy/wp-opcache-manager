@@ -76,7 +76,9 @@ class Option {
 		self::$defaults['history']          = 21;
 		self::$defaults['analytics']        = true;
 		self::$defaults['warmup']           = false;
-		self::$network                      = [ 'version', 'use_cdn', 'script_in_footer', 'display_nag', 'reset_frequency', 'analytics', 'history', 'warmup' ];
+		self::$defaults['flash_invalidate'] = false;
+		self::$defaults['flash_warmup']     = false;
+		self::$network                      = [ 'version', 'use_cdn', 'script_in_footer', 'display_nag', 'reset_frequency', 'analytics', 'history', 'warmup', 'flash_invalidate', 'flash_warmup' ];
 	}
 	/**
 	 * Get the options infos for Site Health "info" tab.

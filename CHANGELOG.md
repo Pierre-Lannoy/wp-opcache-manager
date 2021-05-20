@@ -3,6 +3,16 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased - Will be 2.3.0]
+
+### Added
+- Compatibility with WordPress 5.8.
+- [WPCLI] New command to invalidate site / network files: see `wp help opcache invalidate` for details.
+- [WPCLI] New command to warm-up site / network files: see `wp help opcache warmup` for details.
+
+### Changed
+- [WPCLI] Documentation updated.
+
 ## [2.2.0] - 2021-02-24
 
 ### Added

@@ -3,7 +3,9 @@ OPcache Manager is fully usable from command-line, thanks to [WP-CLI](https://wp
 1. [Obtaining statistics about OPcache usage](#obtaining-statistics-about-opcache-usage) - `wp opcache analytics`
 2. [Getting OPcache Manager status](#getting-opcache-manager-status) - `wp opcache status`
 3. [Managing main settings](#managing-main-settings) - `wp opcache settings`
-4. [Misc flags](#misc-flags)
+4. [Forced invalidation](#forced-invalidation) - `wp opcache invalidate`
+5. [Forced warm-up](#forced-warm-up) - `wp opcache warmup`
+6. [Misc flags](#misc-flags)
 
 ## Obtaining statistics about OPcache usage
 
@@ -52,6 +54,34 @@ To disable analytics without confirmation prompt, type the following command:
 ```console
 pierre@dev:~$ wp opcache settings disable analytics --yes
 Success: analytics are now deactivated.
+```
+
+## Forced invalidation
+
+To initiate a forced invalidation, use `wp opcache invalidate`.
+
+This invalidation will be done at the next scheduled cron.
+
+### Example
+
+To invalidate files without confirmation prompt, type the following command:
+```console
+pierre@dev:~$ wp opcache invalidate --yes
+Success: invalidation scheduled to start in less than 5 minutes.
+```
+
+## Forced warm-up
+
+To initiate a forced invalidation followed by a warm-up, use `wp opcache warmup`.
+
+The invalidation and warm-up will be done at the next scheduled cron.
+
+### Example
+
+To invalidate and warm-up files without confirmation prompt, type the following command:
+```console
+pierre@dev:~$ wp opcache warmup --yes
+Success: invalidation and warmup scheduled to start in less than 5 minutes.
 ```
 
 ## Misc flags
