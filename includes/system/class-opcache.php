@@ -269,7 +269,7 @@ class OPcache {
 	/**
 	 * Warm-up the site.
 	 *
-	 * @param   boolean $automatic Optional. Is the warmup done (via cron, for example).
+	 * @param   boolean $automatic Optional. Is the warmup automatically done (via cron, for example).
 	 * @param   boolean $force Optional. Has invalidation to be forced.
 	 * @return integer The number of recompiled files.
 	 * @since   1.0.0
