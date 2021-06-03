@@ -44,7 +44,7 @@ class Updater {
 				$this->update( $old );
 				// phpcs:ignore
 				$message  = sprintf( esc_html__( '%1$s has been correctly updated from version %2$s to version %3$s.', 'opcache-manager' ), OPCM_PRODUCT_NAME, $old, OPCM_VERSION );
-				Logger::notice( $message );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->notice( $message );
 				// phpcs:ignore
 				$message .= ' ' . sprintf( __( 'See <a href="%s">what\'s new</a>.', 'opcache-manager' ), admin_url( 'admin.php?page=opcm-settings&tab=about' ) );
 			}

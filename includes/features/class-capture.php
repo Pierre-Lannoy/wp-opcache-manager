@@ -69,13 +69,13 @@ class Capture {
 			$cache_id = '/Data/LastCheck';
 			$old      = Cache::get_global( $cache_id );
 			if ( ! isset( $old ) ) {
-				Logger::debug( 'No OPcache transient.' );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'No OPcache transient.' );
 			} elseif ( ! array_key_exists( 'timestamp', $old ) ) {
-				Logger::debug( 'No OPcache timestamp.' );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'No OPcache timestamp.' );
 			} elseif ( 300 - self::$delta > $time - $old['timestamp'] ) {
-				Logger::debug( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Delta time too short: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			} elseif ( 300 + self::$delta < $time - $old['timestamp'] ) {
-				Logger::debug( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Delta time too long: %d sec. Launching recycling process.', $time - $old['timestamp'] ) );
 			}
 			if ( isset( $old ) && array_key_exists( 'timestamp', $old ) && ( 300 + self::$delta > $time - $old['timestamp'] ) ) {
 				try {
@@ -172,9 +172,9 @@ class Capture {
 					}
 					Cache::set_global( $cache_id, $value, 'check' );
 					$schema->write_statistics_record_to_database( $record );
-					Logger::debug( 'OPcache is enabled. Statistics recorded.' );
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'OPcache is enabled. Statistics recorded.' );
 				} catch ( \Throwable $e ) {
-					Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
 				}
 			} elseif ( isset( $old ) && array_key_exists( 'timestamp', $old ) && ( 300 - self::$delta > $time - $old['timestamp'] ) ) {
 				// What to do when delta is less 59 sec ?
@@ -186,14 +186,14 @@ class Capture {
 					Cache::set_global( $cache_id, $value, 'check' );
 					$record['status'] = 'recycle_in_progress';
 					$schema->write_statistics_record_to_database( $record );
-					Logger::debug( 'OPcache is enabled. Recovery cycle.' );
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'OPcache is enabled. Recovery cycle.' );
 				} catch ( \Throwable $e ) {
-					Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
 				}
 			}
 		} else {
 			$schema->write_statistics_record_to_database( $record );
-			Logger::debug( 'OPcache is disabled. No statistics to record.' );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'OPcache is disabled. No statistics to record.' );
 		}
 	}
 

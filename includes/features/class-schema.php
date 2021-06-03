@@ -11,8 +11,6 @@
 
 namespace OPcacheManager\Plugin\Feature;
 
-use OPcacheManager\System\OPcache;
-
 use OPcacheManager\System\Option;
 use OPcacheManager\System\Database;
 use OPcacheManager\System\Logger;
@@ -81,11 +79,11 @@ class Schema {
 		global $wpdb;
 		try {
 			$this->create_table();
-			Logger::debug( sprintf( 'Table "%s" created.', $wpdb->base_prefix . self::$statistics ) );
-			Logger::info( 'Schema installed.' );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Table "%s" created.', $wpdb->base_prefix . self::$statistics ) );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( 'Schema installed.' );
 		} catch ( \Throwable $e ) {
-			Logger::alert( sprintf( 'Unable to create "%s" table: %s', $wpdb->base_prefix . self::$statistics, $e->getMessage() ), $e->getCode() );
-			Logger::alert( 'Schema not installed.', $e->getCode() );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->alert( sprintf( 'Unable to create "%s" table: %s', $wpdb->base_prefix . self::$statistics, $e->getMessage() ), [ 'code' => $e->getCode() ] );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->alert( 'Schema not installed.', [ 'code' => $e->getCode() ] );
 		}
 	}
 
@@ -99,8 +97,8 @@ class Schema {
 		$sql = 'DROP TABLE IF EXISTS ' . $wpdb->base_prefix . self::$statistics;
 		// phpcs:ignore
 		$wpdb->query( $sql );
-		Logger::debug( sprintf( 'Table "%s" removed.', $wpdb->base_prefix . self::$statistics ) );
-		Logger::debug( 'Schema destroyed.' );
+		\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Table "%s" removed.', $wpdb->base_prefix . self::$statistics ) );
+		\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'Schema destroyed.' );
 	}
 
 	/**
@@ -112,10 +110,10 @@ class Schema {
 		global $wpdb;
 		try {
 			$this->create_table();
-			Logger::debug( sprintf( 'Table "%s" updated.', $wpdb->base_prefix . self::$statistics ) );
-			Logger::info( 'Schema updated.' );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Table "%s" updated.', $wpdb->base_prefix . self::$statistics ) );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( 'Schema updated.' );
 		} catch ( \Throwable $e ) {
-			Logger::alert( sprintf( 'Unable to update "%s" table: %s', $wpdb->base_prefix . self::$statistics, $e->getMessage() ), $e->getCode() );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->alert( sprintf( 'Unable to update "%s" table: %s', $wpdb->base_prefix . self::$statistics, $e->getMessage() ), [ 'code' => $e->getCode() ] );
 		}
 	}
 
@@ -133,12 +131,12 @@ class Schema {
 		$database = new Database();
 		$count    = $database->purge( self::$statistics, 'timestamp', 24 * $days );
 		if ( 0 === $count ) {
-			Logger::debug( 'No old records to delete.' );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'No old records to delete.' );
 		} elseif ( 1 === $count ) {
-			Logger::debug( '1 old record deleted.' );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( '1 old record deleted.' );
 			Cache::delete_global( 'data/oldestdate' );
 		} else {
-			Logger::debug( sprintf( '%1$s old records deleted.', $count ) );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( '%1$s old records deleted.', $count ) );
 			Cache::delete_global( 'data/oldestdate' );
 		}
 

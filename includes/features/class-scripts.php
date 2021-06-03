@@ -143,7 +143,7 @@ class Scripts extends \WP_List_Table {
 					}
 				}
 			} catch ( \Throwable $e ) {
-				Logger::error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), $e->getCode() );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
 			}
 		}
 	}
