@@ -68,7 +68,7 @@ function opcm_uninstall() {
  * @since 1.0.0
  */
 function opcm_run() {
-	\DecaLog\Engine::initPlugin( OPCM_SLUG, OPCM_PRODUCT_NAME, OPCM_VERSION );
+	\DecaLog\Engine::initPlugin( OPCM_SLUG, OPCM_PRODUCT_NAME, OPCM_VERSION, \OPcacheManager\Plugin\Core::get_base64_logo() );
 	$plugin = new OPcacheManager\Plugin\Core();
 	$plugin->run();
 }
