@@ -285,6 +285,7 @@ class Opcache_Manager_Admin {
 				Option::network_set( 'use_cdn', array_key_exists( 'opcm_plugin_options_usecdn', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_usecdn' ) : false );
 				Option::network_set( 'display_nag', array_key_exists( 'opcm_plugin_options_nag', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_nag' ) : false );
 				Option::network_set( 'analytics', array_key_exists( 'opcm_plugin_features_analytics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_analytics' ) : false );
+				Option::network_set( 'metrics', array_key_exists( 'opcm_plugin_features_metrics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_metrics' ) : false );
 				Option::network_set( 'history', array_key_exists( 'opcm_plugin_features_history', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_history', FILTER_SANITIZE_NUMBER_INT ) : Option::network_get( 'history' ) );
 				Option::network_set( 'reset_frequency', array_key_exists( 'opcm_plugin_features_reset_frequency', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_reset_frequency', FILTER_SANITIZE_STRING ) : $old_frequency );
 				Option::network_set( 'warmup', array_key_exists( 'opcm_plugin_features_warmup', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_warmup' ) : false );
@@ -336,9 +337,9 @@ class Opcache_Manager_Admin {
 	 */
 	public function plugin_options_section_callback() {
 		$form = new Form();
-		if ( defined( 'DECALOG_VERSION' ) ) {
+		if ( \DecaLog\Engine::isDecalogActivated() ) {
 			$help  = '<img style="width:16px;vertical-align:text-bottom;" src="' . \Feather\Icons::get_base64( 'thumbs-up', 'none', '#00C800' ) . '" />&nbsp;';
-			$help .= sprintf( esc_html__('Your site is currently using %s.', 'opcache-manager' ), '<em>DecaLog v' . DECALOG_VERSION .'</em>' );
+			$help .= sprintf( esc_html__('Your site is currently using %s.', 'opcache-manager' ), '<em>' . \DecaLog\Engine::getVersionString() .'</em>' );
 		} else {
 			$help  = '<img style="width:16px;vertical-align:text-bottom;" src="' . \Feather\Icons::get_base64( 'alert-triangle', 'none', '#FF8C00' ) . '" />&nbsp;';
 			$help .= sprintf( esc_html__('Your site does not use any logging plugin. To log all events triggered in OPcache Manager, I recommend you to install the excellent (and free) %s. But it is not mandatory.', 'opcache-manager' ), '<a href="https://wordpress.org/plugins/decalog/">DecaLog</a>' );
@@ -471,6 +472,22 @@ class Opcache_Manager_Admin {
 			]
 		);
 		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_history' );
+		add_settings_field(
+			'opcm_plugin_features_metrics',
+			esc_html__( 'Metrics', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_features_section',
+			'opcm_plugin_features_section',
+			[
+				'text'        => esc_html__( 'Activated', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_features_metrics',
+				'checked'     => \DecaLog\Engine::isDecalogActivated() ? Option::network_get( 'metrics' ) : false,
+				'description' => esc_html__( 'If checked, OPcache Manager will collate and publish OPcache metrics.', 'opcache-manager' ) . ( \DecaLog\Engine::isDecalogActivated() ? '' : '<br/>' . esc_html__( 'Note: for this to work, you must install DecaLog.', 'opcache-manager' ) ),
+				'full_width'  => false,
+				'enabled'     => \DecaLog\Engine::isDecalogActivated(),
+			]
+		);
+		register_setting( 'opcm_plugin_features_section', 'opcm_plugin_features_metrics' );
 		add_settings_field(
 			'opcm_plugin_features_reset_frequency',
 			esc_html__( 'Site invalidation', 'opcache-manager' ),
