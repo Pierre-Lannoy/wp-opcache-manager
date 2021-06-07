@@ -7,10 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Compatibility with WordPress 5.8.
+- Integration with DecaLog SDK.
+- Traces and metrics collation and publication.
+- New option, available via settings page and wp-cli, to disable/enable metrics collation.
 - [WPCLI] New command to invalidate site / network files: see `wp help opcache invalidate` for details.
 - [WPCLI] New command to warm-up site / network files: see `wp help opcache warmup` for details.
 
 ### Changed
+- [WP-CLI] `opcache status` command now displays DecaLog SDK version too.
 - [WPCLI] Documentation updated.
 
 ## [2.2.0] - 2021-02-24
