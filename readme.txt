@@ -3,8 +3,8 @@ Contributors: PierreLannoy
 Tags: analytics, cache, monitor, OPcache, Zend
 Requires at least: 5.2
 Requires PHP: 7.2
-Tested up to: 5.7
-Stable tag: 2.2.0
+Tested up to: 5.8
+Stable tag: 2.3.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -33,7 +33,8 @@ OPcache statistics and management right in the WordPress admin dashboard.
 **OPcache Manager** supports multisite report delegation (see FAQ).
 
 **OPcache Manager** supports a set of WP-CLI commands to:
-                 
+
+* invalidate or warmup cache - see `wp help opcache invalidate` and `wp help opcache warmup` for details;
 * toggle on/off main settings - see `wp help opcache settings` for details;
 * obtain operational statistics - see `wp help opcache analytics` for details.
 
