@@ -172,6 +172,12 @@ class OPcache {
 	public static function invalidate( $files, $force = false ) {
 		$cpt = 0;
 		if ( function_exists( 'opcache_invalidate' ) && ! self::is_restricted() ) {
+			if ( $force ) {
+				$s = 'Forced invalidation';
+			} else {
+				$s = 'Invalidation';
+			}
+			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s );
 			foreach ( $files as $file ) {
 				if ( 0 === strpos( $file, './' ) ) {
 					$file = str_replace( '..', '', $file );
@@ -181,12 +187,8 @@ class OPcache {
 					}
 				}
 			}
-			if ( $force ) {
-				$s = 'Forced invalidation';
-			} else {
-				$s = 'Invalidation';
-			}
 			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( sprintf( '%s: %d file(s).', $s, $cpt ) );
+			\DecaLog\Engine::tracesLogger( OPCM_SLUG )->end_span( $span );
 		}
 		return $cpt;
 	}
@@ -202,6 +204,12 @@ class OPcache {
 	public static function recompile( $files, $force = false ) {
 		$cpt = 0;
 		if ( function_exists( 'opcache_invalidate' ) && function_exists( 'opcache_compile_file' ) && function_exists( 'opcache_is_script_cached' ) && ! self::is_restricted() ) {
+			if ( $force ) {
+				$s = 'Recompilation';
+			} else {
+				$s = 'Compilation';
+			}
+			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s );
 			foreach ( $files as $file ) {
 				if ( 0 === strpos( $file, './' ) ) {
 					foreach ( self::$do_not_compile as $item ) {
@@ -232,6 +240,7 @@ class OPcache {
 				}
 			}
 			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( sprintf( 'Recompilation: %d file(s).', $cpt ) );
+			\DecaLog\Engine::tracesLogger( OPCM_SLUG )->end_span( $span );
 		}
 		return $cpt;
 	}
