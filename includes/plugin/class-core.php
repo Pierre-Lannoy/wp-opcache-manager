@@ -18,6 +18,7 @@ use OPcacheManager\System\Assets;
 use OPcacheManager\Library\Libraries;
 use OPcacheManager\System\Nag;
 use OPcacheManager\System\Option;
+use OPcacheManager\Plugin\Feature\Capture;
 
 /**
  * The core plugin class.
@@ -54,6 +55,9 @@ class Core {
 		$this->define_global_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		if ( \DecaLog\Engine::isDecalogActivated() && Option::network_get( 'metrics' ) ) {
+			Capture::metrics();
+		}
 	}
 
 	/**

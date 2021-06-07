@@ -197,4 +197,125 @@ class Capture {
 		}
 	}
 
+	/**
+	 * Publish metrics.
+	 *
+	 * @since    2.3.0
+	 */
+	public static function metrics() {
+		if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
+			$span     = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( 'Metrics collation' );
+			$cache_id = 'metrics/lastcheck';
+			$metrics  = Cache::get_global( $cache_id );
+			if ( ! isset( $metrics ) ) {
+				try {
+					$value = opcache_get_status( false );
+					if ( array_key_exists( 'memory_usage', $value ) && array_key_exists( 'used_memory', $value['memory_usage'] ) ) {
+						$used = (int) $value['memory_usage']['used_memory'];
+					} else {
+						$used = 0;
+					}
+					if ( array_key_exists( 'memory_usage', $value ) && array_key_exists( 'wasted_memory', $value['memory_usage'] ) ) {
+						$wasted = (int) $value['memory_usage']['wasted_memory'];
+					} else {
+						$wasted = 0;
+					}
+					if ( array_key_exists( 'memory_usage', $value ) && array_key_exists( 'free_memory', $value['memory_usage'] ) ) {
+						$free = (int) $value['memory_usage']['free_memory'];
+					} else {
+						$free = 0;
+					}
+					$total = $free + $used + $wasted;
+					if ( 0 < $total ) {
+						$metrics['mem']    = $used / $total;
+						$metrics['wasted'] = $wasted / $total;
+					} else {
+						$metrics['mem']    = 0.0;
+						$metrics['wasted'] = 0.0;
+					}
+					if ( array_key_exists( 'opcache_statistics', $value ) && array_key_exists( 'max_cached_keys', $value['opcache_statistics'] ) ) {
+						$key_total = (int) $value['opcache_statistics']['max_cached_keys'];
+					} else {
+						$key_total = 0;
+					}
+					if ( array_key_exists( 'opcache_statistics', $value ) && array_key_exists( 'num_cached_keys', $value['opcache_statistics'] ) ) {
+						$key_used = (int) $value['opcache_statistics']['num_cached_keys'];
+					} else {
+						$key_used = 0;
+					}
+					if ( 0 < $key_total ) {
+						$metrics['key'] = $key_used / $key_total;
+					} else {
+						$metrics['key'] = 0.0;
+					}
+					if ( array_key_exists( 'interned_strings_usage', $value ) && array_key_exists( 'buffer_size', $value['interned_strings_usage'] ) ) {
+						$buf_total = (int) $value['interned_strings_usage']['buffer_size'];
+					} else {
+						$buf_total = 0;
+					}
+					if ( array_key_exists( 'interned_strings_usage', $value ) && array_key_exists( 'used_memory', $value['interned_strings_usage'] ) ) {
+						$buf_used = (int) $value['interned_strings_usage']['used_memory'];
+					} else {
+						$buf_used = 0;
+					}
+					if ( 0 < $buf_total ) {
+						$metrics['buffer'] = $buf_used / $buf_total;
+					} else {
+						$metrics['buffer'] = 0.0;
+					}
+					if ( array_key_exists( 'opcache_statistics', $value ) && array_key_exists( 'hits', $value['opcache_statistics'] ) ) {
+						$hit = (int) $value['opcache_statistics']['hits'];
+					} else {
+						$hit = 0;
+					}
+					if ( array_key_exists( 'opcache_statistics', $value ) && array_key_exists( 'misses', $value['opcache_statistics'] ) ) {
+						$miss = (int) $value['opcache_statistics']['misses'];
+					} else {
+						$miss = 0;
+					}
+					$total = $hit + $miss;
+					if ( 0 < $total ) {
+						$metrics['hit_ratio'] = $hit / $total;
+					} else {
+						$metrics['hit_ratio'] = 0.0;
+					}
+					if ( array_key_exists( 'opcache_statistics', $value ) && array_key_exists( 'num_cached_scripts', $value['opcache_statistics'] ) ) {
+						$metrics['scripts'] = (int) $value['opcache_statistics']['num_cached_scripts'];
+					} else {
+						$metrics['scripts'] = 0;
+					}
+					Cache::set_global( $cache_id, $metrics, 'metrics' );
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'OPcache is enabled. Statistics recorded.' );
+				} catch ( \Throwable $e ) {
+					$metrics = null;
+					\DecaLog\Engine::eventsLogger( OPCM_SLUG )->error( sprintf( 'Unable to query OPcache status: %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
+				}
+			}
+			if ( isset( $metrics ) ) {
+				$monitor = \DecaLog\Engine::metricsLogger( OPCM_SLUG );
+				if ( array_key_exists( 'mem', $metrics ) ) {
+					$monitor->createProdGauge( 'memory_saturation', $metrics['mem'], 'OPcache used memory - [percent]' );
+				}
+				if ( array_key_exists( 'wasted', $metrics ) ) {
+					$monitor->createProdGauge( 'memory_wasted', $metrics['wasted'], 'OPcache wasted memory - [percent]' );
+				}
+				if ( array_key_exists( 'key', $metrics ) ) {
+					$monitor->createProdGauge( 'key_saturation', $metrics['key'], 'OPcache used keys - [percent]' );
+				}
+				if ( array_key_exists( 'buffer', $metrics ) ) {
+					$monitor->createProdGauge( 'buffer_saturation', $metrics['buffer'], 'OPcache used buffers - [percent]' );
+				}
+				if ( array_key_exists( 'hit_ratio', $metrics ) ) {
+					$monitor->createProdGauge( 'hit_ratio', $metrics['hit_ratio'], 'OPcache hit ratio - [percent]' );
+				}
+				if ( array_key_exists( 'scripts', $metrics ) ) {
+					$monitor->createProdGauge( 'script_total', $metrics['scripts'], 'Number of cached scripts - [count]' );
+				}
+			}
+			\DecaLog\Engine::tracesLogger( OPCM_SLUG )->end_span( $span );
+		} else {
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( 'OPcache is disabled. No metrics to collate.' );
+		}
+	}
+
 }
