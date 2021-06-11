@@ -38,7 +38,9 @@ OPcache statistics and management right in the WordPress admin dashboard.
 * toggle on/off main settings - see `wp help opcache settings` for details;
 * obtain operational statistics - see `wp help opcache analytics` for details.
 
-For a full help on WP-CLI commands in OPcache Manager, please [read this guide](https://github.com/Pierre-Lannoy/wp-opcache-manager/blob/master/WP-CLI.md).
+For a full help on WP-CLI commands in OPcache Manager, please [read this guide](https://perfops.one/opcache-manager-wpcli).
+
+> **OPcache Manager** is part of [PerfOps One](https://perfops.one/), a suite of free and open source WordPress plugins dedicated to observability and operations performance.
 
 **OPcache Manager** is a free and open source plugin for WordPress. It integrates many other free and open source works (as-is or modified). Please, see 'about' tab in the plugin settings to see the details.
 
@@ -104,7 +106,7 @@ You can report bugs and suggest ideas via the [GitHub issue tracker](https://git
 
 == Changelog ==
 
-Please, see [full changelog](https://github.com/Pierre-Lannoy/wp-opcache-manager/blob/master/CHANGELOG.md) on GitHub.
+Please, see [full changelog](https://perfops.one/opcache-manager-changelog).
 
 == Upgrade Notice ==
 
