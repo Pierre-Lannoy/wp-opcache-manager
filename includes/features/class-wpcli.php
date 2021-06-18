@@ -478,7 +478,7 @@ class Wpcli {
 	 * @return  string  The output of the shortcode, ready to print.
 	 * @since 1.0.0
 	 */
-	public function sc_get_helpfile( $attributes ) {
+	public static function sc_get_helpfile( $attributes ) {
 		$md = new Markdown();
 		return $md->get_shortcode( 'WP-CLI.md', $attributes );
 	}
