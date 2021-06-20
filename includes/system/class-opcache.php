@@ -177,7 +177,7 @@ class OPcache {
 			} else {
 				$s = 'Invalidation';
 			}
-			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s );
+			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s, DECALOG_SPAN_MAIN_RUN );
 			foreach ( $files as $file ) {
 				if ( 0 === strpos( $file, './' ) ) {
 					$file = str_replace( '..', '', $file );
@@ -209,7 +209,7 @@ class OPcache {
 			} else {
 				$s = 'Compilation';
 			}
-			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s );
+			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( $s, DECALOG_SPAN_MAIN_RUN );
 			foreach ( $files as $file ) {
 				if ( 0 === strpos( $file, './' ) ) {
 					foreach ( self::$do_not_compile as $item ) {

@@ -204,7 +204,7 @@ class Capture {
 	 */
 	public static function metrics() {
 		if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
-			$span     = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( 'Metrics collation' );
+			$span     = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->start_span( 'Metrics collation', DECALOG_SPAN_PLUGINS_LOAD );
 			$cache_id = 'metrics/lastcheck';
 			$metrics  = Cache::get_global( $cache_id );
 			if ( ! isset( $metrics ) ) {
