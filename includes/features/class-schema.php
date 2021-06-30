@@ -11,9 +11,9 @@
 
 namespace OPcacheManager\Plugin\Feature;
 
+use OPcacheManager\System\OPcache;
 use OPcacheManager\System\Option;
 use OPcacheManager\System\Database;
-use OPcacheManager\System\Logger;
 use OPcacheManager\System\Cache;
 
 /**
