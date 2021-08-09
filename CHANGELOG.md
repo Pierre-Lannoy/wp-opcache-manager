@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - New redesigned UI for Perfops One plugins management and menus.
 
+### Fixed
+- In some conditions, the plugin may be in the default site language rather than the user's language.
+
 ## [2.3.1] - 2021-06-30
 
 ### Fixed
