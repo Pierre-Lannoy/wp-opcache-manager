@@ -21,7 +21,7 @@ use OPcacheManager\System\Blog;
 use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\OPcache;
-use PerfOpsOne\AdminMenus;
+use PerfOpsOne\Menus;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -83,7 +83,7 @@ class Opcache_Manager_Admin {
 	 * @return array    The completed menus array.
 	 * @since 1.0.0
 	 */
-	public function init_perfops_admin_menus( $perfops ) {
+	public function init_perfopsone_admin_menus( $perfops ) {
 		if ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) {
 			if ( function_exists( 'opcache_get_status' ) && ! OPcache::is_restricted() ) {
 				$perfops['tools'][] = [
@@ -96,7 +96,6 @@ class Opcache_Manager_Admin {
 					'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
 					'capability'    => 'manage_options',
 					'callback'      => [ $this, 'get_tools_page' ],
-					'position'      => 50,
 					'plugin'        => OPCM_SLUG,
 					'activated'     => true,
 					'remedy'        => '',
@@ -112,7 +111,6 @@ class Opcache_Manager_Admin {
 				'menu_title'    => OPCM_PRODUCT_NAME,
 				'capability'    => 'manage_options',
 				'callback'      => [ $this, 'get_settings_page' ],
-				'position'      => 50,
 				'plugin'        => OPCM_SLUG,
 				'version'       => OPCM_VERSION,
 				'activated'     => true,
@@ -132,7 +130,6 @@ class Opcache_Manager_Admin {
 					'menu_title'    => esc_html__( 'OPcache', 'opcache-manager' ),
 					'capability'    => 'manage_options',
 					'callback'      => [ $this, 'get_viewer_page' ],
-					'position'      => 50,
 					'plugin'        => OPCM_SLUG,
 					'activated'     => Option::network_get( 'analytics' ),
 					'remedy'        => esc_url( admin_url( 'admin.php?page=opcm-settings' ) ),
@@ -143,13 +140,22 @@ class Opcache_Manager_Admin {
 	}
 
 	/**
+	 * Dispatch the items in the settings menu.
+	 *
+	 * @since 2.0.0
+	 */
+	public function finalize_admin_menus() {
+		Menus::finalize();
+	}
+
+	/**
 	 * Set the items in the settings menu.
 	 *
 	 * @since 1.0.0
 	 */
 	public function init_admin_menus() {
-		add_filter( 'init_perfops_admin_menus', [ $this, 'init_perfops_admin_menus' ] );
-		AdminMenus::initialize();
+		add_filter( 'init_perfopsone_admin_menus', [ $this, 'init_perfopsone_admin_menus' ] );
+		Menus::initialize();
 	}
 
 	/**

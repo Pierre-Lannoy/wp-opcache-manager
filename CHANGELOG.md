@@ -3,6 +3,11 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - Unreleased
+
+### Changed
+- New redesigned UI for Perfops One plugins management and menus.
+
 ## [2.3.1] - 2021-06-30
 
 ### Fixed
