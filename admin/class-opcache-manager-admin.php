@@ -149,6 +149,15 @@ class Opcache_Manager_Admin {
 	}
 
 	/**
+	 * Removes unneeded items from the settings menu.
+	 *
+	 * @since 2.0.0
+	 */
+	public function normalize_admin_menus() {
+		Menus::normalize();
+	}
+
+	/**
 	 * Set the items in the settings menu.
 	 *
 	 * @since 1.0.0
