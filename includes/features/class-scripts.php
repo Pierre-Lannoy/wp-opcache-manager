@@ -130,11 +130,11 @@ class Scripts extends \WP_List_Table {
 				$raw = opcache_get_status( true );
 				if ( array_key_exists( 'scripts', $raw ) ) {
 					foreach ( $raw['scripts'] as $script ) {
-						if ( false === strpos( $script['full_path'], ABSPATH ) ) {
+						if ( false === strpos( $script['full_path'], OPCM_ABSPATH ) ) {
 							continue;
 						}
 						$item              = [];
-						$item['script']    = str_replace( ABSPATH, './', $script['full_path'] );
+						$item['script']    = str_replace( OPCM_ABSPATH, './', $script['full_path'] );
 						$item['hit']       = $script['hits'];
 						$item['memory']    = $script['memory_consumption'];
 						$item['timestamp'] = $script['timestamp'];

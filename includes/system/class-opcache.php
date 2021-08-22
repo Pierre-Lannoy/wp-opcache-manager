@@ -181,7 +181,7 @@ class OPcache {
 			foreach ( $files as $file ) {
 				if ( 0 === strpos( $file, './' ) ) {
 					$file = str_replace( '..', '', $file );
-					$file = str_replace( './', ABSPATH, $file );
+					$file = str_replace( './', OPCM_ABSPATH, $file );
 					if ( opcache_invalidate( $file, $force ) ) {
 						$cpt++;
 					}
@@ -219,7 +219,7 @@ class OPcache {
 						}
 					}
 					$file = str_replace( '..', '', $file );
-					$file = str_replace( './', ABSPATH, $file );
+					$file = str_replace( './', OPCM_ABSPATH, $file );
 					if ( $force ) {
 						opcache_invalidate( $file, true );
 					}
@@ -261,10 +261,10 @@ class OPcache {
 					$raw = opcache_get_status( true );
 					if ( array_key_exists( 'scripts', $raw ) ) {
 						foreach ( $raw['scripts'] as $script ) {
-							if ( false === strpos( $script['full_path'], ABSPATH ) ) {
+							if ( false === strpos( $script['full_path'], OPCM_ABSPATH ) ) {
 								continue;
 							}
-							$files[] = str_replace( ABSPATH, './', $script['full_path'] );
+							$files[] = str_replace( OPCM_ABSPATH, './', $script['full_path'] );
 						}
 						self::invalidate( $files, true );
 					}
@@ -285,8 +285,8 @@ class OPcache {
 	 */
 	public static function warmup( $automatic = true, $force = false ) {
 		$files = [];
-		foreach ( File::list_files( ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
-			$files[] = str_replace( ABSPATH, './', $file );
+		foreach ( File::list_files( OPCM_ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
+			$files[] = str_replace( OPCM_ABSPATH, './', $file );
 		}
 		if ( Environment::is_wordpress_multisite() ) {
 			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( $automatic ? 'Network reset and warm-up initiated via cron.' : 'Network warm-up initiated via manual action.' );

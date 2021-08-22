@@ -34,6 +34,9 @@ class Environment {
 	 * @since 1.0.0
 	 */
 	public static function init() {
+		if ( ! function_exists( 'get_home_path' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		$plugin_path         = str_replace( OPCM_SLUG . '/includes/system/', OPCM_SLUG . '/', plugin_dir_path( __FILE__ ) );
 		$plugin_path         = str_replace( OPCM_SLUG . '\includes\system/', OPCM_SLUG . '/', $plugin_path );
 		$plugin_url          = str_replace( OPCM_SLUG . '/includes/system/', OPCM_SLUG . '/', plugin_dir_url( __FILE__ ) );
@@ -53,6 +56,7 @@ class Environment {
 		define( 'OPCM_PLUGIN_SIGNATURE', OPCM_PRODUCT_NAME . ' v' . OPCM_VERSION );
 		define( 'OPCM_PLUGIN_AGENT', OPCM_PRODUCT_NAME . ' (' . self::wordpress_version_id() . '; ' . self::plugin_version_id() . '; +' . OPCM_PRODUCT_URL . ')' );
 		define( 'OPCM_ASSETS_ID', OPCM_PRODUCT_ABBREVIATION . '-assets' );
+		define( 'OPCM_ABSPATH', get_home_path() );
 	}
 
 	/**

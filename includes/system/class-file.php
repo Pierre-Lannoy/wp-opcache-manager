@@ -41,7 +41,7 @@ class File {
 	 * @return  array  The list of files.
 	 * @since   1.0.0
 	 */
-	public static function list_files( $folder = ABSPATH, $levels = 100, $file_include = [], $file_exclude = [], $hidden = false ) {
+	public static function list_files( $folder = OPCM_ABSPATH, $levels = 100, $file_include = [], $file_exclude = [], $hidden = false ) {
 		if ( empty( $folder ) || ! $levels ) {
 			return [];
 		}
