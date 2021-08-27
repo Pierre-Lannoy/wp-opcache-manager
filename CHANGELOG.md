@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - OPcache Manager is now compatible with WordPress installation on non-standard directories.
+- Redesigned and improved warmup process: it's more fast and more reliable.
+
+### Fixed
+- In some conditions, invalidation or warmup may produce many warnings.
+- [SEC001] Warmup now ignores `wp-content` directory.
 
 ## [2.3.2] - 2021-08-11
 

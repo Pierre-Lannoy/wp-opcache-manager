@@ -652,10 +652,10 @@ class Scripts extends \WP_List_Table {
 			case 'warmup':
 				if ( Environment::is_wordpress_multisite() ) {
 					// phpcs:ignore
-					$message = esc_html( sprintf( __( 'Network warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
+					$message = esc_html( sprintf( __( 'Network warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false, true ) ) );
 				} else {
 					// phpcs:ignore
-					$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false ) ) );
+					$message = esc_html( sprintf( __( 'Site warm-up has been initiated. %d relevant files.', 'opcache-manager' ), OPcache::warmup( false, true ) ) );
 				}
 				$code = 0;
 				break;

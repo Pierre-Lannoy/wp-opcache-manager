@@ -57,6 +57,7 @@ class Environment {
 		define( 'OPCM_PLUGIN_AGENT', OPCM_PRODUCT_NAME . ' (' . self::wordpress_version_id() . '; ' . self::plugin_version_id() . '; +' . OPCM_PRODUCT_URL . ')' );
 		define( 'OPCM_ASSETS_ID', OPCM_PRODUCT_ABBREVIATION . '-assets' );
 		define( 'OPCM_ABSPATH', get_home_path() );
+		define( 'OPCM_CONTENT', OPCM_ABSPATH . 'wp-content/' );
 	}
 
 	/**

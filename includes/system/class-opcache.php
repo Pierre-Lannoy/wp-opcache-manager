@@ -43,14 +43,6 @@ class OPcache {
 	public static $resets = [ 'none', 'oom', 'hash', 'manual' ];
 
 	/**
-	 * The list of file not compilable/recompilable.
-	 *
-	 * @since  1.0.0
-	 * @var    array    $status    Maintains the file list.
-	 */
-	public static $do_not_compile = [ 'includes/plugin.php', 'includes/options.php', 'includes/misc.php', 'includes/menu.php' ];
-
-	/**
 	 * Initializes the class and set its properties.
 	 *
 	 * @since 1.0.0
@@ -210,36 +202,35 @@ class OPcache {
 				$s = 'Compilation';
 			}
 			$span = \DecaLog\Engine::tracesLogger( OPCM_SLUG )->startSpan( $s, DECALOG_SPAN_MAIN_RUN );
-			foreach ( $files as $file ) {
-				if ( 0 === strpos( $file, './' ) ) {
-					foreach ( self::$do_not_compile as $item ) {
-						if ( false !== strpos( $file, $item ) ) {
-							\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'File "%s" must not be recompiled.', $file ) );
-							continue 2;
-						}
+			// phpcs:ignore
+			set_error_handler( null );
+			try {
+				foreach ( $files as $file ) {
+					if ( false !== strpos( $file, OPCM_CONTENT ) ) {
+						\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'File "%s" must not be recompiled.', $file ) );
+						continue;
 					}
-					$file = str_replace( '..', '', $file );
-					$file = str_replace( './', OPCM_ABSPATH, $file );
 					if ( $force ) {
 						opcache_invalidate( $file, true );
 					}
 					if ( ! opcache_is_script_cached( $file ) ) {
-						try {
-							// phpcs:ignore
-							if ( @opcache_compile_file( $file ) ) {
-								$cpt++;
-							} else {
-								\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Unable to compile file "%s".', $file ) );
-							}
-						} catch ( \Throwable $e ) {
-							\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Unable to compile file "%s": %s.', $file, $e->getMessage() ), [ 'code' => $e->getCode() ] );
+						// phpcs:ignore
+						if ( @opcache_compile_file( $file ) ) {
+							$cpt++;
+						} else {
+							\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'Unable to compile file "%s".', $file ) );
 						}
 					} else {
 						\DecaLog\Engine::eventsLogger( OPCM_SLUG )->debug( sprintf( 'File "%s" already cached.', $file ) );
 					}
 				}
+			} catch ( \Throwable $e ) {
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->warning( sprintf( 'Unable to fully warmup "%s": %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
+			} finally {
+				// phpcs:ignore
+				restore_error_handler();
 			}
-			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( sprintf( 'Recompilation: %d file(s).', $cpt ) );
+			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( sprintf( 'Recompilation: %d files.', $cpt ) );
 			\DecaLog\Engine::tracesLogger( OPCM_SLUG )->endSpan( $span );
 		}
 		return $cpt;
@@ -284,10 +275,7 @@ class OPcache {
 	 * @since   1.0.0
 	 */
 	public static function warmup( $automatic = true, $force = false ) {
-		$files = [];
-		foreach ( File::list_files( OPCM_ABSPATH, 100, [ '/^.*\.php$/i' ], [], true ) as $file ) {
-			$files[] = str_replace( OPCM_ABSPATH, './', $file );
-		}
+		$files = File::list_files( OPCM_ABSPATH, 100, [ '/^.*\.php$/i' ], [], true );
 		if ( Environment::is_wordpress_multisite() ) {
 			\DecaLog\Engine::eventsLogger( OPCM_SLUG )->info( $automatic ? 'Network reset and warm-up initiated via cron.' : 'Network warm-up initiated via manual action.' );
 		} else {
