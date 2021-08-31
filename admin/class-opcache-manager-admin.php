@@ -13,7 +13,6 @@ use OPcacheManager\Plugin\Feature\Analytics;
 use OPcacheManager\Plugin\Feature\AnalyticsFactory;
 use OPcacheManager\System\Assets;
 use OPcacheManager\System\Environment;
-use OPcacheManager\System\Logger;
 use OPcacheManager\System\Role;
 use OPcacheManager\System\Option;
 use OPcacheManager\System\Form;
@@ -22,6 +21,7 @@ use OPcacheManager\System\Date;
 use OPcacheManager\System\Timezone;
 use OPcacheManager\System\OPcache;
 use PerfOpsOne\Menus;
+use PerfOpsOne\AdminBar;
 
 /**
  * The admin-specific functionality of the plugin.
@@ -140,6 +140,20 @@ class Opcache_Manager_Admin {
 	}
 
 	/**
+	 * Init PerfOps admin bar.
+	 *
+	 * @param array $perfops    The already declared items.
+	 * @return array    The completed items array.
+	 * @since 1.0.0
+	 */
+	public function init_perfopsone_admin_bar( $perfops ) {
+		if ( Option::network_get( 'adminbar' ) ) {
+
+		}
+		return $perfops;
+	}
+
+	/**
 	 * Dispatch the items in the settings menu.
 	 *
 	 * @since 2.0.0
@@ -164,7 +178,9 @@ class Opcache_Manager_Admin {
 	 */
 	public function init_admin_menus() {
 		add_filter( 'init_perfopsone_admin_menus', [ $this, 'init_perfopsone_admin_menus' ] );
+		add_filter( 'init_perfopsone_admin_bar', [ $this, 'init_perfopsone_admin_bar' ] );
 		Menus::initialize();
+		AdminBar::initialize();
 	}
 
 	/**
