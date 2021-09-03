@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - OPcache Manager is now compatible with WordPress installation on non-standard directories.
 - Redesigned and improved warmup process: it's more fast and more reliable.
+- Updated DecaLog SDK from version 1.2.0 to version 2.0.0.
 
 ### Fixed
 - There may be name collisions for some functions if version of WordPress is lower than 5.6.
