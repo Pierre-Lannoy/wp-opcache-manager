@@ -588,7 +588,9 @@ class Scripts extends \WP_List_Table {
 	 * @since 1.0.0
 	 */
 	public function process_args() {
-		$this->nonce = filter_input( INPUT_POST, '_wpnonce' );
+		if ( ! ( $this->nonce = filter_input( INPUT_POST, '_wpnonce' ) ) ) {
+			$this->nonce = filter_input( INPUT_GET, '_wpnonce' );
+		}
 		$this->url   = set_url_scheme( 'http://' . filter_input( INPUT_SERVER, 'HTTP_HOST' ) . filter_input( INPUT_SERVER, 'REQUEST_URI' ) );
 		$this->limit = filter_input( INPUT_GET, 'limit', FILTER_SANITIZE_NUMBER_INT );
 		foreach ( [ 'top', 'bottom' ] as $which ) {
@@ -624,6 +626,9 @@ class Scripts extends \WP_List_Table {
 			if ( wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'doinvalidate-' . $which, $_POST ) ) {
 				$this->action = 'reset';
 			}
+		}
+		if ( array_key_exists( 'quick-action', $_GET ) && wp_verify_nonce( $this->nonce, 'quick-action-opcm-tools' ) ) {
+			$this->action = filter_input( INPUT_GET, 'quick-action', FILTER_SANITIZE_STRING );
 		}
 		if ( '' === $this->action ) {
 			$action = '-1';

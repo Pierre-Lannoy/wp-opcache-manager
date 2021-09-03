@@ -12,8 +12,10 @@
 use OPcacheManager\System\Environment;
 
 if ( Environment::is_wordpress_multisite() ) {
+	$reset  = esc_html__( 'Network Invalidation', 'opcache-manager' );
 	$warmup = esc_html__( 'Network Warm-Up', 'opcache-manager' );
 } else {
+	$reset  = esc_html__( 'Site Invalidation', 'opcache-manager' );
 	$warmup = esc_html__( 'Site Warm-Up', 'opcache-manager' );
 }
 
@@ -30,6 +32,6 @@ if ( Environment::is_wordpress_multisite() ) {
 </div>
 
 <div class="alignleft actions bulkactions">
-    <input style="margin-left:10px;" type="submit" name="doinvalidate-<?php echo $which; ?>"  id="doinvalidate-<?php echo $which; ?>" class="button-primary action" value="<?php esc_html_e('Site Invalidation', 'opcache-manager');?>"  />
+    <input style="margin-left:10px;" type="submit" name="doinvalidate-<?php echo $which; ?>"  id="doinvalidate-<?php echo $which; ?>" class="button-primary action" value="<?php echo $reset;?>"  />
     <input style="margin-left:10px;" type="submit" name="dowarmup-<?php echo $which; ?>" id="dowarmup-<?php echo $which; ?>" class="button-primary action" value="<?php echo $warmup;?>"  />
 </div>

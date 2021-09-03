@@ -144,11 +144,41 @@ class Opcache_Manager_Admin {
 	 *
 	 * @param array $perfops    The already declared items.
 	 * @return array    The completed items array.
-	 * @since 1.0.0
+	 * @since 3.2.0
 	 */
 	public function init_perfopsone_admin_bar( $perfops ) {
-		if ( Option::network_get( 'adminbar' ) ) {
-
+		if ( ! ( $action = filter_input( INPUT_GET, 'action' ) ) ) {
+			$action = filter_input( INPUT_POST, 'action' );
+		}
+		if ( ! ( $tab = filter_input( INPUT_GET, 'tab' ) ) ) {
+			$tab = filter_input( INPUT_POST, 'tab' );
+		}
+		$early_signal  = ( 'misc' === $tab && 'do-save' === $action ) && ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() );
+		$early_signal &= ( ! empty( $_POST ) && array_key_exists( 'submit', $_POST ) );
+		$early_signal &= ( array_key_exists( '_wpnonce', $_POST ) && wp_verify_nonce( $_POST['_wpnonce'], 'opcm-plugin-options' ) );
+		if ( $early_signal ) {
+			Option::network_set( 'adminbar', array_key_exists( 'opcm_plugin_options_adminbar', $_POST ) );
+		}
+		if ( Option::network_get( 'adminbar' ) && ( Role::SUPER_ADMIN === Role::admin_type() || Role::SINGLE_ADMIN === Role::admin_type() ) ) {
+			if ( Environment::is_wordpress_multisite() ) {
+				$reset  = esc_html__( 'Network Invalidation', 'opcache-manager' );
+				$warmup = esc_html__( 'Network Warm-Up', 'opcache-manager' );
+			} else {
+				$reset  = esc_html__( 'Site Invalidation', 'opcache-manager' );
+				$warmup = esc_html__( 'Site Warm-Up', 'opcache-manager' );
+			}
+			$perfops[] = [
+				'id'    => 'opcm-tools-reset',
+				'title' => '<strong>OPcache</strong>&nbsp;&nbsp;➜&nbsp;&nbsp;' . $reset,
+				'href'  => add_query_arg( '_wpnonce', wp_create_nonce( 'quick-action-opcm-tools' ), admin_url( 'admin.php?page=opcm-tools&quick-action=reset' ) ),
+				'meta'  => false,
+			];
+			$perfops[] = [
+				'id'    => 'opcm-tools-warmup',
+				'title' => '<strong>OPcache</strong>&nbsp;&nbsp;➜&nbsp;&nbsp;' . $warmup,
+				'href'  => add_query_arg( '_wpnonce', wp_create_nonce( 'quick-action-opcm-tools' ), admin_url( 'admin.php?page=opcm-tools&quick-action=warmup' ) ),
+				'meta'  => false,
+			];
 		}
 		return $perfops;
 	}
@@ -315,6 +345,7 @@ class Opcache_Manager_Admin {
 				$old_frequency = Option::network_get( 'reset_frequency' );
 				Option::network_set( 'use_cdn', array_key_exists( 'opcm_plugin_options_usecdn', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_usecdn' ) : false );
 				Option::network_set( 'display_nag', array_key_exists( 'opcm_plugin_options_nag', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_nag' ) : false );
+				Option::network_set( 'adminbar', array_key_exists( 'opcm_plugin_options_adminbar', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_options_adminbar' ) : false );
 				Option::network_set( 'analytics', array_key_exists( 'opcm_plugin_features_analytics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_analytics' ) : false );
 				Option::network_set( 'metrics', array_key_exists( 'opcm_plugin_features_metrics', $_POST ) ? (bool) filter_input( INPUT_POST, 'opcm_plugin_features_metrics' ) : false );
 				Option::network_set( 'history', array_key_exists( 'opcm_plugin_features_history', $_POST ) ? (string) filter_input( INPUT_POST, 'opcm_plugin_features_history', FILTER_SANITIZE_NUMBER_INT ) : Option::network_get( 'history' ) );
@@ -386,6 +417,22 @@ class Opcache_Manager_Admin {
 			]
 		);
 		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_logger' );
+		add_settings_field(
+			'opcm_plugin_options_adminbar',
+			__( 'Quick actions', 'opcache-manager' ),
+			[ $form, 'echo_field_checkbox' ],
+			'opcm_plugin_options_section',
+			'opcm_plugin_options_section',
+			[
+				'text'        => esc_html__( 'Display in admin bar', 'opcache-manager' ),
+				'id'          => 'opcm_plugin_options_adminbar',
+				'checked'     => Option::network_get( 'adminbar' ),
+				'description' => esc_html__( 'If checked, OPcache Manager will display in admin bar the most important actions, if any.', 'opcache-manager' ),
+				'full_width'  => false,
+				'enabled'     => true,
+			]
+		);
+		register_setting( 'opcm_plugin_options_section', 'opcm_plugin_options_adminbar' );
 		add_settings_field(
 			'opcm_plugin_options_usecdn',
 			esc_html__( 'Resources', 'opcache-manager' ),
