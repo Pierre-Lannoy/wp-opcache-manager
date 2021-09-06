@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - There may be name collisions for some functions if version of WordPress is lower than 5.6.
 - The main PerfOps One menu is not hidden when it doesn't contain any items (thanks to [Jan Thiel](https://github.com/JanThiel)).
 - In some very special conditions, the plugin may be in the default site language rather than the user's language.
+- The PerfOps One menu builder is not compatible with Admin Menu Editor plugin (thanks to [dvokoun](https://wordpress.org/support/users/dvokoun/)).
 - In some conditions, invalidation or warmup may produce many warnings.
 - Some labels are not consistent on WordPress multisite.
 - [SEC001] Warmup now ignores `wp-content` directory.
