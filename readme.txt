@@ -4,7 +4,7 @@ Tags: analytics, cache, monitor, OPcache, Zend
 Requires at least: 5.2
 Requires PHP: 7.2
 Tested up to: 5.8
-Stable tag: 2.3.2
+Stable tag: 2.4.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -115,3 +115,4 @@ Please, see [full changelog](https://perfops.one/opcache-manager-changelog).
 1. Daily Statistics
 2. Historical Statistics
 3. Management Tools
+4. Quick Actions in Admin Bar
