@@ -3,6 +3,17 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - Not yet released
+
+### Added
+- Compatibility with WordPress 5.9.
+- The available hooks (filters and actions) are now described in `HOOKS.md` file.
+
+### Changed
+- Updated the `README.md` file.
+
+### Fixed
+
 ## [2.4.0] - 2021-09-07
 
 ### Added

@@ -30,12 +30,11 @@ __OPcache Manager__ is a free and open source plugin for WordPress. It integrate
 
 ## WP-CLI
 
-__OPcache Manager__ supports a set of WP-CLI commands to:
+__OPcache Manager__ implements a set of WP-CLI commands. For a full help on these commands, please read [this guide](WP-CLI.md).
 
-* toggle on/off main settings - see `wp help opcache settings` for details;
-* obtain operational statistics - see `wp help opcache analytics` for details.
+## Hooks
 
-For a full help on WP-CLI commands in OPcache Manager, please [read this guide](WP-CLI.md).
+__OPcache Manager__ introduces some filters and actions to allow plugin customization. Please, read the [hooks reference](HOOKS.md) to learn more about them.
 
 ## Installation
 
