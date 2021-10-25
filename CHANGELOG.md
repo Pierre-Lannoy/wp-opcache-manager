@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated the `README.md` file.
 
 ### Fixed
+- There's typos in `CHANGELOG.md`.
 
 ## [2.4.0] - 2021-09-07
 
@@ -157,7 +158,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Full compatibility with [APCu Manager](https://wordpress.org/plugins/apcu-manager/).
-- Full integration with PerfOps.One suite.
+- Full integration with PerfOps One suite.
 - Compatibility with WordPress 5.4.
 
 ### Changed
