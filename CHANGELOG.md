@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - The available hooks (filters and actions) are now described in `HOOKS.md` file.
 
 ### Changed
+- Improved update process on high-traffic sites to avoid concurrent resources accesses.
 - Updated the `README.md` file.
 
 ### Fixed
