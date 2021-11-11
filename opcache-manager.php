@@ -8,13 +8,13 @@
  *
  * @wordpress-plugin
  * Plugin Name:       OPcache Manager
- * Plugin URI:        https://github.com/Pierre-Lannoy/wp-opcache-manager
+ * Plugin URI:        https://perfops.one/opcache-manager
  * Description:       OPcache statistics and management right in the WordPress admin dashboard.
  * Version:           2.4.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
- * Author:            Pierre Lannoy
- * Author URI:        https://pierre.lannoy.fr
+ * Author:            PerfOps One / Pierre Lannoy
+ * Author URI:        https://perfops.one
  * License:           GPLv3
  * License URI:       https://www.gnu.org/licenses/gpl-3.0.html
  * Network:           true
