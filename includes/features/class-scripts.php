@@ -611,11 +611,11 @@ class Scripts extends \WP_List_Table {
 				$this->paged = 1;
 			}
 		}
-		$this->order = filter_input( INPUT_GET, 'order', FILTER_SANITIZE_STRING );
+		$this->order = filter_input( INPUT_GET, 'order', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( ! $this->order ) {
 			$this->order = 'desc';
 		}
-		$this->orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_STRING );
+		$this->orderby = filter_input( INPUT_GET, 'orderby', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( ! $this->orderby ) {
 			$this->orderby = 'script';
 		}
@@ -628,18 +628,18 @@ class Scripts extends \WP_List_Table {
 			}
 		}
 		if ( array_key_exists( 'quick-action', $_GET ) && wp_verify_nonce( $this->nonce, 'quick-action-opcm-tools' ) ) {
-			$this->action = filter_input( INPUT_GET, 'quick-action', FILTER_SANITIZE_STRING );
+			$this->action = filter_input( INPUT_GET, 'quick-action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		}
 		if ( '' === $this->action ) {
 			$action = '-1';
 			if ( '-1' === $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'action', $_POST ) ) {
-				$action = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_STRING );
+				$action = filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			}
 			if ( '-1' === $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'action2', $_POST ) ) {
-				$action = filter_input( INPUT_POST, 'action2', FILTER_SANITIZE_STRING );
+				$action = filter_input( INPUT_POST, 'action2', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 			}
 			if ( '-1' !== $action && wp_verify_nonce( $this->nonce, 'bulk-opcm-tools' ) && array_key_exists( 'bulk', $_POST ) ) {
-				$this->bulk = filter_input( INPUT_POST, 'bulk', FILTER_SANITIZE_STRING, FILTER_FORCE_ARRAY );
+				$this->bulk = filter_input( INPUT_POST, 'bulk', FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_FORCE_ARRAY );
 				if ( 0 < count( $this->bulk ) ) {
 					$this->action = $action;
 				}
