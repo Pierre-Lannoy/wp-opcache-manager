@@ -462,18 +462,56 @@
     margin-top: -8px;
 }
 
+.opcm-multichart-item,
+.opcm-multichart-xlarge-item,
+.opcm-multichart-large-item,
+.opcm-multichart-medium-item,
+.opcm-multichart-small-item,
+.opcm-multichart-xsmall-item,
+.opcm-multichart-xxsmall-item{
+    position: absolute;
+    height: 200px;
+    visibility:hidden;
+    opacity:0;
+    width: 94%;
+    left: 2.4%;
+}
+
+.opcm-multichart-item svg,
+.opcm-multichart-xlarge-item svg,
+.opcm-multichart-large-item svg,
+.opcm-multichart-medium-item svg,
+.opcm-multichart-small-item svg,
+.opcm-multichart-xsmall-item svg,
+.opcm-multichart-xxsmall-item svg{
+    overflow: visible;
+}
+
+.opcm-multichart-item.active,
+.opcm-multichart-xlarge-item.active,
+.opcm-multichart-large-item.active,
+.opcm-multichart-medium-item.active,
+.opcm-multichart-small-item.active,
+.opcm-multichart-xsmall-item.active,
+.opcm-multichart-xxsmall-item.active{
+    visibility:visible;
+    opacity:1;
+    transition:visibility 0.6s linear,opacity 0.6s linear;
+}
+
+.opcm-multichart-xlarge-item .ct-bar {stroke-width: 6% !important;stroke-opacity: 0.8 !important;}
+.opcm-multichart-large-item .ct-bar {stroke-width: 3% !important;stroke-opacity: 0.8 !important;}
+.opcm-multichart-medium-item .ct-bar {stroke-width: 1.5% !important;stroke-opacity: 0.8 !important;}
+.opcm-multichart-small-item .ct-bar {stroke-width: 0.75% !important;stroke-opacity: 0.8 !important;}
+.opcm-multichart-xsmall-item .ct-bar {stroke-width: 0.4% !important;stroke-opacity: 0.8 !important;}
+.opcm-multichart-xxsmall-item .ct-bar {stroke-width: 0.2% !important;stroke-opacity: 0.8 !important;}
+
 .ct-labels foreignObject:first-child {
     display: none;
 }
 
-#opcm-chart-memory .ct-labels foreignObject:first-child,
-#opcm-chart-buf .ct-labels foreignObject:first-child,
-#opcm-chart-key .ct-labels foreignObject:first-child{
-    display: block !important;
-}
-
 .ct-labels .ct-horizontal {
-    transform: translateX(-32px);
+    transform: translateX(-7px);
 }
 
 .ct-labels .ct-vertical {
