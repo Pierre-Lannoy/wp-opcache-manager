@@ -75,6 +75,7 @@ class Wpcli {
 	 * @since   2.0.0
 	 */
 	private function error( $code = 255, $stdout = false ) {
+		$msg = '[' . OPCM_PRODUCT_NAME . '] ' . ucfirst( $this->exit_codes[ $code ] );
 		if ( \WP_CLI\Utils\isPiped() ) {
 			// phpcs:ignore
 			fwrite( STDOUT, '' );
@@ -82,11 +83,11 @@ class Wpcli {
 			exit( $code );
 		} elseif ( $stdout ) {
 			// phpcs:ignore
-			fwrite( STDERR, ucfirst( $this->exit_codes[ $code ] ) );
+			fwrite( STDERR, $msg );
 			// phpcs:ignore
 			exit( $code );
 		} else {
-			\WP_CLI::error( $this->exit_codes[ $code ] );
+			\WP_CLI::error( $msg );
 		}
 	}
 
@@ -99,6 +100,7 @@ class Wpcli {
 	 * @since   2.0.0
 	 */
 	private function warning( $msg, $result = '', $stdout = false ) {
+		$msg = '[' . OPCM_PRODUCT_NAME . '] ' . ucfirst( $msg );
 		if ( \WP_CLI\Utils\isPiped() || $stdout ) {
 			// phpcs:ignore
 			fwrite( STDOUT, $result );
@@ -116,6 +118,7 @@ class Wpcli {
 	 * @since   2.0.0
 	 */
 	private function success( $msg, $result = '', $stdout = false ) {
+		$msg = '[' . OPCM_PRODUCT_NAME . '] ' . ucfirst( $msg );
 		if ( \WP_CLI\Utils\isPiped() || $stdout ) {
 			// phpcs:ignore
 			fwrite( STDOUT, $result );
