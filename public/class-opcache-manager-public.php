@@ -45,7 +45,7 @@ class Opcache_Manager_Public {
 	 * @since 1.0.0
 	 */
 	public function enqueue_styles() {
-		$this->assets->register_style( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'css/opcache-manager.min.css' );
+		//$this->assets->register_style( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'css/opcache-manager.min.css' );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Opcache_Manager_Public {
 	 * @since 1.0.0
 	 */
 	public function enqueue_scripts() {
-		$this->assets->register_script( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
+		//$this->assets->register_script( OPCM_ASSETS_ID, OPCM_PUBLIC_URL, 'js/opcache-manager.min.js', [ 'jquery' ] );
 	}
 
 }
