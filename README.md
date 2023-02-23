@@ -25,6 +25,8 @@ __OPcache Manager__ is also a full featured analytics reporting tool that analyz
 __OPcache Manager__ supports multisite report delegation.
 
 > __OPcache Manager__ is part of [PerfOps One](https://perfops.one/), a suite of free and open source WordPress plugins dedicated to observability and operations performance.
+> 
+> __The development of the PerfOps One suite is sponsored by [Hosterra - Ethical & Sustainable Internet Hosting](https://hosterra.eu/).__
 
 __OPcache Manager__ is a free and open source plugin for WordPress. It integrates many other free and open source works (as-is or modified). Please, see 'about' tab in the plugin settings to see the details.
 
