@@ -502,7 +502,7 @@ class Opcache_Manager_Admin {
 		$result[] = [ 'hourly', esc_html__( 'Once Hourly', 'opcache-manager' ) ];
 		$result[] = [ 'twicedaily', esc_html__( 'Twice Daily', 'opcache-manager' ) ];
 		$result[] = [ 'daily', esc_html__( 'Once Daily', 'opcache-manager' ) ];
-		return $result;
+		return apply_filters( 'poo_reset_frequencies', $result );
 	}
 
 	/**
