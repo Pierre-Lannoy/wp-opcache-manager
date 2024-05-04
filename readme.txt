@@ -1,7 +1,7 @@
 === OPcache Manager ===
 Contributors: PierreLannoy, hosterra
 Tags: analytics, cache, monitor, OPcache, Zend
-Requires at least: 6.1
+Requires at least: 6.2
 Requires PHP: 8.1
 Tested up to: 6.5
 Stable tag: 2.12.0
