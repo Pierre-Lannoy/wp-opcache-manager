@@ -3,7 +3,7 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.13.0] - Not Yet Released
+## [2.13.0] - 2024-05-04
 
 ### Added
 - There's now a filter to add more frequencies to warmup - see [hooks reference](HOOKS.md) (thanks to [Étienne Pigeyre](https://github.com/epigeyre)).
