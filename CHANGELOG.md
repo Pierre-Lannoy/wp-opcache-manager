@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Updated DecaLog SDK from version 3.0.0 to version 4.1.0.
 - Minimal required WordPress version is now 6.2.
 
+### Fixed
+- If warmup fails to complete, it produces a fatal error (thanks to [Ivan Milyukov](https://github.com/imilyukov)).
+
 ## [2.12.0] - 2024-03-02
 
 ### Added

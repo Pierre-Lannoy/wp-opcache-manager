@@ -225,7 +225,7 @@ class OPcache {
 					}
 				}
 			} catch ( \Throwable $e ) {
-				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->warning( sprintf( 'Unable to fully warmup "%s": %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
+				\DecaLog\Engine::eventsLogger( OPCM_SLUG )->warning( sprintf( 'Unable to complete full warmup: %s.', $e->getMessage() ), [ 'code' => $e->getCode() ] );
 			} finally {
 				// phpcs:ignore
 				restore_error_handler();
