@@ -26,3 +26,34 @@ Display advanced settings and controls in admin screens:
 ```php
   add_filter( 'perfopsone_show_advanced', '__return_true' );
 ```
+
+## Frequencies customization
+You can add available frequencies for warmup with the `opcache-manager_add_reset_frequencies` filter.
+
+### Example 1
+Adding the WordPress-native weekly frequency.
+```php
+add_filter('opcache-manager_add_reset_frequencies', function($frequencies) {
+  $frequencies[] = [ 'weekly' => 'Weekly' ];
+  return $frequencies;
+});
+```
+
+### Example 2
+Adding a customized 30 minutes frequency.
+```php
+add_filter('opcache-manager_add_reset_frequencies', function($frequencies) {
+  $frequencies[] = [ 'twicehourly' => 'Twice Hourly' ];
+  return $frequencies;
+});
+```
+And don't forget to create the right schedule like that:
+```php
+add_filter('cron_schedules', function($schedules) {
+  if ( ! array_key_exists( 'twicehourly', $schedules ) ) {
+    $schedules['twicehourly'] = [
+        'interval' => 1800,
+        'display' => 'Twice Hourly',
+    ];
+});
+```

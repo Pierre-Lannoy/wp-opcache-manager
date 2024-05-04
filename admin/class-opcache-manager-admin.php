@@ -502,7 +502,14 @@ class Opcache_Manager_Admin {
 		$result[] = [ 'hourly', esc_html__( 'Once Hourly', 'opcache-manager' ) ];
 		$result[] = [ 'twicedaily', esc_html__( 'Twice Daily', 'opcache-manager' ) ];
 		$result[] = [ 'daily', esc_html__( 'Once Daily', 'opcache-manager' ) ];
-		return apply_filters( 'poo_reset_frequencies', $result );
+		/**
+		 * Adds frequencies
+		 *
+		 * @See https://github.com/Pierre-Lannoy/wp-opcache-manager/blob/master/HOOKS.md
+		 * @since 2.13.0
+		 * @param   array   $frequencies       The current frequencies
+		 */
+		return apply_filters( 'opcache-manager_add_reset_frequencies', $result );
 	}
 
 	/**
