@@ -38,10 +38,6 @@ class Initializer {
 		\OPcacheManager\System\Cache::init();
 		\OPcacheManager\System\Sitehealth::init();
 		\OPcacheManager\System\APCu::init();
-		//if ( 'en_US' !== determine_locale() ) {
-			unload_textdomain( OPCM_SLUG );
-			load_plugin_textdomain( OPCM_SLUG );
-		//}
 	}
 
 	/**
