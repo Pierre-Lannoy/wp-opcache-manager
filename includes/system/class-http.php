@@ -186,7 +186,7 @@ class Http {
 	 * @since  1.0.0
 	 */
 	public static function user_agent() {
-		return OPCM_PRODUCT_NAME . ' (' . Environment::wordpress_version_id() . '; ' . Environment::plugin_version_id() . '; +' . OPCM_PRODUCT_URL . ')';
+		return 'PerfOps One - ' . OPCM_PRODUCT_NAME . ' / ' . OPCM_VERSION . ' (https://perfops.one/' . OPCM_SLUG . ')';
 	}
 
 	/**
