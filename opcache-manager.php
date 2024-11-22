@@ -10,7 +10,7 @@
  * Plugin Name:       OPcache Manager
  * Plugin URI:        https://perfops.one/opcache-manager
  * Description:       OPcache statistics and management right in the WordPress admin dashboard.
- * Version:           3.0.0
+ * Version:           3.1.0
  * Requires at least: 6.2
  * Requires PHP:      8.1
  * Author:            Pierre Lannoy / PerfOps One
