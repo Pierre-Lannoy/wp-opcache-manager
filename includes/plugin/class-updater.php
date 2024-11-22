@@ -13,6 +13,7 @@ use OPcacheManager\System\Nag;
 use OPcacheManager\System\Option;
 use Exception;
 use OPcacheManager\System\Cache;
+use OPcacheManager\System\Http;
 use OPcacheManager\Plugin\Feature\Schema;
 use OPcacheManager\System\Logger;
 use OPcacheManager\System\Markdown;
@@ -117,7 +118,8 @@ class Updater {
 				[
 					'timeout' => 10,
 					'headers' => [
-						'Accept' => 'application/vnd.github+json'
+						'Accept'     => 'application/vnd.github+json',
+						'user-agent' => Http::user_agent(),
 					]
 				]
 			);
@@ -136,8 +138,8 @@ class Updater {
 				[
 					'timeout' => 10,
 					'headers' => [
-						'Accept' => 'application/vnd.github+json'
-					]
+						'user-agent' => Http::user_agent(),
+					],
 				]
 			);
 			if ( is_wp_error( $remote ) || 200 !== wp_remote_retrieve_response_code( $remote ) || empty( wp_remote_retrieve_body( $remote ) ) ) {
