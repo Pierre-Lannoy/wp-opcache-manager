@@ -3,6 +3,11 @@ All notable changes to **OPcache Manager** are documented in this *changelog*.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and **OPcache Manager** adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2025-11-22
+
+### Added
+- Compatibility with WordPress 6.9.
+
 ## [3.2.0] - 2025-04-14
 
 ### Added
