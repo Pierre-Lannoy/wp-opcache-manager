@@ -1,7 +1,7 @@
 # OPcache Manager
 [![version](https://badgen.net/github/release/Pierre-Lannoy/wp-opcache-manager/)](https://wordpress.org/plugins/opcache-manager/)
-[![php](https://badgen.net/badge/php/7.2+/green)](https://wordpress.org/plugins/opcache-manager/)
-[![wordpress](https://badgen.net/badge/wordpress/5.2+/green)](https://wordpress.org/plugins/opcache-manager/)
+[![php](https://badgen.net/badge/php/8.2+/green)](https://wordpress.org/plugins/opcache-manager/)
+[![wordpress](https://badgen.net/badge/wordpress/6.4+/green)](https://wordpress.org/plugins/opcache-manager/)
 [![license](https://badgen.net/github/license/Pierre-Lannoy/wp-opcache-manager/)](/license.txt)
 
 __OPcache Manager__ is a full featured OPcache management and analytics reporting tool. It allows you to monitor and optimize OPcache operations on your WordPress site or network.
@@ -57,7 +57,3 @@ Alternatively, if you have usage questions, you can open a discussion on the [Wo
 Before submitting an issue or a pull request, please read the [contribution guidelines](CONTRIBUTING.md).
 
 > ⚠️ The `master` branch is the current development state of the plugin. If you want a stable, production-ready version, please pick the last official [release](https://github.com/Pierre-Lannoy/wp-opcache-manager/releases).
-
-## Smoke tests
-[![WP compatibility](https://plugintests.com/plugins/opcache-manager/wp-badge.svg)](https://plugintests.com/plugins/opcache-manager/latest)
-[![PHP compatibility](https://plugintests.com/plugins/opcache-manager/php-badge.svg)](https://plugintests.com/plugins/opcache-manager/latest)
