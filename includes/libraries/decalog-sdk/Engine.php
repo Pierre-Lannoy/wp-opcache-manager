@@ -91,7 +91,7 @@ class Engine {
 	public static function getPsrVersion() {
 		$required = 1;
 		if ( ! defined( 'DECALOG_PSR_LOG_VERSION') ) {
-			define( 'DECALOG_PSR_LOG_VERSION', 'V1' );
+			define( 'DECALOG_PSR_LOG_VERSION', 'auto' );
 		}
 		switch ( strtolower( DECALOG_PSR_LOG_VERSION ) ) {
 			case 'v3':
