@@ -55,8 +55,8 @@ class Schema {
 		$value_update = [];
 		foreach ( $record as $k => $v ) {
 			$field_insert[] = '`' . $k . '`';
-			$value_insert[] = "'" . $v . "'";
-			$value_update[] = '`' . $k . '`=' . "'" . $v . "'";
+			$value_insert[] = "'" . esc_sql( $v ) . "'";
+			$value_update[] = '`' . $k . '`=' . "'" . esc_sql( $v ) . "'";
 		}
 		if ( count( $field_insert ) > 0 ) {
 			global $wpdb;
